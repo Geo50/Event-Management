@@ -17,6 +17,7 @@ namespace Infrastructure.Repositories
         public Task UpdateUserById(int userid);
         public Task CreateNewUser(User newUser);
 
+
     }
 
     public class UserRepository : IUserRepository

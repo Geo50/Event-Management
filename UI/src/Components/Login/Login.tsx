@@ -15,7 +15,7 @@ type userCredentials = {
   userPassword: string;
 };
 
-const Register: React.FC = () => {
+const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [errorDisplay, setErrorDisplay] = useState<string>("");
@@ -156,4 +156,4 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register;
+export default Login;
