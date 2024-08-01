@@ -8,11 +8,10 @@
   box-sizing: border-box;
 }
 
-
 .componentContainer_centered {
   display: flex;
   justify-content: center;
-  align-items: center;
+  margin-top: 8%;
 }
 
 .componentHeader {
@@ -76,27 +75,30 @@
   padding: 1rem 0;
   font-size: 1.1rem;
   color: #fff;
-  transition: ease 1s;
 }
 
 input:focus {
   outline: 0;
-  border-bottom-color: rgb(231, 198, 31);
+  border-bottom-color: lightblue;
 }
 
 .minimisedLogo {
-    width: 2rem;
-    height: 2rem;
+  width: 8%;
+  height: 8%;
 }
 
-.logoContainer {
-    margin-right: 1rem;
+.submitButton {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
 }
 
-.flexedElements {
-    display: flex;
+.registerButton {
+  margin-top: 1rem;
+  width: 100%;
 }
 
-.text {
-    color: rgba(255, 255, 255, 0.708);
+.linkElement {
+  color: rgb(255, 0, 85);
+  font-size: large;
 }
