@@ -42,6 +42,15 @@ namespace User_API.Controllers
             });
         }
 
+        [HttpPost("UpdatingPassword")]
+
+        public async Task<IActionResult> UpdateUserPassword(PasswordForgotDTO passwordForgot)
+        {
+            await _userService.UpdateUserPassword(passwordForgot);
+            return Ok();
+        }
+
+
         [Authorize]
         [HttpGet("GetAllUsers")]
 

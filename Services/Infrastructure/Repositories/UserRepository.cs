@@ -16,6 +16,7 @@ namespace Infrastructure.Repositories
         public Task<User> GetRegisteredUser(string userName);
         public Task UpdateUserById(int userid);
         public Task CreateNewUser(User newUser);
+        public Task UpdatePassword(User user);
 
 
     }
@@ -55,10 +56,12 @@ namespace Infrastructure.Repositories
                     UserName = newUser.UserName,
                     UserEmail = newUser.UserEmail,
                     UserPassword = hashedPassword,
-                    IsAdmin = newUser.isadmin
+                    IsAdmin = newUser.isadmin,
+                    pass_verification_answer = newUser.PassVerificationAnswer
                 });
             }
         }
+
 
         public async Task<User> GetRegisteredUser(string userName)
         {
@@ -73,8 +76,35 @@ namespace Infrastructure.Repositories
             }
         }
 
+        public async Task UpdatePassword(User user)
+        {
+            var getQuery = UserQueries.GetPasswordVerificationAnswer;
 
-        public Task<User> GetUserById(int userId)
+            using (var connection = Connection)
+            {
+                var storedVerificationAnswer = await connection.QueryFirstOrDefaultAsync<string>(getQuery, new
+                {
+                    UserName = user.UserName
+                });
+
+                if (storedVerificationAnswer == user.PassVerificationAnswer)
+                {
+                    var updateQuery = UserQueries.UpdateUserPassword;
+                    await connection.ExecuteAsync(updateQuery, new
+                    {
+                        UserPassword = user.UserPassword,
+                        UserName = user.UserName
+                    });
+                }
+                else
+                {
+                    throw new UnauthorizedAccessException("Verification answer is incorrect.");
+                }
+            }
+        }
+
+
+            public Task<User> GetUserById(int userId)
         {
             throw new NotImplementedException();
         }

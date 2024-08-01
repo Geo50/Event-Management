@@ -6,5 +6,7 @@
         public  string UserEmail { get; set; }
         public  string UserPassword { get; set; }
         public  bool isadmin { get; set; }
+        public string PassVerificationAnswer { get; set; }
+
     }
 }
