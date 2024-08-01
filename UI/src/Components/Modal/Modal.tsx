@@ -1,6 +1,7 @@
-import { Button, Container, Modal } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import classes from "./Modal.module.css";
+import { Button, Container, Modal } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+
+import classes from './Modal.module.css';
 
 type ModalProps = {
   visibility: boolean;

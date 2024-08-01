@@ -1,15 +1,17 @@
-import { useRef, useState } from "react";
-import LoginRightSide from "../LoginRight/LoginRightSide";
-import classes from "./Login.module.css";
-import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
+import "bootstrap-icons/font/bootstrap-icons.css";
+
 import axios from "axios";
-import { HashLoader } from "react-spinners";
+import { useRef, useState } from "react";
+import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import ModalComponent from "../Modal/Modal";
+import secureLocalStorage from "react-secure-storage";
+import { HashLoader } from "react-spinners";
 
 import passwordLogo from "../../assets/password_yellow.png";
 import userLogo from "../../assets/user_yellow_2.png";
-import secureLocalStorage from "react-secure-storage";
+import LoginRightSide from "../LoginRight/LoginRightSide";
+import ModalComponent from "../Modal/Modal";
+import classes from "./Login.module.css";
 
 type userCredentials = {
   userName: string;
@@ -76,7 +78,7 @@ const Login: React.FC = () => {
         setAlert({
           type: "success",
           message: "You have been logged in successfully",
-        })
+        });
         secureLocalStorage.setItem(key, response.data.token);
       })
       .catch((error) => {
@@ -128,11 +130,10 @@ const Login: React.FC = () => {
             </h1>
             <br />
             <div className={classes.logoContainer}>
-              <img
-                src={userLogo}
-                alt="user_logo"
-                className={classes.minimisedLogo}
-              />
+              <i
+                className="bi bi-person-circle"
+                style={{ color: "#ffc107", fontSize: "26px" }}
+              ></i>
               <input
                 type="text"
                 ref={nameRef}
@@ -141,11 +142,10 @@ const Login: React.FC = () => {
               />
             </div>
             <div className={classes.logoContainer}>
-              <img
-                src={passwordLogo}
-                alt="password_logo"
-                className={classes.minimisedLogo}
-              />
+              <i
+                className="bi bi-key-fill"
+                style={{ color: "#ffc107", fontSize: "26px" }}
+              ></i>
               <input
                 type="password"
                 ref={passwordRef}
@@ -165,6 +165,10 @@ const Login: React.FC = () => {
               <Link to="/forgotpassword" className={classes.linkElement}>
                 Forgot Password?
               </Link>
+            </div> <br />
+            <div>
+              <p className={classes.linkElement}> Don't have an account? 
+              <Link to="/registration" className={classes.linkElement}> Create One</Link></p>
             </div>
           </form>
         </Col>

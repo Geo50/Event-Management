@@ -1,57 +1,68 @@
 .formPosition {
-    display: flex;
-    flex-direction: column;
-    margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
 }
 
 .formsContainer {
-    background-color: rgb(32, 29, 29);
-    padding: 1.1rem;
-    border-radius: 3%;
+  background-color: var(--dark-black);
+  padding: 1.1rem;
+  border-radius: 3%;
 }
-  
+
 .formGroup {
-    display: flex;
-    margin-bottom: 15px;
-    margin-left: 10px;
-    justify-content: flex-end;
+  display: flex;
+  margin-bottom: 15px;
+  margin-left: 10px;
+  justify-content: flex-end;
 }
-  
+
 .inputElements {
-    padding: 6px;
-    text-indent: 0.4rem;
+  width: 100%;
+  text-indent: 2px;
+  text-align: left;
+  background-color: transparent;
+  border: 0px;
+  border-bottom: 2px #fff solid;
+  padding: 1rem 0;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+input:focus {
+  outline: 0;
+  border-bottom-color: lightblue;
 }
 
 .text {
-    color: rgba(255, 255, 255, 0.708);
+  color: rgba(250, 250, 250, 0.708);
 }
 
 .buttonRegister:hover {
-    background-color: rgb(67, 35, 211);
+  background-color: rgb(67, 35, 211);
 }
 
 .loader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .minimisedLogo {
-    width: 2rem;
-    height: 2rem;
+  width: 2rem;
+  height: 2rem;
 }
 
 .logoContainer {
-    margin-right: 1rem;
+  margin-right: 1rem;
 }
 
 .switch {
-    cursor: pointer;
+  cursor: pointer;
 }
 
-
 .flexedElements {
-    display: flex;
-    justify-content: space-around;
+  display: flex;
+  justify-content: space-around;
 }

@@ -1,18 +1,17 @@
-import { Container, Row, Col, Alert, Form, Button } from "react-bootstrap";
+import axios from 'axios';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import secureLocalStorage from 'react-secure-storage';
+import { HashLoader } from 'react-spinners';
 
-import classes from "./Registration.module.css";
-import { useCallback, useEffect, useRef, useState } from "react";
-import ModalComponent from "../Modal/Modal";
-import secureLocalStorage from "react-secure-storage";
-
-import LoginRightSide from "../LoginRight/LoginRightSide";
-import axios from "axios";
-import { HashLoader } from "react-spinners";
-import passwordLogo from "../../assets/password.png";
-import emailLogo from "../../assets/email.png";
-import userLogo from "../../assets/user.png";
-import { Link } from "react-router-dom";
-import NightCity from "../../assets/NightCity.jpg";
+import emailLogo from '../../assets/email.png';
+import NightCity from '../../assets/NightCity.jpg';
+import passwordLogo from '../../assets/password.png';
+import userLogo from '../../assets/user.png';
+import LoginRightSide from '../LoginRight/LoginRightSide';
+import ModalComponent from '../Modal/Modal';
+import classes from './Registration.module.css';
 
 const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 
@@ -172,7 +171,7 @@ const Login: React.FC = () => {
                     className={classes.minimisedLogo}
                   />
                 </div>
-                <Form.Control
+                <input
                   type="text"
                   ref={nameRef}
                   placeholder="Username"
@@ -187,7 +186,7 @@ const Login: React.FC = () => {
                     className={classes.minimisedLogo}
                   />
                 </div>
-                <Form.Control
+                <input
                   type="email"
                   ref={emailRef}
                   placeholder="Email"
@@ -202,7 +201,7 @@ const Login: React.FC = () => {
                     className={classes.minimisedLogo}
                   />
                 </div>
-                <Form.Control
+                <input
                   type="password"
                   ref={passwordRef}
                   placeholder="Password"
@@ -217,7 +216,7 @@ const Login: React.FC = () => {
                     className={classes.minimisedLogo}
                   />
                 </div>
-                <Form.Control
+                <input
                   type="text"
                   ref={verifyRef}
                   placeholder="What is your best friend's first name?"
