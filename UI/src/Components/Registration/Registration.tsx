@@ -1,7 +1,7 @@
 import { Container, Row, Col, Alert, Form, Button } from "react-bootstrap";
 
 import classes from "./Registration.module.css";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ModalComponent from "../Modal/Modal";
 
 import LoginRightSide from "../LoginRight/LoginRightSide";
@@ -11,6 +11,7 @@ import passwordLogo from "../../assets/password.png";
 import emailLogo from "../../assets/email.png";
 import userLogo from "../../assets/user.png";
 import { Link } from "react-router-dom";
+import NightCity from "../../assets/NightCity.jpg";
 
 
 type userCredentials = {
@@ -18,6 +19,7 @@ type userCredentials = {
   emailValue: string;
   userPassword: string;
   adminValue: boolean;
+  PassVerificationAnswer: string; // Updated field name to match backend
 };
 
 const Login: React.FC = () => {
@@ -27,6 +29,7 @@ const Login: React.FC = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const adminRef = useRef<HTMLInputElement>(null);
+  const verifyRef = useRef<HTMLInputElement>(null);
 
   const [alert, setAlert] = useState<{ type: string; message: string } | null>(
     null
@@ -35,7 +38,6 @@ const Login: React.FC = () => {
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [modalType, setModalType] = useState<string>("");
   const [errorDisplay, setErrorDisplay] = useState<string>("");
-  const [usernameFetched, setUsernameFetched] = useState<string>("");
 
   const validationUserInfo = (event: React.FormEvent) => {
     event.preventDefault();
@@ -44,12 +46,14 @@ const Login: React.FC = () => {
     const emailValue = emailRef.current?.value || "";
     const userPassword = passwordRef.current?.value || "";
     const adminValue = adminRef.current?.checked || false;
+    const PassVerificationAnswer = verifyRef.current?.value || "";
 
     const userValues: userCredentials = {
       userName,
       emailValue,
       userPassword,
       adminValue,
+      PassVerificationAnswer
     };
 
     if (userName === "" || emailValue === "" || userPassword === "") {
@@ -57,6 +61,7 @@ const Login: React.FC = () => {
       if (userName === "") message += "Name ";
       if (emailValue === "") message += "Email ";
       if (userPassword === "") message += "Password ";
+      if (PassVerificationAnswer === "") message += "Verification ";
       setAlert({ type: "danger", message: message.trim() });
       return;
     }
@@ -77,7 +82,7 @@ const Login: React.FC = () => {
     if (nameRef.current) nameRef.current.value = "";
     if (emailRef.current) emailRef.current.value = "";
     if (passwordRef.current) passwordRef.current.value = "";
-
+    if (verifyRef.current) verifyRef.current.value = "";
     handleDatabaseInjection(userValues);
     setAlert(null);
   };
@@ -85,6 +90,21 @@ const Login: React.FC = () => {
   const handleCloseDetails = () => {
     setModalShow(false);
   };
+
+  useEffect(() => {
+    document.body.style.backgroundImage = `url(${NightCity})`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.height = "100vh";
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.backgroundImage = "";
+      document.body.style.backgroundSize = "";
+      document.body.style.backgroundRepeat = "";
+      document.body.style.height = "";
+    };
+  }, []);
 
   const handleDatabaseInjection = async (userValues: userCredentials) => {
     setLoading(true);
@@ -94,13 +114,12 @@ const Login: React.FC = () => {
         UserEmail: userValues.emailValue,
         UserPassword: userValues.userPassword,
         IsAdmin: userValues.adminValue,
+        PassVerificationAnswer: userValues.PassVerificationAnswer 
       })
-
       .then(() => {
         setModalType("success");
         setModalShow(true);
       })
-
       .catch((error) => {
         setErrorDisplay(error.message);
         setModalType("error");
@@ -153,6 +172,10 @@ const Login: React.FC = () => {
                   <Form.Group className={classes.formGroup}>
                   <div className={classes.logoContainer}><img src={passwordLogo} alt="password_logo" className={classes.minimisedLogo}/></div>
                     <Form.Control type="password" ref={passwordRef} placeholder="Password" className={classes.inputElements} />
+                  </Form.Group>
+                  <Form.Group className={classes.formGroup}>
+                  <div className={classes.logoContainer}><img src={passwordLogo} alt="password_logo" className={classes.minimisedLogo}/></div>
+                    <Form.Control type="text" ref={verifyRef} placeholder="What is your best friend's first name?" className={classes.inputElements} />
                   </Form.Group>
                   <Form.Check
                     type="switch"
