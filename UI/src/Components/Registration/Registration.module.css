@@ -22,10 +22,6 @@
     text-indent: 0.4rem;
 }
 
-body {
-    background-image: url('/public/monochrome.jpg');    
-}
-
 .text {
     color: rgba(255, 255, 255, 0.708);
 }

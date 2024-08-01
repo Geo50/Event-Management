@@ -25,6 +25,7 @@
 .rowProperties {
   height: 100%;
   width: 100%;
+  margin: 0 !important;
 }
 
 .rightSide {
@@ -35,6 +36,7 @@
 
 .logoContainer {
   display: flex;
+  align-items: center;
 }
 
 
@@ -61,11 +63,14 @@
 .title,
 .subTitle {
   color: white;
+  text-wrap: nowrap;
+  max-width: 100%;
 }
 
 .inputElements {
   width: 100%;
-  border-radius: 5px;
+  /* border-radius: 5px; */
+  margin-left: 0.75rem;
   margin-bottom: 1rem;
   text-indent: 2px;
   text-align: left;
@@ -101,4 +106,6 @@ input:focus {
 .linkElement {
   color: rgb(255, 0, 85);
   font-size: large;
+  font-weight: 600;
+  text-decoration: none;
 }

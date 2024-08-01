@@ -3,6 +3,9 @@ import Registration from './Components/Registration/Registration';
 import Login from './Components/Login/Login';
 import ForgotPassword from './Components/Login/ForgotPassword';
 
+export const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
+
+
 function App() {
   return (
     <BrowserRouter>

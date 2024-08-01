@@ -9,11 +9,14 @@ import ModalComponent from "../Modal/Modal";
 
 import passwordLogo from "../../assets/password_yellow.png";
 import userLogo from "../../assets/user_yellow_2.png";
+import secureLocalStorage from "react-secure-storage";
 
 type userCredentials = {
   userName: string;
   userPassword: string;
 };
+
+const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -69,11 +72,12 @@ const Login: React.FC = () => {
         UserName: userValues.userName,
         UserPassword: userValues.userPassword,
       })
-      .then(() => {
+      .then((response) => {
         setAlert({
           type: "success",
           message: "You have been logged in successfully",
-        });
+        })
+        secureLocalStorage.setItem(key, response.data.token);
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
@@ -116,7 +120,6 @@ const Login: React.FC = () => {
               {alert.message}
             </Alert>
           )}
-
           <form className={classes.formContainer} onSubmit={inputValidation}>
             <h1 className={`display-4 ${classes.title}`}>Catch up now! </h1>
             <br />

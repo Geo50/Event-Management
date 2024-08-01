@@ -3,6 +3,7 @@ import { Container, Row, Col, Alert, Form, Button } from "react-bootstrap";
 import classes from "./Registration.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ModalComponent from "../Modal/Modal";
+import secureLocalStorage from "react-secure-storage";
 
 import LoginRightSide from "../LoginRight/LoginRightSide";
 import axios from "axios";
@@ -13,6 +14,7 @@ import userLogo from "../../assets/user.png";
 import { Link } from "react-router-dom";
 import NightCity from "../../assets/NightCity.jpg";
 
+const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 
 type userCredentials = {
   userName: string;
@@ -37,7 +39,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [modalType, setModalType] = useState<string>("");
-  const [errorDisplay, setErrorDisplay] = useState<string>(""); 
+  const [errorDisplay, setErrorDisplay] = useState<string>("");
 
   const validationUserInfo = (event: React.FormEvent) => {
     event.preventDefault();
@@ -53,7 +55,7 @@ const Login: React.FC = () => {
       emailValue,
       userPassword,
       adminValue,
-      PassVerificationAnswer
+      PassVerificationAnswer,
     };
 
     if (userName === "" || emailValue === "" || userPassword === "") {
@@ -114,11 +116,13 @@ const Login: React.FC = () => {
         UserEmail: userValues.emailValue,
         UserPassword: userValues.userPassword,
         IsAdmin: userValues.adminValue,
-        PassVerificationAnswer: userValues.PassVerificationAnswer 
+        PassVerificationAnswer: userValues.PassVerificationAnswer,
       })
-      .then(() => {
+      .then((response) => {
         setModalType("success");
         setModalShow(true);
+        secureLocalStorage.setItem(key, response.data.token);
+        console.log(response.data.token);
       })
       .catch((error) => {
         setErrorDisplay(error.message);
@@ -129,91 +133,132 @@ const Login: React.FC = () => {
         setLoading(false);
       });
   };
-
   return (
     <Container className={classes.container}>
-      {loading ? (
+      {loading && (
         <div className={classes.loader}>
           <HashLoader color="#a80e0e" size={100} speedMultiplier={1.3} />{" "}
         </div>
-      ) : (
-        <div>
-          {modalShow ? (
-            <ModalComponent
-              visibility={modalShow}
-              modalType={modalType}
-              errorDisplayProp={errorDisplay}
-              handleClose={handleCloseDetails}
-            />
-          ) : null}
-          {alert && (
-            <Alert
-              variant={alert.type}
-              dismissible
-              onClose={() => setAlert(null)}
+      )}
+      <div>
+        {modalShow && (
+          <ModalComponent
+            visibility={modalShow}
+            modalType={modalType}
+            errorDisplayProp={errorDisplay}
+            handleClose={handleCloseDetails}
+          />
+        )}
+        {alert && (
+          <Alert
+            variant={alert.type}
+            dismissible
+            onClose={() => setAlert(null)}
+          >
+            {alert.message}
+          </Alert>
+        )}
+        <Row className="justify-content-start align-items-center mt-5">
+          <Col md={7} lg={4} className={classes.formsContainer}>
+            <Form
+              className={classes.formPosition}
+              onSubmit={validationUserInfo}
             >
-              {alert.message}
-            </Alert>
-          )}
-          <Row className="justify-content-start align-items-center mt-5">
-              <Col md={7} lg={4} className={classes.formsContainer}>
-                <Form
-                  className={classes.formPosition}
-                  onSubmit={validationUserInfo}
-                >
-                  <Form.Group className={classes.formGroup}>
-                    <div className={classes.logoContainer}><img src={userLogo} alt="user_logo" className={classes.minimisedLogo}/></div>                  
-                    <Form.Control type="text" ref={nameRef} placeholder="Username" className={classes.inputElements}/>
-                  </Form.Group>
-                  <Form.Group className={classes.formGroup}>
-                  <div className={classes.logoContainer}><img src={emailLogo} alt="email_logo" className={classes.minimisedLogo}/></div>
-                    <Form.Control type="email" ref={emailRef} placeholder="Email" className={classes.inputElements}/>
-                  </Form.Group>
-                  <Form.Group className={classes.formGroup}>
-                  <div className={classes.logoContainer}><img src={passwordLogo} alt="password_logo" className={classes.minimisedLogo}/></div>
-                    <Form.Control type="password" ref={passwordRef} placeholder="Password" className={classes.inputElements} />
-                  </Form.Group>
-                  <Form.Group className={classes.formGroup}>
-                  <div className={classes.logoContainer}><img src={passwordLogo} alt="password_logo" className={classes.minimisedLogo}/></div>
-                    <Form.Control type="text" ref={verifyRef} placeholder="What is your best friend's first name?" className={classes.inputElements} />
-                  </Form.Group>
-                  <Form.Check
-                    type="switch"
-                    label="Are you an administrator? "
-                    ref={adminRef}
-                    className={classes.switch}
+              <Form.Group className={classes.formGroup}>
+                <div className={classes.logoContainer}>
+                  <img
+                    src={userLogo}
+                    alt="user_logo"
+                    className={classes.minimisedLogo}
                   />
-                  <br />
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    className={classes.buttonRegister}
-                  >
-                    Register
-                  </Button>
-                  <br />
-                  <div className={classes.flexedElements}>  
-                  <h5 className={classes.text}>Already have an account ?</h5>
-                  <Link to="/">
+                </div>
+                <Form.Control
+                  type="text"
+                  ref={nameRef}
+                  placeholder="Username"
+                  className={classes.inputElements}
+                />
+              </Form.Group>
+              <Form.Group className={classes.formGroup}>
+                <div className={classes.logoContainer}>
+                  <img
+                    src={emailLogo}
+                    alt="email_logo"
+                    className={classes.minimisedLogo}
+                  />
+                </div>
+                <Form.Control
+                  type="email"
+                  ref={emailRef}
+                  placeholder="Email"
+                  className={classes.inputElements}
+                />
+              </Form.Group>
+              <Form.Group className={classes.formGroup}>
+                <div className={classes.logoContainer}>
+                  <img
+                    src={passwordLogo}
+                    alt="password_logo"
+                    className={classes.minimisedLogo}
+                  />
+                </div>
+                <Form.Control
+                  type="password"
+                  ref={passwordRef}
+                  placeholder="Password"
+                  className={classes.inputElements}
+                />
+              </Form.Group>
+              <Form.Group className={classes.formGroup}>
+                <div className={classes.logoContainer}>
+                  <img
+                    src={passwordLogo}
+                    alt="password_logo"
+                    className={classes.minimisedLogo}
+                  />
+                </div>
+                <Form.Control
+                  type="text"
+                  ref={verifyRef}
+                  placeholder="What is your best friend's first name?"
+                  className={classes.inputElements}
+                />
+              </Form.Group>
+              <Form.Check
+                type="switch"
+                label="Are you an administrator?"
+                ref={adminRef}
+                className={classes.switch}
+              />
+              <br />
+              <Button
+                variant="primary"
+                type="submit"
+                className={classes.buttonRegister}
+              >
+                Register
+              </Button>
+              <br />
+              <div className={classes.flexedElements}>
+                <h5 className={classes.text}>Already have an account?</h5>
+                <Link to="/">
                   <Button
                     variant="primary"
                     type="submit"
                     className={classes.buttonRegister}
                   >
                     Login Now
-                  </Button></Link>
-                  </div>
-                  
-                </Form>
-              </Col>
-            <Col md={6} className="d-none d-md-block">
-              <LoginRightSide />
-            </Col>
-          </Row>
-        </div>
-      )}
+                  </Button>
+                </Link>
+              </div>
+            </Form>
+          </Col>
+          <Col md={6} className="d-none d-md-block">
+            <LoginRightSide />
+          </Col>
+        </Row>
+      </div>
     </Container>
   );
 };
-
 export default Login;
