@@ -2,6 +2,8 @@
 using Application.Services;
 using Domain.Entities;
 using Application.DTO;
+using Application.JwtToken;
+using Microsoft.AspNetCore.Authorization;
 
 namespace User_API.Controllers
 {
@@ -10,10 +12,13 @@ namespace User_API.Controllers
     public class UserController : Controller
     {
         private readonly Application.Services.UserInfo _userService;
+        private readonly JwtTokenService _tokenService;
 
-        public UserController(Application.Services.UserInfo userService)
+
+        public UserController(Application.Services.UserInfo userService, JwtTokenService tokenService)
         {
             _userService = userService;
+            _tokenService = tokenService;
         }
 
         [HttpPost("CreateNewUser")]
@@ -21,9 +26,32 @@ namespace User_API.Controllers
         public async Task<IActionResult> CreateNewUser(CreateUserDTO newUser)
         {
             await _userService.CreateNewUser(newUser);
-            return Ok("Successfully created the new user");
+
+            var user = await _userService.GetUserByUName(newUser.UserName);
+
+            if (user == null)
+            {
+                return Unauthorized("User creation failed.");
+            }
+
+            var token = _tokenService.GenerateToken(user.UserId.ToString());
+
+            return Ok(new
+            {
+                token
+            });
         }
 
+        [HttpPost("UpdatingPassword")]
+
+        public async Task<IActionResult> UpdateUserPassword(PasswordForgotDTO passwordForgot)
+        {
+            await _userService.UpdateUserPassword(passwordForgot);
+            return Ok();
+        }
+
+
+        [Authorize]
         [HttpGet("GetAllUsers")]
 
         public async Task<IActionResult> GetAllUsers()
@@ -34,7 +62,7 @@ namespace User_API.Controllers
 
 
         [HttpPost("VerifyLoginAccount")]
-        public async Task<IActionResult> VerifyLoginAccount( LoginDTO loginDTO)
+        public async Task<IActionResult> VerifyLoginAccount(LoginDTO loginDTO)
         {
             if (loginDTO == null || string.IsNullOrEmpty(loginDTO.UserName) || string.IsNullOrEmpty(loginDTO.UserPassword))
             {
@@ -45,21 +73,14 @@ namespace User_API.Controllers
 
             if (user == null)
             {
-                // User not found or invalid credentials
                 return Unauthorized("Invalid username or password.");
             }
+            var token = _tokenService.GenerateToken(user.UserId.ToString());
 
-            // Generate authentication token or set cookies, etc.
-            // For example:
-            // var token = GenerateToken(user); // Implement this method as needed
-
-            // Assuming you want to return user details or some success message
             return Ok(new
             {
                 userName = user.UserName,
-                password = user.UserPassword,
-                email = user.UserEmail,
-                id = user.UserId
+                token
             });
         }
 

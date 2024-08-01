@@ -16,6 +16,9 @@ namespace Application.Services
         public Task<User> VerifyUserCredentials(LoginDTO loginDTO);
         public Task CreateNewUser(CreateUserDTO newUserDTO);
         public Task UpdateUserById(int userid);
+        public Task<User> GetUserByUName(string UName);
+        public Task UpdateUserPassword(PasswordForgotDTO passwordForgot);
+
 
 
     }
@@ -37,6 +40,20 @@ namespace Application.Services
             var newUser = _mapper.Map<User>(newUserDTO);
             return _repository.CreateNewUser(newUser);
         }
+
+        public Task UpdateUserPassword(PasswordForgotDTO passwordForgot)
+        {
+            var userEntity = _mapper.Map<User>(passwordForgot); // Map DTO to User entity
+            var updatedPassword = _repository.UpdatePassword(userEntity);
+            return updatedPassword;
+        }
+
+
+        public async Task<User> GetUserByUName(string UName)
+        {
+            var user = await _repository.GetRegisteredUser(UName);
+            return user;
+        }   
 
         public async Task<User> VerifyUserCredentials(LoginDTO loginDTO)
         {

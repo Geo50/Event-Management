@@ -13,6 +13,7 @@ namespace Domain.Entities
         public  string UserEmail { get; set; }
         public  string UserPassword { get; set; }
         public Boolean isadmin { get; set; }
+        public string PassVerificationAnswer { get; set; }
 
     }
 }

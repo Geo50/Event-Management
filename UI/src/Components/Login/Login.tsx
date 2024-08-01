@@ -7,15 +7,18 @@ import { HashLoader } from "react-spinners";
 import { Link } from "react-router-dom";
 import ModalComponent from "../Modal/Modal";
 
-import passwordLogo from "../../assets/password.png";
-import userLogo from "../../assets/user.png";
+import passwordLogo from "../../assets/password_yellow.png";
+import userLogo from "../../assets/user_yellow_2.png";
+import secureLocalStorage from "react-secure-storage";
 
 type userCredentials = {
   userName: string;
   userPassword: string;
 };
 
-const Register: React.FC = () => {
+const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
+
+const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [errorDisplay, setErrorDisplay] = useState<string>("");
@@ -69,11 +72,12 @@ const Register: React.FC = () => {
         UserName: userValues.userName,
         UserPassword: userValues.userPassword,
       })
-      .then(() => {
+      .then((response) => {
         setAlert({
           type: "success",
           message: "You have been logged in successfully",
-        });
+        })
+        secureLocalStorage.setItem(key, response.data.token);
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
@@ -90,13 +94,15 @@ const Register: React.FC = () => {
   };
 
   return (
-    <Container>
-      {loading ? (
-        <div className={classes.loader}>
-          <HashLoader color="#a80e0e" size={100} speedMultiplier={1.3} />{" "}
-        </div>
-      ) : (
-        <div>
+    <Container fluid className={classes.componentContainer}>
+      {/* //START OF ROW */}
+      <Row className={classes.rowProperties}>
+        <Col xs={12} lg={4} xl={4} className={classes.firstColumn}>
+          {loading && (
+            <div className={classes.loader}>
+              <HashLoader color="#a80e0e" size={100} speedMultiplier={1.3} />{" "}
+            </div>
+          )}
           {modalShow && (
             <ModalComponent
               visibility={modalShow}
@@ -114,46 +120,65 @@ const Register: React.FC = () => {
               {alert.message}
             </Alert>
           )}
-          <Row className="justify-content-start mt-5">
-            <Col md={7} lg={4} className={classes.formsContainer}>
-              <Form className={classes.formPosition} onSubmit={inputValidation}>
-                <Form.Group className={classes.formGroup}>
-                <div className={classes.logoContainer}><img src={userLogo} alt="user_logo" className={classes.minimisedLogo}/></div>                  
-                  <Form.Control type="text" ref={nameRef} className={classes.inputElements} placeholder="Username"/>
-                </Form.Group>
-                <Form.Group className={classes.formGroup}>
-                <div className={classes.logoContainer}><img src={passwordLogo} alt="password_logo" className={classes.minimisedLogo}/></div>
-                  <Form.Control type="password" ref={passwordRef} className={classes.inputElements} placeholder="Password" />
-                </Form.Group>
-                  <Button
-                    variant="outline-primary"
-                    type="submit"
-                    className={classes.buttonRegister}
-                  >
-                    Login
-                  </Button>
-                  <Container className={classes.flexedElements}>
-                  <h5 className={classes.text}>Don't have an account yet?</h5>
-                  <Link to="/registration">
-                  <Button
-                    variant="outline-primary"
-                    type="submit"
-                    className={classes.buttonRegister}
-                  >
-                    Create One Now
-                  </Button></Link>
-                  </Container>
-                  
-              </Form>
-            </Col>
-            <Col md={6} className="d-none d-md-block">
-              <LoginRightSide />
-            </Col>
-          </Row>
-        </div>
-      )}
+          <form className={classes.formContainer} onSubmit={inputValidation}>
+            <h1 className={`display-4 ${classes.title}`}>Catch up now! </h1>
+            <br />
+            <h1 className={`display-6 ${classes.subTitle}`}>
+              Login to your account
+            </h1>
+            <br />
+            <div className={classes.logoContainer}>
+              <img
+                src={userLogo}
+                alt="user_logo"
+                className={classes.minimisedLogo}
+              />
+              <input
+                type="text"
+                ref={nameRef}
+                className={classes.inputElements}
+                placeholder="Username"
+              />
+            </div>
+            <div className={classes.logoContainer}>
+              <img
+                src={passwordLogo}
+                alt="password_logo"
+                className={classes.minimisedLogo}
+              />
+              <input
+                type="password"
+                ref={passwordRef}
+                className={classes.inputElements}
+                placeholder="Password"
+              />
+            </div>
+            <Button
+              variant="outline-warning"
+              type="submit"
+              className={classes.submitButton}
+            >
+              Login
+            </Button>
+            <br />
+            <div>
+              <Link to="/forgotpassword" className={classes.linkElement}>
+                Forgot Password?
+              </Link>
+            </div>
+          </form>
+        </Col>
+        <Col
+          xs={0}
+          lg={8}
+          xl={8}
+          className={`d-none d-lg-block ${classes.rightSide}`}
+        >
+          <LoginRightSide />
+        </Col>
+      </Row>
     </Container>
   );
 };
 
-export default Register;
+export default Login;

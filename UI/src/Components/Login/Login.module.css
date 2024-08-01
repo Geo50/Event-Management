@@ -1,71 +1,111 @@
-.loader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+.componentContainer {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-.formPosition {
-    display: flex;
-    flex-direction: column;
-    margin-left: auto;
-}
-  
-.formsContainer {
-    background-color: rgb(32, 29, 29);
-    padding: 1.1rem;
-    border-radius: 3%;
-}
-  
-.formGroup {
-    display: flex;
-    margin-bottom: 15px;
-    margin-left: 10px;
-    justify-content: flex-end;
-}
-  
-.inputElements {
-    padding: 6px;
-    text-indent: 0.4rem;
+.componentContainer_centered {
+  display: flex;
+  justify-content: center;
+  margin-top: 8%;
 }
 
-body {
-    background-image: url('/public/monochrome.jpg');    
-    z-index: 0;
+.componentHeader {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 30%;
 }
 
-label {
-    color: white;
+.rowProperties {
+  height: 100%;
+  width: 100%;
+  margin: 0 !important;
 }
 
-.buttonRegister {
-    margin-bottom: 1rem;
-}
-
-.buttonRegister:hover {
-    background-color: rgb(67, 35, 211);
-}
-
-.loader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.minimisedLogo {
-    width: 2rem;
-    height: 2rem;
+.rightSide {
+  background-image: url("../../../public/event-login.png.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .logoContainer {
-    margin-right: 1rem;
+  display: flex;
+  align-items: center;
 }
 
-.flexedElements {
-    display: flex;
+
+.firstColumn {
+  background-color: rgb(32, 31, 31);
+  padding: 10px;
 }
 
-.text {
-    color: rgba(255, 255, 255, 0.708);
+.formBackground {
+  background-color: rgba(32, 31, 31, 0.938);
+  border-radius: 10px;
+}
+
+.formContainer {
+  padding: 10%;
+}
+
+
+.resetPassword {
+  width: 100%;
+
+}
+
+.title,
+.subTitle {
+  color: white;
+  text-wrap: nowrap;
+  max-width: 100%;
+}
+
+.inputElements {
+  width: 100%;
+  /* border-radius: 5px; */
+  margin-left: 0.75rem;
+  margin-bottom: 1rem;
+  text-indent: 2px;
+  text-align: left;
+  background-color: transparent;
+  border: 0px;
+  border-bottom: 2px #fff solid;
+  padding: 1rem 0;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+input:focus {
+  outline: 0;
+  border-bottom-color: lightblue;
+}
+
+.minimisedLogo {
+  width: 8%;
+  height: 8%;
+}
+
+.submitButton {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.registerButton {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.linkElement {
+  color: rgb(255, 0, 85);
+  font-size: large;
+  font-weight: 600;
+  text-decoration: none;
 }
