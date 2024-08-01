@@ -37,7 +37,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [modalType, setModalType] = useState<string>("");
-  const [errorDisplay, setErrorDisplay] = useState<string>("");
+  const [errorDisplay, setErrorDisplay] = useState<string>(""); 
 
   const validationUserInfo = (event: React.FormEvent) => {
     event.preventDefault();
