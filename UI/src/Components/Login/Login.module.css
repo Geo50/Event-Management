@@ -8,6 +8,13 @@
   box-sizing: border-box;
 }
 
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
 .componentContainer_centered {
   display: flex;
   justify-content: center;
@@ -51,7 +58,7 @@
 }
 
 .formContainer {
-  padding: 10%;
+  padding: 2%;
 }
 
 
@@ -83,14 +90,13 @@
   transition: 0.5s ease;
 }
 
-input:focus {
-  outline: 0;
-  border-bottom-color: #ffc107;
+.inputError {
+  border-bottom: 2px solid red;
 }
 
-.minimisedLogo {
-  width: 8%;
-  height: 8%;
+.inputElements:focus {
+  outline: 0;
+  border-bottom-color: #ffc107;
 }
 
 .submitButton {
@@ -105,12 +111,12 @@ input:focus {
 }
 
 .linkElement {
-  color: #ffc107;
+  color: var(--login-orange);
   font-size: 1.1rem;
   font-weight: 400;
   text-decoration: none;
 }
 
 .linkElement:hover {
-  color: #ffeb3b;
+  color: var(--login-orange-hover);
 }

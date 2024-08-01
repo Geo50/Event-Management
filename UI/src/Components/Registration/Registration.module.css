@@ -1,45 +1,108 @@
-.formPosition {
+.componentContainer {
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-direction: column;
-  margin-left: auto;
+  align-items: center;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
-.formsContainer {
-  background-color: var(--dark-black);
-  padding: 1.1rem;
-  border-radius: 3%;
+.rightSide {
+  background-image: url("../../assets/NightCity.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
-.formGroup {
+.registrationImage {
   display: flex;
-  margin-bottom: 15px;
-  margin-left: 10px;
   justify-content: flex-end;
+  align-items: flex-end;
+  background-image: url("../../assets/NightCity.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.rowProperties {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+.firstColumn {
+  background-color: var(--dark-black);
+  padding: 10px;
+}
+
+.formContainer {
+  padding: 2%;
+}
+
+.title,
+.subTitle {
+  color: rgba(250, 250, 250, 0.708);
 }
 
 .inputElements {
   width: 100%;
-  text-indent: 2px;
-  text-align: left;
   background-color: transparent;
   border: 0px;
   border-bottom: 2px #fff solid;
   padding: 1rem 0;
   font-size: 1.1rem;
   color: #fff;
+  margin-left: 0.7rem;
+  transition: ease 0.7s;
 }
 
-input:focus {
+.inputError {
+  border-bottom: 2px solid red;
+}
+
+.inputElements:focus {
   outline: 0;
-  border-bottom-color: lightblue;
+  border-bottom-color: var(--registration-blue);
 }
 
-.text {
-  color: rgba(250, 250, 250, 0.708);
+.submitButton {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
 }
 
-.buttonRegister:hover {
-  background-color: rgb(67, 35, 211);
+.linkText {
+  color: var(--registration-blue);
+  font-size: 1.1rem;
+}
+
+.linkElement {
+  color: var(--registration-blue);
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.linkElement:hover {
+  color: var(--registration-blue-hover);
+}
+
+.flexedElements {
+  display: flex;
+  margin-top: 1rem;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+}
+
+.switch {
+  margin-left: 10px;
+  font-size: 1.3rem;
+}
+
+.iconClass {
+  font-size: 1.8rem;
+  color: var(--registration-blue);
 }
 
 .loader {
@@ -47,22 +110,4 @@ input:focus {
   justify-content: center;
   align-items: center;
   height: 100vh;
-}
-
-.minimisedLogo {
-  width: 2rem;
-  height: 2rem;
-}
-
-.logoContainer {
-  margin-right: 1rem;
-}
-
-.switch {
-  cursor: pointer;
-}
-
-.flexedElements {
-  display: flex;
-  justify-content: space-around;
 }
