@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application.Services;
 using Domain.Entities;
-using Application.DTO;
 using Application.JwtToken;
 using Microsoft.AspNetCore.Authorization;
+using Application.DTO.UserDTOs;
 
 namespace User_API.Controllers
 {

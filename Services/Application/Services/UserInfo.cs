@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Infrastructure.Repositories;
-using Application.DTO;
 using AutoMapper;
+using Application.DTO.UserDTOs;
 
 namespace Application.Services
 {

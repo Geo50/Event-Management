@@ -10,8 +10,12 @@
   text-decoration: none;
   color: white;
   font-size: 1.1rem;
+  transition: ease 0.4s;
 }
 
+.navbarLink:hover {
+  font-weight: 600;
+}
 .navbarBrand {
   text-decoration: none;
   color: white;

@@ -14,7 +14,7 @@ function OffcanvasExample() {
     <div>
       <Navbar collapseOnSelect expand="md" id={classes.navContainer}>
         <Container fluid>
-          <Navbar.Brand className={classes.navbarBrand}>
+          <Navbar.Brand className={`user-select-none ${classes.navbarBrand}`}>
             Organiser Events
           </Navbar.Brand>
           <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-md`} />
