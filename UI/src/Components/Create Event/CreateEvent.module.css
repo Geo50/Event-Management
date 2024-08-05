@@ -1,0 +1,84 @@
+
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.backgroundContainer {
+  background-color: rgba(39, 38, 38, 0.644);
+  padding: 2rem;
+  border-radius: 10px;
+}
+
+.imageContainer {
+  margin: 1rem 0;
+  height: 8rem;
+  border: 1px solid white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;  
+}
+
+.inputElementBox {
+  background-color: transparent;
+}
+
+.imagePreview {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.inputElements {
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+  border: 0;
+  font-size: 1.1rem;
+  padding: 1rem;
+  transition: 0.5s ease;
+  color: white;
+}
+
+.inputElements:focus {
+  outline: 0;
+  color: white;
+}
+
+.inputElements::placeholder {
+  color: white;
+}
+
+.title {
+  font-weight: 600;
+  color: white;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.imageText {
+  text-align: center;
+  font-size: 2.1rem;
+  color: white;
+  user-select: none;
+}
+
+.hiddenElement {
+  display: none;
+}
+
+.imageInputField {
+  text-align: center;
+  color: white;
+  cursor: pointer;
+  font-size: 2rem;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.navbarItem, .navbarItem:hover {
+  color: white;
+  text-decoration: none;
+}

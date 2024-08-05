@@ -30,15 +30,6 @@ function OffcanvasExample() {
               </Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              <Form className="d-flex">
-                <Form.Control
-                  type="search"
-                  placeholder="Search"
-                  className="me-2"
-                  aria-label="Search"
-                />
-                <Button className={classes.navButton}>Search</Button>
-              </Form>
               <Nav className="justify-content-end gap-5 flex-grow-1 pe-3">
                 <Nav.Link>
                   <Link to="/registration" className={classes.navbarLink}>
@@ -53,6 +44,11 @@ function OffcanvasExample() {
                 <Nav.Link>
                   <Link to="/homepage" className={classes.navbarLink}>
                     Homepage
+                  </Link>
+                </Nav.Link>
+                <Nav.Link>
+                  <Link to="/create-event" className={classes.navbarLink}>
+                    Create-Event
                   </Link>
                 </Nav.Link>
                 {/* <NavDropdown
