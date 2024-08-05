@@ -8,9 +8,15 @@ namespace SQL_Queries.Queries
 {
     public class EventQueries
     {
-        public static string CreateNewEvent = "INSERT INTO public.event (eventname, eventdate, eventplace, eventtype, eventimage) VALUES (@eventname, @eventdate, @eventplace, @eventtype, @eventimage); " +
-                                              "INSERT INTO public.event_details (eventid, eventdescription) VALUES (@eventid, @eventdescription); " +
-                                              "INSERT INTO public.tickets (eventid, ticketname, ticketprice) VALUES (@eventid, @ticketname, @ticketprice);";
+        public static string CreateNewEvent = "INSERT INTO public.event (eventname, eventdate, eventplace, eventtype, eventimage) VALUES (@eventname, @eventdate, @eventplace, @eventtype, @eventimage) RETURNING eventid ";
+
+        public static string GetDate = "SELECT eventdate FROM public.event WHERE eventdate = @Date";
+
+        public static string GetPlace = "SELECT eventplace FROM public.event WHERE eventplace = @Place";
+
+        public static string InsertTickets = "INSERT INTO public.tickets ( eventid, ticketname, ticketprice) VALUES (@eventid, @ticketname, @ticketprice) RETURNING ticketid";
+
+        public static string InsertEventDetails = "INSERT INTO public.event_details ( eventid, eventdescription, ticketid) VALUES (@eventid, @eventdescription, @ticketid)";
 
         public static string GetEventsInHomepage => "SELECT eventname, eventdate, eventplace, eventtype, eventimage FROM public.event";
 
