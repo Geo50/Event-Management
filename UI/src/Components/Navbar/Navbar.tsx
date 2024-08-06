@@ -37,7 +37,7 @@ function OffcanvasExample() {
                   </Link>
                 </Nav.Link>
                 <Nav.Link>
-                  <Link to="/" className={classes.navbarLink}>
+                  <Link to="/login" className={classes.navbarLink}>
                     Login
                   </Link>
                 </Nav.Link>

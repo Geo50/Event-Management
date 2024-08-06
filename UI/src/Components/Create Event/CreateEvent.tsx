@@ -3,11 +3,12 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Col, Container, Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import Winetable from "../../assets/Table-Background.jpg";
-import { storage } from "../../Firebase/Firebase"; // Import your firebase config
-import classes from "./CreateEvent.module.css";
 import { PuffLoader } from "react-spinners";
+import { toast, ToastContainer } from "react-toastify";
+import WhiteTable from "../../assets/Table-Background.jpg";
+import { storage } from "../../Firebase/Firebase";
+import classes from "./CreateEvent.module.css";
+import InputComponent, { ComponentFunctions } from "./InputComponent";
 
 type eventCredentials = {
   eventName: string;
@@ -16,22 +17,29 @@ type eventCredentials = {
   eventType: string;
   eventImage: string;
   eventDescription: string;
-  eventAttendees: number;
   ticketName: string;
   ticketPrice: number;
 };
 
 const CreateEvent: React.FC = () => {
-
-  const eventNameRef = useRef<HTMLInputElement>(null);
-  const eventDateRef = useRef<HTMLInputElement>(null);
-  const eventPlaceRef = useRef<HTMLInputElement>(null);
-  const eventTypeRef = useRef<HTMLInputElement>(null);
+  const eventNameRef = useRef<ComponentFunctions>(null);
+  const eventDateRef = useRef<ComponentFunctions>(null);
+  const eventPlaceRef = useRef<ComponentFunctions>(null);
+  const eventTypeRef = useRef<ComponentFunctions>(null);
   const eventImageRef = useRef<HTMLInputElement>(null);
-  const eventDescriptionRef = useRef<HTMLInputElement>(null);
-  const ticketNameRef = useRef<HTMLInputElement>(null);
-  const ticketPriceRef = useRef<HTMLInputElement>(null);
-  const eventAttendeesRef = useRef<HTMLInputElement>(null);
+  const eventDescriptionRef = useRef<ComponentFunctions>(null);
+  const ticketNameRef = useRef<ComponentFunctions>(null);
+  const ticketPriceRef = useRef<ComponentFunctions>(null);
+  const eventDataRef = useRef<eventCredentials>({
+    eventName: "",
+    eventDate: "",
+    eventPlace: "",
+    eventImage: "",
+    eventType: "",
+    eventDescription: "",
+    ticketName: "",
+    ticketPrice: 0,
+  });
 
   const [imageURL, setImageURL] = useState<string>("");
   const [view, setView] = useState<string>("details");
@@ -42,35 +50,33 @@ const CreateEvent: React.FC = () => {
   const navigate = useNavigate();
 
   const [file, setFile] = useState<File | null>(null);
-  const [url, setUrl] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
       setFile(e.target.files[0]);
-      handleUpload();
+      handleUpload(selectedFile); 
     }
   };
-  const handleUpload = async () => {
-    if (file) {
-      const fileRef = ref(storage, `event-images/${file.name}`);
-      setLoading(true);
-      try {
-        await uploadBytes(fileRef, file);
-        const downloadURL = await getDownloadURL(fileRef);
-        setImageURL(downloadURL);
-      } catch (uploadError) {
-        console.error('Upload failed:', uploadError);
-      } finally {
-        setLoading(false);
-      }
+
+  const handleUpload = async (file: File) => {
+    const fileRef = ref(storage, `event-images/${file.name}`);
+    setLoading(true);
+    try {
+      await uploadBytes(fileRef, file);
+      const downloadURL = await getDownloadURL(fileRef);
+      setImageURL(downloadURL);
+    } catch (uploadError: any) {
+      toast.error(`Upload failed: ${uploadError.message}`);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
-    document.body.style.backgroundImage = `url(${Winetable})`;
+    document.body.style.backgroundImage = `url(${WhiteTable})`;
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundRepeat = "no-repeat";
-    document.body.style.height = "100%";
-    document.body.style.overflow = "";
+    document.body.style.height = "100vh";
     document.body.style.backdropFilter = "blur(3px)";
 
     return () => {
@@ -78,7 +84,7 @@ const CreateEvent: React.FC = () => {
       document.body.style.backgroundSize = "";
       document.body.style.backgroundRepeat = "";
       document.body.style.height = "";
-      document.body.style.overflow = "";
+      document.body.style.backdropFilter = "";
     };
   }, []);
 
@@ -86,50 +92,48 @@ const CreateEvent: React.FC = () => {
     let isValid: boolean = true;
     let today = new Date();
     const eventValues: eventCredentials = {
-      eventName: eventNameRef.current?.value || "",
-      eventDate: eventDateRef.current?.value || "",
-      eventPlace: eventPlaceRef.current?.value || "",
+      eventName: (eventNameRef.current?.value as string) || "",
+      eventDate: (eventDateRef.current?.value as string) || "",
+      eventPlace: (eventPlaceRef.current?.value as string) || "",
       eventImage: imageURL || "",
-      eventType: eventTypeRef.current?.value || "",
-      eventDescription: eventDescriptionRef.current?.value || "",
-      eventAttendees: parseInt(eventAttendeesRef.current?.value || "0"),
-      ticketName: ticketNameRef.current?.value || "",
-      ticketPrice: parseFloat(ticketPriceRef.current?.value || "0"),
-
+      eventType: (eventTypeRef.current?.value as string) || "",
+      eventDescription: (eventDescriptionRef.current?.value as string) || "",
+      ticketName: (ticketNameRef.current?.value as string) || "",
+      ticketPrice: (ticketPriceRef.current?.value as number) || 0,
     };
     let inputDate: number = new Date(eventValues.eventDate).getTime();
     let todayTimestamp = today.getTime();
 
     if (eventValues.eventName === "") {
-      eventNameRef.current?.classList.add(classes.inputError);
+      eventNameRef.current?.handleAddErrorClass();
       toast.error("Please enter an event name");
       isValid = false;
     } else {
-      eventNameRef.current?.classList.remove(classes.inputError);
+      eventNameRef.current?.handleRemoveErrorClass();
     }
 
     if (eventValues.eventDate === "") {
-      eventDateRef.current?.classList.add(classes.inputError);
+      eventDateRef.current?.handleAddErrorClass();
       toast.error("Please enter a date");
       isValid = false;
-    } else if (inputDate - todayTimestamp > 30 * 24 * 60 * 60 * 1000) { // 10 days in milliseconds
+    } else if (inputDate - todayTimestamp > 30 * 24 * 60 * 60 * 1000) {
       toast.error("Please enter a date not so far in the future");
-      eventDateRef.current?.classList.add(classes.inputError);
+      eventDateRef.current?.handleAddErrorClass();
       isValid = false;
     } else if (inputDate - todayTimestamp < 0) {
       toast.error("Please enter a valid date");
-      eventDateRef.current?.classList.add(classes.inputError);
+      eventDateRef.current?.handleAddErrorClass();
       isValid = false;
     } else {
-      eventDateRef.current?.classList.remove(classes.inputError);
+      eventDateRef.current?.handleRemoveErrorClass();
     }
 
     if (eventValues.eventPlace === "") {
-      eventPlaceRef.current?.classList.add(classes.inputError);
+      eventPlaceRef.current?.handleAddErrorClass();
       toast.error("Please enter a place for the event");
       isValid = false;
     } else {
-      eventPlaceRef.current?.classList.remove(classes.inputError);
+      eventPlaceRef.current?.handleRemoveErrorClass();
     }
 
     if (eventValues.eventImage === "") {
@@ -141,40 +145,35 @@ const CreateEvent: React.FC = () => {
     }
 
     if (eventValues.eventType === "") {
-      eventTypeRef.current?.classList.add(classes.inputError);
+      eventTypeRef.current?.handleAddErrorClass();
       toast.error("Please enter the type of event");
       isValid = false;
     } else {
-      eventTypeRef.current?.classList.remove(classes.inputError);
+      eventTypeRef.current?.handleRemoveErrorClass();
     }
 
     if (eventValues.eventDescription === "") {
-      eventDescriptionRef.current?.classList.add(classes.inputError);
+      eventDescriptionRef.current?.handleAddErrorClass();
       toast.error("Please describe the event");
       isValid = false;
     } else {
-      eventDescriptionRef.current?.classList.remove(classes.inputError);
+      eventDescriptionRef.current?.handleRemoveErrorClass();
     }
 
     if (eventValues.ticketName === "") {
-      ticketNameRef.current?.classList.add(classes.inputError);
+      ticketNameRef.current?.handleAddErrorClass();
       toast.error("Please enter a ticket name");
       isValid = false;
     } else {
-      ticketNameRef.current?.classList.remove(classes.inputError);
+      ticketNameRef.current?.handleRemoveErrorClass();
     }
 
     if (eventValues.ticketPrice <= 0 || eventValues.ticketPrice > 1000) {
-      ticketPriceRef.current?.classList.add(classes.inputError);
+      ticketPriceRef.current?.handleAddErrorClass();
       toast.error("Please enter a valid ticket price");
       isValid = false;
     } else {
-      ticketPriceRef.current?.classList.remove(classes.inputError);
-    }
-
-    if (eventValues.eventAttendees < 0 || eventValues.eventAttendees > 1000) {
-      eventAttendeesRef.current?.classList.add(classes.inputError)
-      toast.error("Please enter a valid number of maximum attendees")
+      ticketPriceRef.current?.handleRemoveErrorClass();
     }
 
     if (isValid) {
@@ -200,7 +199,9 @@ const CreateEvent: React.FC = () => {
           navigate("/homescreen");
         })
         .catch((error) => {
-          toast.error(`Failed to create event. Status code: ${error.status}: ${error.message}`);
+          toast.error(
+            `Failed to create event. Status code: ${error.status}: ${error.message}`
+          );
         })
         .finally(() => {
           setLoading(false);
@@ -211,6 +212,20 @@ const CreateEvent: React.FC = () => {
 
   const handleNavbarShow = (selectedKey: string | null) => {
     if (selectedKey) {
+      const eventValues: eventCredentials = {
+        eventName:
+          (eventNameRef.current?.value as string) ||
+          eventDataRef.current.eventName ||
+          "",
+        eventDate: (eventDateRef.current?.value as string) ||eventDataRef.current.eventDate || "",
+        eventPlace: (eventPlaceRef.current?.value as string) || eventDataRef.current.eventPlace ||"",
+        eventImage: imageURL || "",
+        eventType: (eventTypeRef.current?.value as string) || eventDataRef.current.eventType ||"",
+        eventDescription: (eventDescriptionRef.current?.value as string) || eventDataRef.current.eventDescription ||"",
+        ticketName: (ticketNameRef.current?.value as string) || eventDataRef.current.ticketName ||"",
+        ticketPrice: (ticketPriceRef.current?.value as number) || eventDataRef.current.ticketPrice ||0,
+      };
+      eventDataRef.current = eventValues;
       setView(selectedKey);
     }
   };
@@ -219,10 +234,10 @@ const CreateEvent: React.FC = () => {
     <Container fluid className={classes.container}>
       <ToastContainer />
       {loading && (
-            <div className={classes.loader}>
-              <PuffLoader color="var(--registration-blue)" size={130} />
-            </div>
-          )}
+        <div className={classes.loader}>
+          <PuffLoader color="var(--registration-blue)" size={130} />
+        </div>
+      )}
       <Col xl={4} lg={6} md={8} sm={12} className={classes.backgroundContainer}>
         <Nav
           variant="tabs"
@@ -243,33 +258,33 @@ const CreateEvent: React.FC = () => {
         </Nav>
 
         {/* {view === "details" && ( */}
-        <div>
-          <h1 className={`${classes.title} display-4`}>Set Up Your Event</h1>
-          <div className={classes.hiddenElement}>
-            <input
-              type="file"
-              name="image_insertion"
-              id="image_insertion"
-              accept="image/png, image/jpeg"
-              onChange={handleFileChange}
-              ref={eventImageRef}
-            />
-          </div>
-          <div className={classes.imageContainer}>
-            {!imageURL && (
-              <div>
-                 <label
-                htmlFor="image_insertion"
-                className={`${classes.imageInputField}`}
-              >
-                Choose your event picture
-              </label>
-               <button onClick={handleUpload} disabled={loading}>Upload Image
-             </button>
-              </div>
-             
-            )}
-
+          <div>
+            <h1 className={`${classes.title} display-4`}>Set Up Your Event</h1>
+            <div className={classes.hiddenElement}>
+              <input
+                type="file"
+                name="image_insertion"
+                id="image_insertion"
+                accept="image/png, image/jpeg"
+                onChange={handleFileChange}
+                ref={eventImageRef}
+              />
+            </div>
+            <div className={classes.imageContainer}>
+              {!imageURL && (
+                <div>
+                  <label
+                    htmlFor="image_insertion"
+                    className={`${classes.imageInputField}`}
+                  >
+                    Choose your event picture
+                  </label>
+                  {/* <button onClick={handleUpload} disabled={loading}>
+                    Upload Image
+                  </button> */}
+                </div>
+              )}
+            </div>
             {imageURL && (
               <img
                 src={imageURL}
@@ -277,93 +292,80 @@ const CreateEvent: React.FC = () => {
                 className={classes.imagePreview}
               />
             )}
-          </div>
-          <div>
+
             <div className={classes.inputElementBox}>
-              <div className={classes.inputElementBox}>
-                <input
-                  type="text"
-                  placeholder="Enter event name"
-                  className={classes.inputElements}
-                  ref={eventNameRef}
-                />
-              </div>
-              <div className={classes.inputElementBox}>
-                <input
-                  type="text"
-                  placeholder="Describe your event"
-                  className={classes.inputElements}
-                  ref={eventDescriptionRef}
-                />
-              </div>
-              <div className={classes.inputElementBox}>
-                <input
-                  type="datetime-local"
-                  className={classes.inputElements}
-                  ref={eventDateRef}
-                />
-              </div>
-              <div className={classes.inputElementBox}>
-                <input
-                  type="text"
-                  placeholder="Event Place"
-                  className={classes.inputElements}
-                  ref={eventPlaceRef}
-                />
-              </div>
-              <div className={classes.inputElementBox}>
-                <input
-                  type="text"
-                  placeholder="Event Type (concert...)"
-                  className={classes.inputElements}
-                  ref={eventTypeRef}
-                />
-              </div>
-              <div className={classes.inputElementBox}>
-                <input
-                  type="number"
-                  placeholder="Event Attendees"
-                  className={classes.inputElements}
-                  ref={eventAttendeesRef}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* )} */}
-        {/* {view === "tickets" && ( */}
-        <div>
-          <h1 className={`${classes.title} display-4`}>Create Your Tickets</h1>
-          <Button className={classes.addTicket} variant="danger">
-            Add New Ticket
-          </Button>
-          <div className={classes.inputElementBox}>
-            <div className={classes.inputElementBox}>
-              <input
-                type="text"
-                placeholder="Ticket Name"
-                className={classes.inputElements}
-                ref={ticketNameRef}
+              <InputComponent
+                ref={eventNameRef}
+                inputType="text"
+                inputPlaceholder="Enter your event name"
+                value={eventDataRef.current.eventName}
+              />
+              <InputComponent
+                ref={eventDescriptionRef}
+                inputType="text"
+                inputPlaceholder="Describe your event"
+                value={eventDataRef.current.eventDescription}
+              />
+              <InputComponent
+                ref={eventDateRef}
+                inputType="datetime-local"
+                inputPlaceholder="Enter your event date"
+                value={eventDataRef.current.eventDate}
+              />
+              <InputComponent
+                ref={eventPlaceRef}
+                inputType="text"
+                inputPlaceholder="Event Place"
+                value={eventDataRef.current.eventPlace}
+              />
+              <InputComponent
+                ref={eventTypeRef}
+                inputType="text"
+                inputPlaceholder="Enter your Event Type"
+                value={eventDataRef.current.eventType}
               />
             </div>
-            <div className={classes.inputElementBox}>
-              <input
-                type="number"
-                placeholder="Ticket Price"
-                className={classes.inputElements}
-                ref={ticketPriceRef}
-              />
-            </div>
+            <Button variant="warning w-100" onClick={handleSubmit}>
+              Submit
+            </Button>
           </div>
-          <Button variant="danger" className="mb-3 mt-3">
-            Create Ticket
-          </Button>
-          <Button variant="warning w-100" onClick={handleSubmit}>
-            Submit
-          </Button>
-        </div>
         {/* )} */}
+        
       </Col>
+      <div>
+          {/* {view === "tickets" && ( */}
+          <Col className={classes.backgroundContainer}>
+          <div>
+              <h1 className={`${classes.title} display-4`}>
+                Create Your Tickets
+              </h1>
+              <Button className={classes.addTicket} variant="danger">
+                Add New Ticket
+              </Button>
+              <div className={classes.inputElementBox}>
+                <InputComponent
+                  ref={ticketNameRef}
+                  inputType="text"
+                  inputPlaceholder="Enter your ticket name"
+                  value={eventDataRef.current.ticketName}
+                />
+                <InputComponent
+                  ref={ticketPriceRef}
+                  inputType="number"
+                  inputPlaceholder="Enter ticket price"
+                  value={eventDataRef.current.ticketPrice}
+                />
+              </div>
+              <Button variant="danger" className="mb-3 mt-3">
+                Create Ticket
+              </Button>
+              <Button variant="warning w-100" onClick={handleSubmit}>
+                Submit
+              </Button>
+            </div></Col>
+            
+          {/* )} */}          
+        </div>
     </Container>
   );
 };

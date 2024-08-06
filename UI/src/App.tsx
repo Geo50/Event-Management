@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import Homepage from './Components/Homepage/Homepage';
 import ForgotPassword from './Components/Login/ForgotPassword';
@@ -15,14 +15,15 @@ function App() {
     <BrowserRouter>
     <Navbar></Navbar>
       <Routes>
+        <Route path="/" element={<Navigate to ="/homepage" />} />
         <Route path='/registration' element={<Registration />} />
-        <Route path='/' element={<Login />}></Route>
+        <Route path='/login' element={<Login />}></Route>
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/create-event" element={<CreateEvent />} />
       </Routes>
     </BrowserRouter>
   );
-}
+} 
 
 export default App;
