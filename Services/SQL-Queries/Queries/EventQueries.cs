@@ -12,9 +12,11 @@ namespace SQL_Queries.Queries
 
         public static string GetDate = "SELECT eventdate FROM public.event WHERE eventdate = @Date";
 
+        public static string GetEventId = "SELECT eventid FROM public.event ";
+
         public static string GetPlace = "SELECT eventplace FROM public.event WHERE eventplace = @Place";
 
-        public static string InsertTickets = "INSERT INTO public.tickets ( eventid, ticketname, ticketprice) VALUES (@eventid, @ticketname, @ticketprice) RETURNING ticketid";
+        public static string CreateNewTicket = "INSERT INTO public.tickets (  ticketname, ticketprice) VALUES ( @ticketname, @ticketprice)";
 
         public static string InsertEventDetails = "INSERT INTO public.event_details ( eventid, eventdescription, ticketid) VALUES (@eventid, @eventdescription, @ticketid)";
 

@@ -20,7 +20,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<EventRepository>();
 builder.Services.AddAutoMapper(typeof(UserMapper));
-builder.Services.AddScoped<Event>();
+builder.Services.AddScoped<EventService>();
 // Add JWT settings
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.Configure<JwtSettings>(jwtSettings);

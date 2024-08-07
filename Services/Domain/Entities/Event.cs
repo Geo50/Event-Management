@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 namespace Domain.Entities
 {
     public class Event
-    {
-        public int EventId { get; set; }
-        public string EventName { get; set; }
-        public DateTime EventDate { get; set; }
-        public string EventPlace { get; set; }
-        public string EventType { get; set; }
-        public string EventImage { get; set; }
-
-    }
+{
+    public int eventid { get; set; }
+    public string eventname { get; set; }
+    public DateTime eventdate { get; set; }
+    public string eventplace { get; set; }
+    public string eventtype { get; set; }
+    public string eventimage { get; set; }
+}
 }

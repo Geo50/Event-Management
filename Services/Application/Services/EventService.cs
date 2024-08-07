@@ -10,11 +10,11 @@ using Infrastructure.Repositories;
 
 namespace Application.Services
 {
-    public interface IEvent
+    public interface IEventService
     {
-        public Task<IEnumerable<Event>> GetEventByName(string EventName);
-        public Task<IEnumerable<Event>> GetAllEvents();
-        public Task<IEnumerable<Event>> UpdateEventByName(string EventName);
+        public Task<IEnumerable<EventService>> GetEventByName(string EventName);
+        public Task<IEnumerable<GetEventsDTO>> GetEventsInHomepage();
+        public Task<IEnumerable<EventService>> UpdateEventByName(string EventName);
         public Task DeleteEvent(string EventName);
         public Task CreateNewEvent(CreateEventDTO newEvent);
         public Task<bool> GetDate(DateTime date);
@@ -23,11 +23,11 @@ namespace Application.Services
 
     }
 
-    public class Event : IEvent
+    public class EventService : IEventService
     {
         private readonly EventRepository _repository;
         private readonly IMapper _mapper;
-        public Event (EventRepository repository, IMapper mapper)
+        public EventService (EventRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
@@ -38,6 +38,18 @@ namespace Application.Services
             return _repository.CreateNewEvent(newEvent);
         }
 
+        //public Task CreateTicket(CreateTicketDTO TicketDTO)
+        //{
+        //    var newTicket = _mapper.Map<Tickets>(TicketDTO);
+        //    return _repository.CreateNewTicket(newTicket);
+        //}
+
+        public async Task<IEnumerable<GetEventsDTO>> GetEventsInHomepage()
+        {
+            var events = await _repository.GetEventsInHomepage();
+            var eventDTOs = _mapper.Map<IEnumerable<GetEventsDTO>>(events);
+            return eventDTOs;
+        }
         public Task<bool> GetDate(DateTime date)
         {
             return _repository.GetDate(date);
@@ -53,17 +65,13 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Event>> GetAllEvents()
+
+        public Task<IEnumerable<EventService>> GetEventByName(string EventName)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Event>> GetEventByName(string EventName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Event>> UpdateEventByName(string EventName)
+        public Task<IEnumerable<EventService>> UpdateEventByName(string EventName)
         {
             throw new NotImplementedException();
         }

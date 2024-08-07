@@ -69,7 +69,7 @@ namespace Infrastructure.Repositories
         public async Task CreateNewEvent(CombinedProperties newEvent)
         {
             var insertEvent = EventQueries.CreateNewEvent;
-            var insertTicket = EventQueries.InsertTickets;
+            var insertTicket = EventQueries.CreateNewTicket;
             var insertEventDetails = EventQueries.InsertEventDetails;
             bool hasSameDate = await GetDate(newEvent.EventDate);
             bool hasSamePlace = await GetPlace(newEvent.EventPlace);

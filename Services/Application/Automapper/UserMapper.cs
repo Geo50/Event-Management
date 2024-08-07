@@ -20,16 +20,10 @@ namespace Application
 
             CreateMap<CombinedProperties, CreateEventDTO>().ReverseMap();
 
+            CreateMap<Event, GetEventsDTO>().ReverseMap();
 
-            //CreateMap<Event, CreateEventDTO>();
-
-            //CreateMap<EventDetails, CreateEventDTO>()
-            //    .ReverseMap()   
-            //    .ForMember(dest => dest.EventDescription, opt => opt.MapFrom(src => src.EventDescription));
-
-            //CreateMap<Tickets, CreateEventDTO>()
-            //    .ForMember(dest => dest.TicketName, opt => opt.MapFrom(src => src.TicketName))
-            //    .ForMember(dest => dest.TicketPrice, opt => opt.MapFrom(src => src.TicketPrice));
+            CreateMap<Tickets, CreateTicketDTO>().ReverseMap();
+            
         }
     }
 }
