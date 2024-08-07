@@ -22,8 +22,7 @@ namespace Application
 
             CreateMap<Event, GetEventsDTO>().ReverseMap();
 
-            CreateMap<Tickets, CreateTicketDTO>().ReverseMap();
-            
+            CreateMap<Tickets, CreateTicketDTO>().ReverseMap();            
         }
     }
 }

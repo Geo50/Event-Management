@@ -22,7 +22,7 @@ namespace Infrastructure.Repositories
     {
         public Task<IEnumerable<Event>> GetEventsInHomepage();
         public Task<int> GetEventIdByName(string eventName);
-        public Task<IEnumerable<Event>> GetEventInDetails(int eventId);
+        public Task<IEnumerable<CombinedProperties>> GetEventInDetails(int eventId);
         public Task CreateNewEvent(CombinedProperties newEvent);
         public Task<bool> GetDate(DateTime date);
         public Task<bool> GetPlace(string place);
@@ -147,9 +147,17 @@ namespace Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Event>> GetEventInDetails(int eventId)
+        public async Task<IEnumerable<CombinedProperties>> GetEventInDetails(int eventId)
         {
-            throw new NotImplementedException();
+            var query = EventQueries.GetEventInDetails;
+            using (var connection = Connection)
+            {
+                var result = await connection.QueryAsync<CombinedProperties>(query, new
+                {
+                    eventid = eventId
+                });
+                return result;
+            }
         }
     }
 }

@@ -44,5 +44,13 @@ namespace Event_API.Controllers
             var events = await _eventService.GetEventsInHomepage();
             return Ok(events);
         }
+
+        [HttpPost("GetEventInDetails")]
+
+        public async Task<ActionResult<IEnumerable<CombinedProperties>>> GetEventInDetails( [FromQuery] int eventId)
+        {
+            var eventDetails = await _eventService.GetEventInDetails(eventId);
+            return Ok(eventDetails);
+        }
     }
 }

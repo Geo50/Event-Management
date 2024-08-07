@@ -55,7 +55,7 @@ const CreateEvent: React.FC = () => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
       setFile(e.target.files[0]);
-      handleUpload(selectedFile); 
+      handleUpload(selectedFile);
     }
   };
 
@@ -72,6 +72,7 @@ const CreateEvent: React.FC = () => {
       setLoading(false);
     }
   };
+  
   useEffect(() => {
     document.body.style.backgroundImage = `url(${WhiteTable})`;
     document.body.style.backgroundSize = "cover";
@@ -199,9 +200,7 @@ const CreateEvent: React.FC = () => {
           navigate("/homescreen");
         })
         .catch((error) => {
-          toast.error(
-            `Failed to create event. Status code: ${error.status}: ${error.message}`
-          );
+          toast.error(`Failed to create event. Status code: ${error.status}: ${error.message}`);
         })
         .finally(() => {
           setLoading(false);
@@ -213,17 +212,14 @@ const CreateEvent: React.FC = () => {
   const handleNavbarShow = (selectedKey: string | null) => {
     if (selectedKey) {
       const eventValues: eventCredentials = {
-        eventName:
-          (eventNameRef.current?.value as string) ||
-          eventDataRef.current.eventName ||
-          "",
-        eventDate: (eventDateRef.current?.value as string) ||eventDataRef.current.eventDate || "",
-        eventPlace: (eventPlaceRef.current?.value as string) || eventDataRef.current.eventPlace ||"",
+        eventName: (eventNameRef.current?.value as string) || eventDataRef.current.eventName || "",
+        eventDate: (eventDateRef.current?.value as string) || eventDataRef.current.eventDate || "",
+        eventPlace: (eventPlaceRef.current?.value as string) || eventDataRef.current.eventPlace || "",
         eventImage: imageURL || "",
-        eventType: (eventTypeRef.current?.value as string) || eventDataRef.current.eventType ||"",
-        eventDescription: (eventDescriptionRef.current?.value as string) || eventDataRef.current.eventDescription ||"",
-        ticketName: (ticketNameRef.current?.value as string) || eventDataRef.current.ticketName ||"",
-        ticketPrice: (ticketPriceRef.current?.value as number) || eventDataRef.current.ticketPrice ||0,
+        eventType: (eventTypeRef.current?.value as string) || eventDataRef.current.eventType || "",
+        eventDescription: (eventDescriptionRef.current?.value as string) || eventDataRef.current.eventDescription || "",
+        ticketName: (ticketNameRef.current?.value as string) || eventDataRef.current.ticketName || "",
+        ticketPrice: (ticketPriceRef.current?.value as number) || eventDataRef.current.ticketPrice || 0,
       };
       eventDataRef.current = eventValues;
       setView(selectedKey);
@@ -239,12 +235,7 @@ const CreateEvent: React.FC = () => {
         </div>
       )}
       <Col xl={4} lg={6} md={8} sm={12} className={classes.backgroundContainer}>
-        <Nav
-          variant="tabs"
-          activeKey={view}
-          onSelect={handleNavbarShow}
-          className="mb-5"
-        >
+        <Nav variant="tabs" activeKey={view} onSelect={handleNavbarShow} className="mb-5">
           <Nav.Item>
             <Nav.Link eventKey="details" className={classes.navbarItem}>
               <p className={classes.text}> Event Details</p>
@@ -258,114 +249,96 @@ const CreateEvent: React.FC = () => {
         </Nav>
 
         {/* {view === "details" && ( */}
-          <div>
-            <h1 className={`${classes.title} display-4`}>Set Up Your Event</h1>
-            <div className={classes.hiddenElement}>
-              <input
-                type="file"
-                name="image_insertion"
-                id="image_insertion"
-                accept="image/png, image/jpeg"
-                onChange={handleFileChange}
-                ref={eventImageRef}
-              />
-            </div>
-            <div className={classes.imageContainer}>
-              {!imageURL && (
-                <div>
-                  <label
-                    htmlFor="image_insertion"
-                    className={`${classes.imageInputField}`}
-                  >
-                    Choose your event picture
-                  </label>
-                  {/* <button onClick={handleUpload} disabled={loading}>
+        <div>
+          <h1 className={`${classes.title} display-4`}>Set Up Your Event</h1>
+          <div className={classes.hiddenElement}>
+            <input
+              type="file"
+              name="image_insertion"
+              id="image_insertion"
+              accept="image/png, image/jpeg"
+              onChange={handleFileChange}
+              ref={eventImageRef}
+            />
+          </div>
+          <div className={classes.imageContainer}>
+            {!imageURL && (
+              <div>
+                <label htmlFor="image_insertion" className={`${classes.imageInputField}`}>
+                  Choose your event picture
+                </label>
+                </div>
+                )};
+                {imageURL && <img src={imageURL} alt="Event" className={classes.imagePreview} />}
+                {/* <button onClick={handleUpload} disabled={loading}>
                     Upload Image
                   </button> */}
-                </div>
-              )}
-            </div>
-            {imageURL && (
-              <img
-                src={imageURL}
-                alt="Event"
-                className={classes.imagePreview}
-              />
-            )}
+              </div>
+
+          <div className={classes.inputElementBox}>
+            <InputComponent
+              ref={eventNameRef}
+              inputType="text"
+              inputPlaceholder="Enter your event name"
+              value={eventDataRef.current.eventName}
+            />
+            <InputComponent
+              ref={eventDescriptionRef}
+              inputType="text"
+              inputPlaceholder="Describe your event"
+              value={eventDataRef.current.eventDescription}
+            />
+            <InputComponent
+              ref={eventDateRef}
+              inputType="datetime-local"
+              inputPlaceholder="Enter your event date"
+              value={eventDataRef.current.eventDate}
+            />
+            <InputComponent
+              ref={eventPlaceRef}
+              inputType="text"
+              inputPlaceholder="Event Place"
+              value={eventDataRef.current.eventPlace}
+            />
+            <InputComponent
+              ref={eventTypeRef}
+              inputType="text"
+              inputPlaceholder="Enter your Event Type"
+              value={eventDataRef.current.eventType}
+            />
+          </div>
+        </div>
+        {/* )} */}
+      </Col>
+      <div>
+        {/* {view === "tickets" && ( */}
+        <Col className={classes.backgroundContainer}>
+          <div>
+            <h1 className={`${classes.title} display-4`}>Create Your Tickets</h1>
 
             <div className={classes.inputElementBox}>
               <InputComponent
-                ref={eventNameRef}
+                ref={ticketNameRef}
                 inputType="text"
-                inputPlaceholder="Enter your event name"
-                value={eventDataRef.current.eventName}
+                inputPlaceholder="Enter your ticket name"
+                value={eventDataRef.current.ticketName}
               />
               <InputComponent
-                ref={eventDescriptionRef}
-                inputType="text"
-                inputPlaceholder="Describe your event"
-                value={eventDataRef.current.eventDescription}
-              />
-              <InputComponent
-                ref={eventDateRef}
-                inputType="datetime-local"
-                inputPlaceholder="Enter your event date"
-                value={eventDataRef.current.eventDate}
-              />
-              <InputComponent
-                ref={eventPlaceRef}
-                inputType="text"
-                inputPlaceholder="Event Place"
-                value={eventDataRef.current.eventPlace}
-              />
-              <InputComponent
-                ref={eventTypeRef}
-                inputType="text"
-                inputPlaceholder="Enter your Event Type"
-                value={eventDataRef.current.eventType}
+                ref={ticketPriceRef}
+                inputType="number"
+                inputPlaceholder="Enter ticket price"
+                value={eventDataRef.current.ticketPrice}
               />
             </div>
-            <Button variant="warning w-100" onClick={handleSubmit}>
+
+            <Button variant="danger w-100" onClick={handleSubmit}>
               Submit
             </Button>
           </div>
+        </Col>
+
         {/* )} */}
-        
-      </Col>
-      <div>
-          {/* {view === "tickets" && ( */}
-          <Col className={classes.backgroundContainer}>
-          <div>
-              <h1 className={`${classes.title} display-4`}>
-                Create Your Tickets
-              </h1>
-              <Button className={classes.addTicket} variant="danger">
-                Add New Ticket
-              </Button>
-              <div className={classes.inputElementBox}>
-                <InputComponent
-                  ref={ticketNameRef}
-                  inputType="text"
-                  inputPlaceholder="Enter your ticket name"
-                  value={eventDataRef.current.ticketName}
-                />
-                <InputComponent
-                  ref={ticketPriceRef}
-                  inputType="number"
-                  inputPlaceholder="Enter ticket price"
-                  value={eventDataRef.current.ticketPrice}
-                />
-              </div>
-              <Button variant="danger" className="mb-3 mt-3">
-                Create Ticket
-              </Button>
-              <Button variant="warning w-100" onClick={handleSubmit}>
-                Submit
-              </Button>
-            </div></Col>
-            
-          {/* )} */}          
-        </div>
+      </div>
     </Container>
   );
 };

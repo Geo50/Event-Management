@@ -19,6 +19,8 @@ namespace Application.Services
         public Task CreateNewEvent(CreateEventDTO newEvent);
         public Task<bool> GetDate(DateTime date);
         public Task<bool> GetPlace(string place);
+        public Task<IEnumerable<CreateEventDTO>> GetEventInDetails(int eventId);
+
 
 
     }
@@ -36,6 +38,13 @@ namespace Application.Services
         {
             var newEvent = _mapper.Map<CombinedProperties>(EventDTO);
             return _repository.CreateNewEvent(newEvent);
+        }
+
+        public async Task<IEnumerable<CreateEventDTO>> GetEventInDetails(int eventId)
+        {
+            var eventDetails = await _repository.GetEventInDetails(eventId);
+            var eventDTO = _mapper.Map<IEnumerable<CreateEventDTO>>(eventDetails);
+            return eventDTO;
         }
 
         //public Task CreateTicket(CreateTicketDTO TicketDTO)
