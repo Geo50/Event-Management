@@ -37,7 +37,7 @@ namespace Event_API.Controllers
         //    await _eventService.CreateNewEvent(createTicketDTO);
         //    return Ok();
         //}
-        [Authorize]
+
         [HttpGet("GetEventsInHomepage")]
 
         public async Task<ActionResult<IEnumerable<Event>>> GetEventsInHomepage()
