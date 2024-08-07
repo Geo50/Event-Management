@@ -197,7 +197,7 @@ const CreateEvent: React.FC = () => {
           TicketPrice: eventValues.ticketPrice,
         })
         .then(() => {
-          navigate("/homescreen");
+          navigate("/homepage");
         })
         .catch((error) => {
           toast.error(`Failed to create event. Status code: ${error.status}: ${error.message}`);

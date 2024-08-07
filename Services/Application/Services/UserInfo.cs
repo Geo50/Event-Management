@@ -18,22 +18,28 @@ namespace Application.Services
         public Task UpdateUserById(int userid);
         public Task<User> GetUserByUName(string UName);
         public Task UpdateUserPassword(PasswordForgotDTO passwordForgot);
-
+        public Task<User> GetUserById(int userId);
 
 
     }
     public class UserInfo : IUserInfo
     {
-        private readonly IUserRepository _repository;
+        private readonly UserRepository _repository;
         private readonly IMapper _mapper;
 
 
-        public UserInfo(IUserRepository repository, IMapper mapper)
+        public UserInfo(UserRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
 
         }
+
+        public async Task<User> GetUserById(int userid)
+        {
+            return await _repository.GetUserById(userid);
+        }
+
 
         public Task CreateNewUser(CreateUserDTO newUserDTO)
         {

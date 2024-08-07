@@ -116,14 +116,12 @@ const Registration: React.FC = () => {
         })
         .then((response) => {
           secureLocalStorage.setItem(key, response.data.token);
-          toast.success("User created successfully");
-          navigate("/homescreen");
+          navigate("/homepage");
         })
         .catch((error) => {
           setErrorDisplay(error.message);
           setModalType("error");
           setModalShow(true);
-          toast.error("An error occurred: " + error.message);
         })
         .finally(() => {
           setLoading(false);

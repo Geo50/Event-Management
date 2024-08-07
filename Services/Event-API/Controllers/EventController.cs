@@ -1,6 +1,7 @@
 ﻿using Application.DTO.EventDTOs;
 using Application.JwtToken;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Event_API.Controllers
@@ -36,7 +37,7 @@ namespace Event_API.Controllers
         //    await _eventService.CreateNewEvent(createTicketDTO);
         //    return Ok();
         //}
-
+        [Authorize]
         [HttpGet("GetEventsInHomepage")]
 
         public async Task<ActionResult<IEnumerable<Event>>> GetEventsInHomepage()

@@ -11,6 +11,7 @@
   color: white;
   font-size: 1.1rem;
   transition: ease 0.4s;
+  text-wrap:nowrap; 
 }
 
 .navbarLink:hover {
@@ -35,4 +36,11 @@
 .navbarBurger {
   color: white;
   background-color: white;
+}
+
+.highlight {
+  font-weight: 500;
+  color: white;
+}
+.highlight:hover {color: rgba(255, 255, 255, 0.404)
 }

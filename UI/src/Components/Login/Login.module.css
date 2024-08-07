@@ -13,6 +13,9 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
+  background-image: url("../../assets/event-login.png.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .componentContainer_centered {
@@ -36,7 +39,7 @@
 }
 
 .rightSide {
-  background-image: url("../../../public/event-login.png.jpg");
+  background-image: url("../../assets/event-login.png.jpg");
   background-size: cover;
   background-repeat: no-repeat;
 }

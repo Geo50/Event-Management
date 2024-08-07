@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, Card, Container, ListGroup, Modal } from "react-bootstrap";
+import { Button, Card, Container, ListGroup, Modal, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import classes from "./EventDetailsModal.module.css";
 import { PuffLoader } from "react-spinners";
@@ -57,14 +57,16 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         )}
         <Modal.Body >
           <Card className={classes.eventCard}>
-            <Card.Img variant="top" src={events?.eventImage} />
+            <div >
+            <Card.Img variant="top" src={events?.eventImage} className={classes.imageContainer}/>
+            </div>
             <Modal.Header closeButton>
               <Modal.Title className={classes.title}>
-                <p> Name: {events?.eventName}</p>
+                <p>{events?.eventName}</p>
               </Modal.Title>
             </Modal.Header>
             <Card.Body>
-              <Card.Title className={classes.title}>Description: {events?.eventDescription}</Card.Title>
+              <Card.Title className={classes.title}>{events?.eventDescription}</Card.Title>
             </Card.Body>
             <ListGroup className="list-group-flush">
               <ListGroup.Item className={classes.eventInfo}>Date: {events?.eventDate}</ListGroup.Item>

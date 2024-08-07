@@ -18,7 +18,6 @@ namespace Infrastructure.Repositories
         public Task CreateNewUser(User newUser);
         public Task UpdatePassword(User user);
 
-
     }
 
     public class UserRepository : IUserRepository
@@ -104,10 +103,20 @@ namespace Infrastructure.Repositories
         }
 
 
-            public Task<User> GetUserById(int userId)
+        public async Task<User> GetUserById(int userid)
         {
-            throw new NotImplementedException();
+            var user = UserQueries.GetUserById;
+            using (var connection = Connection)
+            {
+                var result = await connection.QueryFirstOrDefaultAsync<User>(user, new
+                {
+                    userid = userid
+                });
+                return result;
+            }
+
         }
+
 
         public Task UpdateUserById(int userid)
         {
@@ -115,3 +124,4 @@ namespace Infrastructure.Repositories
         }
     }
 }
+
