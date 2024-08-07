@@ -10,12 +10,7 @@ type ModalProps = {
   errorDisplayProp: string;
 };
 
-const ModalComponent: React.FC<ModalProps> = ({
-  visibility,
-  modalType,
-  handleClose,
-  errorDisplayProp,
-}) => {
+const ModalComponent: React.FC<ModalProps> = ({ visibility, modalType, handleClose, errorDisplayProp }) => {
   return (
     <Modal show={visibility} onHide={handleClose}>
       <Modal.Header closeButton className="bg-dark">
@@ -30,8 +25,7 @@ const ModalComponent: React.FC<ModalProps> = ({
       <Modal.Body className="bg-dark">
         {modalType === "success" ? (
           <div>
-            You have been successfully registered to your favorite event
-            management website.
+            You have been successfully registered to your favorite event management website.
             <Modal.Footer>
               <Button variant="success" onClick={handleClose}>
                 Explore Events
@@ -41,16 +35,12 @@ const ModalComponent: React.FC<ModalProps> = ({
         ) : modalType === "account-not-exist" ? (
           <div className="bg-dark">
             <p className={classes.lightText}>
-              Your account does not exist, please check your credentials or
-              create a new account.
+              Your account does not exist, please check your credentials or create a new account.
             </p>
           </div>
         ) : (
           <div className="bg-dark">
-            <p className={classes.lightText}>
-              {" "}
-              An unexpected error occurred: {errorDisplayProp}
-            </p>
+            <p className={classes.lightText}> An unexpected error occurred: {errorDisplayProp}</p>
             <Modal.Footer>
               <Button variant="outline-danger" onClick={handleClose}>
                 Try Again
