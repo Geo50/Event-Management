@@ -15,6 +15,9 @@ namespace Application
 
             CreateMap<PasswordForgotDTO, User>().ReverseMap();
 
+            CreateMap<UpdateUsernameDTO, User>().ReverseMap();
+
+            CreateMap<UpdateEmailDTO, User>().ReverseMap();
 
             //***************** EVENT MAPPING ENTITY TO DTO *****************
 

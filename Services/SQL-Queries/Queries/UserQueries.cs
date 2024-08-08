@@ -20,10 +20,13 @@ namespace SQL_Queries.Queries
         public static string GetUserById => @"SELECT * FROM public.user_details WHERE userid = @userid";
 
         //CAN DISASSEMBLE THE QUERY OR FIX IT , LOW PRIORITY
-        public static string Updateuserdetails => @"UPDATE public.user_details SET username = @username WHERE userid = @userid AND username != @username, useremail = @useremail WHERE userid = @userid AND useremail != @useremail, userpassword = @userpassword  WHERE userid = @userid AND userpassword != @userpassword";
 
         public static string GetPasswordVerificationAnswer => @"SELECT pass_verification_answer FROM public.user_details WHERE username = @UserName";
 
         public static string UpdateUserPassword => @"UPDATE public.user_details SET userpassword = @userpassword WHERE username = @UserName";
+
+        public static string UpdateUserName => "UPDATE public.user_details SET username = @UserName WHERE userid = @UserId";
+        public static string UpdateUserEmail => "UPDATE public.user_details SET useremail = @UserEmail WHERE userid = @UserId";
+
     }
 }

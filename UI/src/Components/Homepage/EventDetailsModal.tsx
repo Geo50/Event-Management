@@ -55,10 +55,15 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
             <PuffLoader color="var(--registration-blue)" size={130} />
           </div>
         )}
-        <Modal.Body >
+        <Modal.Body>
           <Card className={classes.eventCard}>
-            <div >
-            <Card.Img variant="top" src={events?.eventImage} className={classes.imageContainer}/>
+            <div className={classes.parentContainer}>
+              <Card.Img variant="top" src={events?.eventImage} className={classes.imageContainer} />
+              <div className={classes.bookmarkPosition}>
+                <Button variant="outline-danger">
+                  <i className="bi bi-bookmarks-fill"></i>
+                </Button>
+              </div>
             </div>
             <Modal.Header closeButton>
               <Modal.Title className={classes.title}>

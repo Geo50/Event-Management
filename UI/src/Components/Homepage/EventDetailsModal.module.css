@@ -1,7 +1,19 @@
 .eventsContainer {
-    width: 50%;
+  width: 50%;
 }
 
 .imageContainer {
-    height:50%;
+  height: 50%;
+}
+
+.parentContainer {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+.bookmarkPosition {
+  position: absolute;
+  top: 10px;
+  right: 15px;
 }

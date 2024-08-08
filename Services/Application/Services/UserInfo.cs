@@ -19,6 +19,9 @@ namespace Application.Services
         public Task<User> GetUserByUName(string UName);
         public Task UpdateUserPassword(PasswordForgotDTO passwordForgot);
         public Task<User> GetUserById(int userId);
+        public Task UpdateUsername(UpdateUsernameDTO updateUsernameDTO);
+        public Task UpdateUserEmail(UpdateEmailDTO updateEmailDTO);
+
 
 
     }
@@ -49,11 +52,23 @@ namespace Application.Services
 
         public Task UpdateUserPassword(PasswordForgotDTO passwordForgot)
         {
-            var userEntity = _mapper.Map<User>(passwordForgot); // Map DTO to User entity
+            var userEntity = _mapper.Map<User>(passwordForgot); 
             var updatedPassword = _repository.UpdatePassword(userEntity);
             return updatedPassword;
         }
 
+        public Task UpdateUsername(UpdateUsernameDTO updateUsernameDTO)
+        {
+            var userEntity = _mapper.Map<User>(updateUsernameDTO);
+            var updatedUsername = _repository.UpdateUsername(userEntity);
+            return updatedUsername;
+        }
+        public Task UpdateUserEmail(UpdateEmailDTO updateEmailDTO)
+        {
+            var userEntity = _mapper.Map<User>(updateEmailDTO);
+            var updatedEmail = _repository.UpdateUserEmail(userEntity);
+            return updatedEmail;
+        }
 
         public async Task<User> GetUserByUName(string UName)
         {

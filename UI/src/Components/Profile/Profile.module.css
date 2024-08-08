@@ -1,0 +1,34 @@
+.container {
+    border: 1px solid black;
+}
+
+.allContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+}
+
+.userImage {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+}
+
+.editButton {
+    width: 100%;
+    background-color: black;
+    color: white;
+}
+
+.inputElement {
+    width: 100%;
+    height: 100%;
+}
+
+.rowClass {
+    margin-bottom: 1rem;
+}
+
+.eventContainer {
+    margin-top: 10%;
+}

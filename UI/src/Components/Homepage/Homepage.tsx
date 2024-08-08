@@ -74,6 +74,7 @@ const Homepage: React.FC = () => {
             {events.map((events) => (
               <Col key={events.eventId} xs={12} sm={6} lg={4}>
                 <Card className={classes.eventCard}>
+                  <div className={classes.parentContainer}></div>
                   <Card.Img
                     onClick={() => {
                       setModalShow(true);
@@ -83,6 +84,11 @@ const Homepage: React.FC = () => {
                     src={events!.eventImage}
                     className={classes.imageElement}
                   />
+                  <div className={classes.bookmarkPosition}>
+                    <Button variant="outline-danger">
+                      <i className="bi bi-bookmarks-fill"></i>
+                    </Button>
+                  </div>
                   <Card.Body>
                     <Card.Title className={classes.title}>Name : {events.eventName}</Card.Title>
                   </Card.Body>
@@ -91,9 +97,6 @@ const Homepage: React.FC = () => {
                     <ListGroup.Item className={classes.eventInfo}>Type : {events.eventType}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Place : {events.eventPlace}</ListGroup.Item>
                   </ListGroup>
-                  <Card.Body>
-                    <Link to={"/create-event"}>Get Tickets</Link>
-                  </Card.Body>
                 </Card>
               </Col>
             ))}

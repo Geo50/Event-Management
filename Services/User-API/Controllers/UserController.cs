@@ -44,6 +44,21 @@ namespace User_API.Controllers
             return Ok();
         }
 
+        [HttpPost("UpdateUsername")]
+
+        public async Task<IActionResult> UpdateUsername(UpdateUsernameDTO updateUsernameDTO)
+        {
+            await _userService.UpdateUsername(updateUsernameDTO);
+            return Ok();
+        }
+
+        [HttpPost("UpdateEmail")]
+
+        public async Task<IActionResult> UpdateEmail(UpdateEmailDTO updateEmailDTO)
+        {
+            await _userService.UpdateUserEmail(updateEmailDTO);
+            return Ok();
+        }
 
         [HttpGet("GetAllUsers")]
 

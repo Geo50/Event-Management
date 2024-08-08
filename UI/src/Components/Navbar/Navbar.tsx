@@ -1,4 +1,4 @@
-import { Navbar, Container, Offcanvas, Nav } from "react-bootstrap";
+import { Navbar, Container, Offcanvas, Nav, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import classes from "./Navbar.module.css";
 import secureLocalStorage from "react-secure-storage";
@@ -16,7 +16,11 @@ const NavbarComponent: React.FC = () => {
     return typeof token === "string" ? token : null;
   };
 
- const decodeToken = () => {
+  const destroyToken = () => {
+    secureLocalStorage.clear();
+  };
+
+  const decodeToken = () => {
     const token = getToken();
     if (token) {
       try {
@@ -58,7 +62,6 @@ const NavbarComponent: React.FC = () => {
 
     fetchUserDetails();
   }, []);
-  
 
   return (
     <div>
@@ -80,22 +83,18 @@ const NavbarComponent: React.FC = () => {
                 <Link to="/registration" className={classes.navbarLink}>
                   Register
                 </Link>
-
-                <Link to="/login" className={classes.navbarLink}>
-                  Login
-                </Link>
-
                 <Link to="/homepage" className={classes.navbarLink}>
                   Homepage
                 </Link>
-
-                <Link to="/create-event" className={classes.navbarLink}>
-                  Create-Event
-                </Link>
                 {username !== "" ? (
-                  <Link to="/homepage" className={classes.navbarLink}>
-                    Hello, <p className={classes.highlight}>{username}</p>
-                  </Link>
+                  <div>
+                    <Link to="/profile" className={classes.navbarLink}>
+                      Hello, <p className={classes.highlight}>{username}</p>
+                    </Link>{" "}
+                    <Link to="/homepage">
+                      <Button onClick={destroyToken}>Logout</Button>
+                    </Link>
+                  </div>
                 ) : (
                   <Link to="/login" className={classes.navbarLink}>
                     Want to join us? <p className={classes.highlight}>Login Now</p>
