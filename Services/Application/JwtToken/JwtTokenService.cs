@@ -30,7 +30,7 @@ namespace Application.JwtToken
                 {
                     new Claim(ClaimTypes.Name, userId)
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(10),
+                Expires = DateTime.UtcNow.AddMinutes(60),
                 Issuer = _issuer,
                 Audience = _audience,
                 SigningCredentials = credentials

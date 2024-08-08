@@ -19,6 +19,7 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddAutoMapper(typeof(UserMapper));
 builder.Services.AddScoped<UserInfo>();
 
+
 // Add JWT settings
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.Configure<JwtSettings>(jwtSettings);

@@ -11,11 +11,12 @@
   color: white;
   font-size: 1.1rem;
   transition: ease 0.4s;
-  text-wrap:nowrap; 
+  text-wrap: nowrap; 
 }
 
 .navbarLink:hover {
   color: rgba(255, 255, 255, 0.404)
+  
 }
 
 .navbarBrand {
@@ -41,6 +42,25 @@
 .highlight {
   font-weight: 500;
   color: white;
+  transition: ease 0.4s;
+  display: inline;
 }
-.highlight:hover {color: rgba(255, 255, 255, 0.404)
+
+.highlight:hover {
+  color: rgba(255, 255, 255, 0.404)
+}
+
+.logoutButton {
+  background-color: transparent;
+  color: white;
+  transition: ease 0.4s;
+  border: 1px solid red;
+  
+}
+
+.logoutButton:hover {
+  color: red;
+  background-color: transparent;
+  border: 1px solid red;
+
 }

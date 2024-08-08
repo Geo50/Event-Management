@@ -1,4 +1,4 @@
-import { Navbar, Container, Offcanvas, Nav, Button } from "react-bootstrap";
+import { Navbar, Container, Offcanvas, Nav, Button, ToastBody } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import classes from "./Navbar.module.css";
 import secureLocalStorage from "react-secure-storage";
@@ -6,7 +6,7 @@ import { key } from "../../App"; // Ensure this is correctly defined in your App
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const NavbarComponent: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -18,6 +18,7 @@ const NavbarComponent: React.FC = () => {
 
   const destroyToken = () => {
     secureLocalStorage.clear();
+    toast.error("You have just logged out. Refresh the page for the effect to happen.");
   };
 
   const decodeToken = () => {
@@ -32,9 +33,6 @@ const NavbarComponent: React.FC = () => {
           toast.error("Your session has expired. Please log in again.");
           return null;
         }
-
-        console.log(decodedToken);
-        console.log(`User ID: ${userId}`);
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
@@ -53,7 +51,6 @@ const NavbarComponent: React.FC = () => {
             userId: userId,
           });
           setUsername(result.data.userName);
-          console.log(result.data.userName);
         } catch (error: any) {
           console.log(`Failed to get user details. Status code: ${error.response?.status}: ${error.message}`);
         }
@@ -66,6 +63,7 @@ const NavbarComponent: React.FC = () => {
   return (
     <div>
       <Navbar collapseOnSelect expand="md" id={classes.navContainer}>
+        <ToastContainer />
         <Container fluid>
           <Navbar.Brand className={`user-select-none ${classes.navbarBrand}`}>Organiser Events</Navbar.Brand>
           <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-md`} />
@@ -89,15 +87,17 @@ const NavbarComponent: React.FC = () => {
                 {username !== "" ? (
                   <div>
                     <Link to="/profile" className={classes.navbarLink}>
-                      Hello, <p className={classes.highlight}>{username}</p>
+                      Hello, <p className={classes.highlight}> {username}</p>
                     </Link>{" "}
-                    <Link to="/homepage">
-                      <Button onClick={destroyToken}>Logout</Button>
+                    <Link to="/homepage" className={classes.navbarLink}>
+                      <Button onClick={destroyToken} className={classes.logoutButton}>
+                        Logout
+                      </Button>
                     </Link>
                   </div>
                 ) : (
                   <Link to="/login" className={classes.navbarLink}>
-                    Want to join us? <p className={classes.highlight}>Login Now</p>
+                    <p className={classes.highlight}>Login Now</p>
                   </Link>
                 )}
               </Nav>

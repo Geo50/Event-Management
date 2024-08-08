@@ -30,5 +30,7 @@ namespace SQL_Queries.Queries
                                                    JOIN public.event_details ed ON e.eventid = ed.eventid 
                                                    LEFT JOIN public.tickets t ON ed.ticketid = t.ticketid 
                                                    WHERE e.eventid = :eventid";
+
+        
     }
 }

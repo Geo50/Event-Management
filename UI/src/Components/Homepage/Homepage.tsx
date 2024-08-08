@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Button, Card, Col, Container, ListGroup, Modal, Row } from "react-bootstrap";
-import classes from "./Homepage.module.css";
 import axios from "axios";
+import React, { useCallback, useEffect, useState } from "react";
+import { Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import EventDetailsModal from "./EventDetailsModal";
-import RedBlacK from "../../assets/Firecrackers.jpg";
 import { PuffLoader } from "react-spinners";
+import { toast } from "react-toastify";
+import RedBlacK from "../../assets/Firecrackers.jpg";
+import EventDetailsModal from "./EventDetailsModal";
+import classes from "./Homepage.module.css";
 
 type eventData = {
   eventId: number;
@@ -22,19 +22,18 @@ const Homepage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     document.body.style.backgroundImage = `url(${RedBlacK})`;
     document.body.style.backgroundSize = "cover";
     document.body.style.height = "100vh";
+    document.body.style.backgroundRepeat = "no-repeat";
 
     const handleEventsGeneration = async () => {
       setLoading(true);
       try {
         const result = await axios.get("https://localhost:7083/api/Event/GetEventsInHomepage");
-        console.log(result);
         setEvents(result.data);
       } catch (error: any) {
         toast.error(`Failed to create event. Status code: ${error.response?.status}: ${error.message}`);
@@ -42,6 +41,8 @@ const Homepage: React.FC = () => {
         setLoading(false);
       }
     };
+    console.log(events);
+
     handleEventsGeneration();
 
     return () => {
@@ -67,14 +68,13 @@ const Homepage: React.FC = () => {
           <Row>
             <div className={classes.headerContainer}>
               {" "}
-              <h1 className={`${classes.header} display-4 `}>Explore Your Community Events</h1>
+              <h1 className={`${classes.header}`}>Have Fun!</h1>
             </div>
           </Row>
           <Row>
             {events.map((events) => (
               <Col key={events.eventId} xs={12} sm={6} lg={4}>
                 <Card className={classes.eventCard}>
-                  <div className={classes.parentContainer}></div>
                   <Card.Img
                     onClick={() => {
                       setModalShow(true);
@@ -84,11 +84,6 @@ const Homepage: React.FC = () => {
                     src={events!.eventImage}
                     className={classes.imageElement}
                   />
-                  <div className={classes.bookmarkPosition}>
-                    <Button variant="outline-danger">
-                      <i className="bi bi-bookmarks-fill"></i>
-                    </Button>
-                  </div>
                   <Card.Body>
                     <Card.Title className={classes.title}>Name : {events.eventName}</Card.Title>
                   </Card.Body>

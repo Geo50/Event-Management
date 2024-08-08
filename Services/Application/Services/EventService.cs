@@ -34,10 +34,10 @@ namespace Application.Services
             _repository = repository;
             _mapper = mapper;
         }
-        public Task CreateNewEvent(CreateEventDTO EventDTO)
+        public async Task CreateNewEvent(CreateEventDTO EventDTO)
         {
             var newEvent = _mapper.Map<CombinedProperties>(EventDTO);
-            return _repository.CreateNewEvent(newEvent);
+            await _repository.CreateNewEvent(newEvent);
         }
 
         public async Task<IEnumerable<CreateEventDTO>> GetEventInDetails(int eventId)

@@ -1,5 +1,6 @@
 ﻿using Application.DTO.EventDTOs;
 using Application.JwtToken;
+using Application.Services;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,14 @@ namespace Event_API.Controllers
     {
 
         private readonly Application.Services.EventService _eventService;
+        private readonly Application.Services.Event_User_Service _event_User_Service;
         private readonly JwtTokenService _tokenService;
 
 
-        public EventController(Application.Services.EventService eventService, JwtTokenService tokenService)
+        public EventController(Application.Services.EventService eventService, Event_User_Service event_User_Service, JwtTokenService tokenService)
         {
             _eventService = eventService;
+            _event_User_Service = event_User_Service;
             _tokenService = tokenService;
         }
 
@@ -52,6 +55,22 @@ namespace Event_API.Controllers
         {
             var eventDetails = await _eventService.GetEventInDetails(eventId);
             return Ok(eventDetails);
+        }
+
+        [HttpPost("CreateNewBookmark")]
+
+        public async Task<IActionResult> CreateNewBookmark( Bookmarks bookmark)
+        {
+            await _event_User_Service.CreateNewBookmark(bookmark);
+            return Ok();
+        }
+
+        [HttpPost("GetEventsInProfile")]
+
+        public async Task<ActionResult<IEnumerable<CombinedProperties>>> GetEventsInProfile(int UserId)
+        {
+            var events = await _event_User_Service.GetEventsInProfile(UserId);
+            return Ok(events);
         }
     }
 }
