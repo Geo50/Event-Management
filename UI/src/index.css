@@ -1,6 +1,13 @@
 :root {
     font-family: "Noto Sans", sans-serif;
+    --light-black: #201f1f;
+    --dark-black: #000000;
+    --login-orange: #ffc107;
+    --login-orange-hover: #f6de09;
+    --registration-blue: #0195da;
+    --registration-blue-hover: #00ffff;
+    --event-olive-green: #b6ec07;
+    --event-wine: #dd3611f7;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap')
-

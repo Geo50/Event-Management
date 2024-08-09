@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application.Services;
 using Domain.Entities;
-using Application.DTO;
 using Application.JwtToken;
 using Microsoft.AspNetCore.Authorization;
+using Application.DTO.UserDTOs;
 
 namespace User_API.Controllers
 {
@@ -27,13 +27,7 @@ namespace User_API.Controllers
         {
             await _userService.CreateNewUser(newUser);
 
-            var user = await _userService.GetUserByUName(newUser.UserName);
-
-            if (user == null)
-            {
-                return Unauthorized("User creation failed.");
-            }
-
+            var user = await _userService.GetUserByUName(newUser.UserName);           
             var token = _tokenService.GenerateToken(user.UserId.ToString());
 
             return Ok(new
@@ -50,8 +44,22 @@ namespace User_API.Controllers
             return Ok();
         }
 
+        [HttpPost("UpdateUsername")]
 
-        [Authorize]
+        public async Task<IActionResult> UpdateUsername(UpdateUsernameDTO updateUsernameDTO)
+        {
+            await _userService.UpdateUsername(updateUsernameDTO);
+            return Ok();
+        }
+
+        [HttpPost("UpdateEmail")]
+
+        public async Task<IActionResult> UpdateEmail(UpdateEmailDTO updateEmailDTO)
+        {
+            await _userService.UpdateUserEmail(updateEmailDTO);
+            return Ok();
+        }
+
         [HttpGet("GetAllUsers")]
 
         public async Task<IActionResult> GetAllUsers()
@@ -82,6 +90,14 @@ namespace User_API.Controllers
                 userName = user.UserName,
                 token
             });
+        }
+
+        [HttpPost("GetUserById")]
+
+        public async Task<ActionResult<User>> GetUserById([FromQuery] int userid)
+        {
+            var user = await _userService.GetUserById(userid);
+            return Ok(user);
         }
 
     }

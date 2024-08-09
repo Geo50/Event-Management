@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using Application.DTO;
 using Domain.Entities;
+using Application.DTO.UserDTOs;
+using Application.DTO.EventDTOs;
 
 namespace Application
 {
@@ -14,6 +15,17 @@ namespace Application
 
             CreateMap<PasswordForgotDTO, User>().ReverseMap();
 
+            CreateMap<UpdateUsernameDTO, User>().ReverseMap();
+
+            CreateMap<UpdateEmailDTO, User>().ReverseMap();
+
+            //***************** EVENT MAPPING ENTITY TO DTO *****************
+
+            CreateMap<CombinedProperties, CreateEventDTO>().ReverseMap();
+
+            CreateMap<Event, GetEventsDTO>().ReverseMap();
+
+            CreateMap<Tickets, CreateTicketDTO>().ReverseMap();            
         }
     }
 }

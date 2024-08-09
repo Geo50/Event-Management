@@ -1,0 +1,66 @@
+#navContainer {
+  margin: 0 !important;
+  border: none;
+  border-bottom: 1px white solid;
+  box-shadow: 0px 10px 15px 10px rgb(0 0 0 / 15%);
+  background-color: rgb(0, 0, 0);
+}
+
+.navbarLink {
+  text-decoration: none;
+  color: white;
+  font-size: 1.1rem;
+  transition: ease 0.4s;
+  text-wrap: nowrap; 
+}
+
+.navbarLink:hover {
+  color: rgba(255, 255, 255, 0.404)
+  
+}
+
+.navbarBrand {
+  text-decoration: none;
+  color: white;
+  font-size: 1.6rem;
+}
+
+.navbarBrand:hover {
+  color: white;
+}
+
+.navButton {
+  background-color: black;
+  border: 1px solid white;
+}
+
+.navbarBurger {
+  color: white;
+  background-color: white;
+}
+
+.highlight {
+  font-weight: 500;
+  color: white;
+  transition: ease 0.4s;
+  display: inline;
+}
+
+.highlight:hover {
+  color: rgba(255, 255, 255, 0.404)
+}
+
+.logoutButton {
+  background-color: transparent;
+  color: white;
+  transition: ease 0.4s;
+  border: 1px solid red;
+  
+}
+
+.logoutButton:hover {
+  color: red;
+  background-color: transparent;
+  border: 1px solid red;
+
+}

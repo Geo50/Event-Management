@@ -1,4 +1,13 @@
 .flexContainer {
-    display: flex;
-    justify-content: space-evenly;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.lightText {
+  color: white;
+}
+
+.navbarBrand {
+  user-select: none;
+  background-color: white;
 }

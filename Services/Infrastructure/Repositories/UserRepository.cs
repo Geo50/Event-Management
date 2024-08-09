@@ -17,7 +17,8 @@ namespace Infrastructure.Repositories
         public Task UpdateUserById(int userid);
         public Task CreateNewUser(User newUser);
         public Task UpdatePassword(User user);
-
+        public Task UpdateUsername(User user);
+        public Task UpdateUserEmail (User user);
 
     }
 
@@ -41,6 +42,33 @@ namespace Infrastructure.Repositories
             {
                 var result = await connection.QueryAsync<User>(query);
                 return result;
+            }
+        }
+
+        public async Task UpdateUsername(User user)
+        {
+            string query = UserQueries.UpdateUserName;
+            using (var connection = Connection)
+            {
+                await connection.ExecuteAsync(query, new
+                {
+                    UserId = user.UserId,
+                    UserName = user.UserName
+                });
+
+            }
+        }
+        public async Task UpdateUserEmail(User user)
+        {
+            string query = UserQueries.UpdateUserEmail;
+            using (var connection = Connection)
+            {
+                await connection.ExecuteAsync(query, new
+                {
+                    UserId = user.UserId,
+                    UserEmail = user.UserEmail
+                });
+
             }
         }
 
@@ -104,10 +132,20 @@ namespace Infrastructure.Repositories
         }
 
 
-            public Task<User> GetUserById(int userId)
+        public async Task<User> GetUserById(int userid)
         {
-            throw new NotImplementedException();
+            var user = UserQueries.GetUserById;
+            using (var connection = Connection)
+            {
+                var result = await connection.QueryFirstOrDefaultAsync<User>(user, new
+                {
+                    userid = userid
+                });
+                return result;
+            }
+
         }
+
 
         public Task UpdateUserById(int userid)
         {
@@ -115,3 +153,4 @@ namespace Infrastructure.Repositories
         }
     }
 }
+

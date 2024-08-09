@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Infrastructure.Repositories;
-using Application.DTO;
 using AutoMapper;
+using Application.DTO.UserDTOs;
 
 namespace Application.Services
 {
@@ -18,22 +18,31 @@ namespace Application.Services
         public Task UpdateUserById(int userid);
         public Task<User> GetUserByUName(string UName);
         public Task UpdateUserPassword(PasswordForgotDTO passwordForgot);
+        public Task<User> GetUserById(int userId);
+        public Task UpdateUsername(UpdateUsernameDTO updateUsernameDTO);
+        public Task UpdateUserEmail(UpdateEmailDTO updateEmailDTO);
 
 
 
     }
     public class UserInfo : IUserInfo
     {
-        private readonly IUserRepository _repository;
+        private readonly UserRepository _repository;
         private readonly IMapper _mapper;
 
 
-        public UserInfo(IUserRepository repository, IMapper mapper)
+        public UserInfo(UserRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
 
         }
+
+        public async Task<User> GetUserById(int userid)
+        {
+            return await _repository.GetUserById(userid);
+        }
+
 
         public Task CreateNewUser(CreateUserDTO newUserDTO)
         {
@@ -43,11 +52,23 @@ namespace Application.Services
 
         public Task UpdateUserPassword(PasswordForgotDTO passwordForgot)
         {
-            var userEntity = _mapper.Map<User>(passwordForgot); // Map DTO to User entity
+            var userEntity = _mapper.Map<User>(passwordForgot); 
             var updatedPassword = _repository.UpdatePassword(userEntity);
             return updatedPassword;
         }
 
+        public Task UpdateUsername(UpdateUsernameDTO updateUsernameDTO)
+        {
+            var userEntity = _mapper.Map<User>(updateUsernameDTO);
+            var updatedUsername = _repository.UpdateUsername(userEntity);
+            return updatedUsername;
+        }
+        public Task UpdateUserEmail(UpdateEmailDTO updateEmailDTO)
+        {
+            var userEntity = _mapper.Map<User>(updateEmailDTO);
+            var updatedEmail = _repository.UpdateUserEmail(userEntity);
+            return updatedEmail;
+        }
 
         public async Task<User> GetUserByUName(string UName)
         {

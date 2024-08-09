@@ -1,18 +1,15 @@
-import { Container, Row, Col, Alert, Form, Button } from "react-bootstrap";
-
-import classes from "./Registration.module.css";
-import { useCallback, useEffect, useRef, useState } from "react";
-import ModalComponent from "../Modal/Modal";
-import secureLocalStorage from "react-secure-storage";
-
-import LoginRightSide from "../LoginRight/LoginRightSide";
 import axios from "axios";
-import { HashLoader } from "react-spinners";
-import passwordLogo from "../../assets/password.png";
-import emailLogo from "../../assets/email.png";
-import userLogo from "../../assets/user.png";
-import { Link } from "react-router-dom";
-import NightCity from "../../assets/NightCity.jpg";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import { useCallback, useRef, useState } from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import secureLocalStorage from "react-secure-storage";
+import { PuffLoader } from "react-spinners";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import ModalComponent from "../Modal/Modal";
+import classes from "./Registration.module.css";
 
 const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 
@@ -21,10 +18,10 @@ type userCredentials = {
   emailValue: string;
   userPassword: string;
   adminValue: boolean;
-  PassVerificationAnswer: string; // Updated field name to match backend
+  PassVerificationAnswer: string;
 };
 
-const Login: React.FC = () => {
+const Registration: React.FC = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const nameRef = useRef<HTMLInputElement>(null);
@@ -33,15 +30,13 @@ const Login: React.FC = () => {
   const adminRef = useRef<HTMLInputElement>(null);
   const verifyRef = useRef<HTMLInputElement>(null);
 
-  const [alert, setAlert] = useState<{ type: string; message: string } | null>(
-    null
-  );
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [modalType, setModalType] = useState<string>("");
   const [errorDisplay, setErrorDisplay] = useState<string>("");
+  const navigate = useNavigate();
 
-  const validationUserInfo = (event: React.FormEvent) => {
+  const validationUserInfo = useCallback((event: React.FormEvent) => {
     event.preventDefault();
 
     const userName = nameRef.current?.value || "";
@@ -49,6 +44,47 @@ const Login: React.FC = () => {
     const userPassword = passwordRef.current?.value || "";
     const adminValue = adminRef.current?.checked || false;
     const PassVerificationAnswer = verifyRef.current?.value || "";
+
+    let isValid = true;
+
+    if (userName === "") {
+      nameRef.current?.classList.add(classes.inputError);
+      toast.error("Please enter a valid username ");
+      isValid = false;
+    } else {
+      nameRef.current?.classList.remove(classes.inputError);
+    }
+
+    if (!emailRegex.test(emailValue)) {
+      emailRef.current?.classList.add(classes.inputError);
+      toast.error("Please enter a valid email address");
+      isValid = false;
+    } else if (emailValue === "") {
+      toast.error("Please enter an email address");
+      isValid = false;
+    } else {
+      emailRef.current?.classList.remove(classes.inputError);
+    }
+
+    if (userPassword === "") {
+      passwordRef.current?.classList.add(classes.inputError);
+      toast.error("Please enter a password");
+      isValid = false;
+    } else if (userPassword.length < 10) {
+      passwordRef.current?.classList.add(classes.inputError);
+      toast.error("Please enter a password with more than 10 characters");
+      isValid = false;
+    } else {
+      passwordRef.current?.classList.remove(classes.inputError);
+    }
+
+    if (PassVerificationAnswer === "") {
+      verifyRef.current?.classList.add(classes.inputError);
+      toast.error("Please enter a verification answer");
+      isValid = false;
+    } else {
+      verifyRef.current?.classList.remove(classes.inputError);
+    }
 
     const userValues: userCredentials = {
       userName,
@@ -58,207 +94,138 @@ const Login: React.FC = () => {
       PassVerificationAnswer,
     };
 
-    if (userName === "" || emailValue === "" || userPassword === "") {
-      let message = "Please fill out the following fields: ";
-      if (userName === "") message += "Name ";
-      if (emailValue === "") message += "Email ";
-      if (userPassword === "") message += "Password ";
-      if (PassVerificationAnswer === "") message += "Verification ";
-      setAlert({ type: "danger", message: message.trim() });
-      return;
+    if (isValid) {
+      handleDatabaseInjection(userValues);
     }
-
-    if (!emailRegex.test(emailValue)) {
-      setAlert({ type: "danger", message: "Invalid email format" });
-      return;
-    }
-
-    if (userPassword.length < 3) {
-      setAlert({
-        type: "danger",
-        message: "Enter a password with more than 10 characters",
-      });
-      return;
-    }
-
-    if (nameRef.current) nameRef.current.value = "";
-    if (emailRef.current) emailRef.current.value = "";
-    if (passwordRef.current) passwordRef.current.value = "";
-    if (verifyRef.current) verifyRef.current.value = "";
-    handleDatabaseInjection(userValues);
-    setAlert(null);
-  };
-
-  const handleCloseDetails = () => {
-    setModalShow(false);
-  };
-
-  useEffect(() => {
-    document.body.style.backgroundImage = `url(${NightCity})`;
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-    document.body.style.height = "100vh";
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.backgroundImage = "";
-      document.body.style.backgroundSize = "";
-      document.body.style.backgroundRepeat = "";
-      document.body.style.height = "";
-    };
   }, []);
 
-  const handleDatabaseInjection = async (userValues: userCredentials) => {
-    setLoading(true);
-    axios
-      .post("https://localhost:7273/api/User/CreateNewUser", {
-        UserName: userValues.userName,
-        UserEmail: userValues.emailValue,
-        UserPassword: userValues.userPassword,
-        IsAdmin: userValues.adminValue,
-        PassVerificationAnswer: userValues.PassVerificationAnswer,
-      })
-      .then((response) => {
-        setModalType("success");
-        setModalShow(true);
-        secureLocalStorage.setItem(key, response.data.token);
-        console.log(response.data.token);
-      })
-      .catch((error) => {
-        setErrorDisplay(error.message);
-        setModalType("error");
-        setModalShow(true);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  const handleCloseDetails = useCallback(() => {
+    setModalShow(false);
+  }, []);
+
+  const handleDatabaseInjection = useCallback(
+    async (userValues: userCredentials) => {
+      setLoading(true);
+      axios
+        .post("https://localhost:7273/api/User/CreateNewUser", {
+          UserName: userValues.userName,
+          UserEmail: userValues.emailValue,
+          UserPassword: userValues.userPassword,
+          IsAdmin: userValues.adminValue,
+          PassVerificationAnswer: userValues.PassVerificationAnswer,
+        })
+        .then((response) => {
+          secureLocalStorage.setItem(key, response.data.token);
+          navigate("/homepage");
+        })
+        .catch((error) => {
+          setErrorDisplay(error.message);
+          setModalType("error");
+          setModalShow(true);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [navigate]
+  );
+
   return (
-    <Container className={classes.container}>
-      {loading && (
-        <div className={classes.loader}>
-          <HashLoader color="#a80e0e" size={100} speedMultiplier={1.3} />{" "}
-        </div>
-      )}
-      <div>
-        {modalShow && (
-          <ModalComponent
-            visibility={modalShow}
-            modalType={modalType}
-            errorDisplayProp={errorDisplay}
-            handleClose={handleCloseDetails}
-          />
-        )}
-        {alert && (
-          <Alert
-            variant={alert.type}
-            dismissible
-            onClose={() => setAlert(null)}
-          >
-            {alert.message}
-          </Alert>
-        )}
-        <Row className="justify-content-start align-items-center mt-5">
-          <Col md={7} lg={4} className={classes.formsContainer}>
-            <Form
-              className={classes.formPosition}
-              onSubmit={validationUserInfo}
-            >
-              <Form.Group className={classes.formGroup}>
-                <div className={classes.logoContainer}>
-                  <img
-                    src={userLogo}
-                    alt="user_logo"
-                    className={classes.minimisedLogo}
-                  />
-                </div>
-                <Form.Control
-                  type="text"
-                  ref={nameRef}
-                  placeholder="Username"
-                  className={classes.inputElements}
-                />
-              </Form.Group>
-              <Form.Group className={classes.formGroup}>
-                <div className={classes.logoContainer}>
-                  <img
-                    src={emailLogo}
-                    alt="email_logo"
-                    className={classes.minimisedLogo}
-                  />
-                </div>
-                <Form.Control
-                  type="email"
-                  ref={emailRef}
-                  placeholder="Email"
-                  className={classes.inputElements}
-                />
-              </Form.Group>
-              <Form.Group className={classes.formGroup}>
-                <div className={classes.logoContainer}>
-                  <img
-                    src={passwordLogo}
-                    alt="password_logo"
-                    className={classes.minimisedLogo}
-                  />
-                </div>
-                <Form.Control
-                  type="password"
-                  ref={passwordRef}
-                  placeholder="Password"
-                  className={classes.inputElements}
-                />
-              </Form.Group>
-              <Form.Group className={classes.formGroup}>
-                <div className={classes.logoContainer}>
-                  <img
-                    src={passwordLogo}
-                    alt="password_logo"
-                    className={classes.minimisedLogo}
-                  />
-                </div>
-                <Form.Control
-                  type="text"
-                  ref={verifyRef}
-                  placeholder="What is your best friend's first name?"
-                  className={classes.inputElements}
-                />
-              </Form.Group>
+    <Container fluid className={classes.componentContainer}>
+      <ToastContainer />
+      <Row className={classes.rowProperties}>
+        <Col xs={12} lg={4} xl={4} className={classes.firstColumn}>
+          {loading && (
+            <div className={classes.loader}>
+              <PuffLoader color="var(--registration-blue)" size={130} />
+            </div>
+          )}
+          {modalShow && (
+            <ModalComponent
+              visibility={modalShow}
+              modalType={modalType}
+              errorDisplayProp={errorDisplay}
+              handleClose={handleCloseDetails}
+            />
+          )}
+          <form className={classes.formContainer} onSubmit={validationUserInfo}>
+            <h1 className={`display-4 ${classes.title}`}>
+              Jump into the action
+            </h1>
+            <br />
+            <h1 className={`display-6 ${classes.subTitle}`}>Sign up!</h1>
+            <br />
+            <div className={classes.logoContainer}>
+              <i className={`bi bi-person-circle ${classes.iconClass}`}></i>
+              <input
+                type="text"
+                ref={nameRef}
+                placeholder="Username"
+                className={classes.inputElements}
+              />
+            </div>
+            <div className={classes.logoContainer}>
+              <i className={`bi bi-envelope-at-fill ${classes.iconClass}`}></i>
+              <input
+                type="text"
+                ref={emailRef}
+                placeholder="Email"
+                className={classes.inputElements}
+              />
+            </div>
+            <div className={classes.logoContainer}>
+              <i className={`bi bi-key-fill ${classes.iconClass}`}></i>
+              <input
+                type="password"
+                ref={passwordRef}
+                placeholder="Password"
+                className={classes.inputElements}
+              />
+            </div>
+            <div className={classes.logoContainer}>
+              <i className={`${classes.iconClass} bi bi-incognito`}></i>
+              <input
+                type="text"
+                ref={verifyRef}
+                placeholder="What is your best friend's name?"
+                className={classes.inputElements}
+              />
+            </div>
+            <div className={classes.flexedElements}>
+              <p className={classes.linkText}>Are you an administrator? </p>
               <Form.Check
                 type="switch"
-                label="Are you an administrator?"
                 ref={adminRef}
                 className={classes.switch}
               />
-              <br />
-              <Button
-                variant="primary"
-                type="submit"
-                className={classes.buttonRegister}
-              >
-                Register
-              </Button>
-              <br />
-              <div className={classes.flexedElements}>
-                <h5 className={classes.text}>Already have an account?</h5>
-                <Link to="/">
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    className={classes.buttonRegister}
-                  >
-                    Login Now
-                  </Button>
+            </div>
+            <Button
+              variant="outline-primary"
+              type="submit"
+              className={classes.submitButton}
+            >
+              Register
+            </Button>
+            <div>
+              <p className={classes.linkText}>
+                Already have an account?
+                <Link to="/" className={classes.linkElement}>
+                  {" "}
+                  Login Now
                 </Link>
-              </div>
-            </Form>
-          </Col>
-          <Col md={6} className="d-none d-md-block">
-            <LoginRightSide />
-          </Col>
-        </Row>
-      </div>
+              </p>
+            </div>
+          </form>
+        </Col>
+        <Col
+          xs={0}
+          lg={8}
+          xl={8}
+          className={`d-none d-lg-block ${classes.rightSide}`}
+        ></Col>
+      </Row>
     </Container>
   );
 };
-export default Login;
+
+export default Registration;
