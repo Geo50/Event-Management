@@ -209,7 +209,7 @@ const Registration: React.FC = () => {
             <div>
               <p className={classes.linkText}>
                 Already have an account?
-                <Link to="/" className={classes.linkElement}>
+                <Link to="/login" className={classes.linkElement}>
                   {" "}
                   Login Now
                 </Link>
