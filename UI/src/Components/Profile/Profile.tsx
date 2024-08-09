@@ -1,10 +1,10 @@
-import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, ListGroup, Row, ToastBody } from "react-bootstrap";
 import classes from "./Profile.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 import { key } from "../../App";
 import { jwtDecode } from "jwt-decode";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
@@ -106,6 +106,7 @@ const Profile: React.FC = () => {
       });
       const result: string = response.data;
       setUsername(result);
+      toast.success("You have succefully edited your username.")
     } catch (error) {
       console.error("Error updating username:", error);
     }
@@ -133,9 +134,10 @@ const Profile: React.FC = () => {
 
   return (
     <div className={`${classes.allContainer}`}>
+      <ToastBody />
       <Container className={classes.container}>
         <Row>
-          <h1>Welcome, {username}!</h1>
+          <h1 className={classes.header}>Welcome, {username}!</h1>
           <br />
           <h1>Here are your account details</h1>
         </Row>
