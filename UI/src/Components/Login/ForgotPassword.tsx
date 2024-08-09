@@ -95,6 +95,7 @@ const ForgotPassword: React.FC = () => {
           modalType={modalType}
           errorDisplayProp={errorDisplay}
           handleClose={handleCloseDetails}
+          eventIdProp={0}
         />
       )}
       <div className={classes.formBackground}>

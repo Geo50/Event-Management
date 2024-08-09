@@ -14,7 +14,5 @@ namespace Application.DTO.EventDTOs
         public string EventType { get; set; }
         public string EventImage { get; set; }
         public string EventDescription { get; set; }
-        public string TicketName { get; set; }
-        public int TicketPrice { get; set; }
     }
 }

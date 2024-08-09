@@ -130,6 +130,7 @@ const Login: React.FC = () => {
                   modalType={modalType}
                   errorDisplayProp={errorDisplay}
                   handleClose={handleCloseDetails}
+                  eventIdProp={0}
                 />
               )}
               <form className={classes.formContainer} onSubmit={inputValidation}>

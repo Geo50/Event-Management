@@ -41,7 +41,6 @@ const Homepage: React.FC = () => {
         setLoading(false);
       }
     };
-    console.log(events);
 
     handleEventsGeneration();
 

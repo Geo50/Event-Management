@@ -16,7 +16,9 @@ namespace Application.Services
         public Task<IEnumerable<GetEventsDTO>> GetEventsInHomepage();
         public Task<IEnumerable<EventService>> UpdateEventByName(string EventName);
         public Task DeleteEvent(string EventName);
-        public Task CreateNewEvent(CreateEventDTO newEvent);
+        public Task<int> CreateNewEvent(CreateEventDTO newEvent);
+        public Task CreateNewTicket(CreateTicketDTO createTicketDTO);
+        public Task<IEnumerable<ViewTicketDTO>> GetEventTickets(int eventId);
         public Task<bool> GetDate(DateTime date);
         public Task<bool> GetPlace(string place);
         public Task<IEnumerable<CreateEventDTO>> GetEventInDetails(int eventId);
@@ -29,15 +31,30 @@ namespace Application.Services
     {
         private readonly EventRepository _repository;
         private readonly IMapper _mapper;
-        public EventService (EventRepository repository, IMapper mapper)
+        public EventService(EventRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
-        public async Task CreateNewEvent(CreateEventDTO EventDTO)
+        //        public async Task<(string ticketName, int ticketPrice)> CreateNewTicket(Tickets tickets)
+
+        public async Task<int> CreateNewEvent(CreateEventDTO EventDTO)
         {
             var newEvent = _mapper.Map<CombinedProperties>(EventDTO);
-            await _repository.CreateNewEvent(newEvent);
+            var eventId = await _repository.CreateNewEvent(newEvent);
+            return eventId;
+        }
+        public async Task CreateNewTicket(CreateTicketDTO createTicketDTO)
+        {
+            var newTicket = _mapper.Map<Tickets>(createTicketDTO);
+            await _repository.CreateNewTicket(newTicket);
+        }
+
+        public async Task<IEnumerable<ViewTicketDTO>> GetEventTickets(int eventId)
+        {
+            var ticketDetails = await _repository.GetEventTickets(eventId);
+            var ticketDTO = _mapper.Map<IEnumerable<ViewTicketDTO>>(ticketDetails);
+            return ticketDTO;
         }
 
         public async Task<IEnumerable<CreateEventDTO>> GetEventInDetails(int eventId)

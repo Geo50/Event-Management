@@ -9,6 +9,7 @@ import WhiteTable from "../../assets/Table-Background.jpg";
 import { storage } from "../../Firebase/Firebase";
 import classes from "./CreateEvent.module.css";
 import InputComponent, { ComponentFunctions } from "./InputComponent";
+import ModalComponent from "../Modal/Modal";
 
 type eventCredentials = {
   eventName: string;
@@ -17,8 +18,6 @@ type eventCredentials = {
   eventType: string;
   eventImage: string;
   eventDescription: string;
-  ticketName: string;
-  ticketPrice: number;
 };
 
 const CreateEvent: React.FC = () => {
@@ -28,8 +27,6 @@ const CreateEvent: React.FC = () => {
   const eventTypeRef = useRef<ComponentFunctions>(null);
   const eventImageRef = useRef<HTMLInputElement>(null);
   const eventDescriptionRef = useRef<ComponentFunctions>(null);
-  const ticketNameRef = useRef<ComponentFunctions>(null);
-  const ticketPriceRef = useRef<ComponentFunctions>(null);
   const eventDataRef = useRef<eventCredentials>({
     eventName: "",
     eventDate: "",
@@ -37,16 +34,15 @@ const CreateEvent: React.FC = () => {
     eventImage: "",
     eventType: "",
     eventDescription: "",
-    ticketName: "",
-    ticketPrice: 0,
   });
 
   const [imageURL, setImageURL] = useState<string>("");
-  const [view, setView] = useState<string>("details");
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [modalType, setModalType] = useState<string>("");
   const [errorDisplay, setErrorDisplay] = useState<string>("");
+  const [eventId, setEventId] = useState<number>(0);
+
   const navigate = useNavigate();
 
   const [file, setFile] = useState<File | null>(null);
@@ -72,7 +68,7 @@ const CreateEvent: React.FC = () => {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     document.body.style.backgroundImage = `url(${WhiteTable})`;
     document.body.style.backgroundSize = "cover";
@@ -99,8 +95,6 @@ const CreateEvent: React.FC = () => {
       eventImage: imageURL || "",
       eventType: (eventTypeRef.current?.value as string) || "",
       eventDescription: (eventDescriptionRef.current?.value as string) || "",
-      ticketName: (ticketNameRef.current?.value as string) || "",
-      ticketPrice: (ticketPriceRef.current?.value as number) || 0,
     };
     let inputDate: number = new Date(eventValues.eventDate).getTime();
     let todayTimestamp = today.getTime();
@@ -161,22 +155,6 @@ const CreateEvent: React.FC = () => {
       eventDescriptionRef.current?.handleRemoveErrorClass();
     }
 
-    if (eventValues.ticketName === "") {
-      ticketNameRef.current?.handleAddErrorClass();
-      toast.error("Please enter a ticket name");
-      isValid = false;
-    } else {
-      ticketNameRef.current?.handleRemoveErrorClass();
-    }
-
-    if (eventValues.ticketPrice <= 0 || eventValues.ticketPrice > 1000) {
-      ticketPriceRef.current?.handleAddErrorClass();
-      toast.error("Please enter a valid ticket price");
-      isValid = false;
-    } else {
-      ticketPriceRef.current?.handleRemoveErrorClass();
-    }
-
     if (isValid) {
       handleDatabaseInjection(eventValues);
     }
@@ -185,7 +163,7 @@ const CreateEvent: React.FC = () => {
   const handleDatabaseInjection = useCallback(
     async (eventValues: eventCredentials) => {
       setLoading(true);
-      axios
+      await axios
         .post("https://localhost:7083/api/Event/CreateNewEvent", {
           EventName: eventValues.eventName,
           EventDate: eventValues.eventDate,
@@ -193,11 +171,13 @@ const CreateEvent: React.FC = () => {
           EventType: eventValues.eventType,
           EventImage: eventValues.eventImage,
           EventDescription: eventValues.eventDescription,
-          TicketName: eventValues.ticketName,
-          TicketPrice: eventValues.ticketPrice,
         })
-        .then(() => {
-          navigate("/homepage");
+        .then((response) => {
+          const eventId = response.data.eventId;
+          setEventId(eventId);
+          setModalShow(true);
+          setModalType("Create Event");
+          console.log("Event ID after creation:", eventId);
         })
         .catch((error) => {
           toast.error(`Failed to create event. Status code: ${error.status}: ${error.message}`);
@@ -209,25 +189,19 @@ const CreateEvent: React.FC = () => {
     [navigate]
   );
 
-  const handleNavbarShow = (selectedKey: string | null) => {
-    if (selectedKey) {
-      const eventValues: eventCredentials = {
-        eventName: (eventNameRef.current?.value as string) || eventDataRef.current.eventName || "",
-        eventDate: (eventDateRef.current?.value as string) || eventDataRef.current.eventDate || "",
-        eventPlace: (eventPlaceRef.current?.value as string) || eventDataRef.current.eventPlace || "",
-        eventImage: imageURL || "",
-        eventType: (eventTypeRef.current?.value as string) || eventDataRef.current.eventType || "",
-        eventDescription: (eventDescriptionRef.current?.value as string) || eventDataRef.current.eventDescription || "",
-        ticketName: (ticketNameRef.current?.value as string) || eventDataRef.current.ticketName || "",
-        ticketPrice: (ticketPriceRef.current?.value as number) || eventDataRef.current.ticketPrice || 0,
-      };
-      eventDataRef.current = eventValues;
-      setView(selectedKey);
-    }
-  };
+  const handleCloseDetails = useCallback((): void => {
+    setModalShow(false);
+  }, []);
 
   return (
     <Container fluid className={classes.container}>
+      <ModalComponent
+        visibility={modalShow}
+        handleClose={handleCloseDetails}
+        modalType={modalType}
+        errorDisplayProp=""
+        eventIdProp = {eventId}
+      />
       <ToastContainer />
       {loading && (
         <div className={classes.loader}>
@@ -235,20 +209,6 @@ const CreateEvent: React.FC = () => {
         </div>
       )}
       <Col xl={4} lg={6} md={8} sm={12} className={classes.backgroundContainer}>
-        <Nav variant="tabs" activeKey={view} onSelect={handleNavbarShow} className="mb-5">
-          <Nav.Item>
-            <Nav.Link eventKey="details" className={classes.navbarItem}>
-              <p className={classes.text}> Event Details</p>
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link eventKey="tickets" className={classes.navbarItem}>
-              <p className={classes.text}>Tickets</p>
-            </Nav.Link>
-          </Nav.Item>
-        </Nav>
-
-        {/* {view === "details" && ( */}
         <div>
           <h1 className={`${classes.title} display-4`}>Set Up Your Event</h1>
           <div className={classes.hiddenElement}>
@@ -267,13 +227,13 @@ const CreateEvent: React.FC = () => {
                 <label htmlFor="image_insertion" className={`${classes.imageInputField}`}>
                   Choose your event picture
                 </label>
-                </div>
-                )};
-                {imageURL && <img src={imageURL} alt="Event" className={classes.imagePreview} />}
-                {/* <button onClick={handleUpload} disabled={loading}>
+              </div>
+            )}
+            {imageURL && <img src={imageURL} alt="Event" className={classes.imagePreview} />}
+            {/* <button onClick={handleUpload} disabled={loading}>
                     Upload Image
                   </button> */}
-              </div>
+          </div>
 
           <div className={classes.inputElementBox}>
             <InputComponent
@@ -306,39 +266,12 @@ const CreateEvent: React.FC = () => {
               inputPlaceholder="Enter your Event Type"
               value={eventDataRef.current.eventType}
             />
-          </div>
-        </div>
-        {/* )} */}
-      </Col>
-      <div>
-        {/* {view === "tickets" && ( */}
-        <Col className={classes.backgroundContainer}>
-          <div>
-            <h1 className={`${classes.title} display-4`}>Create Your Tickets</h1>
-
-            <div className={classes.inputElementBox}>
-              <InputComponent
-                ref={ticketNameRef}
-                inputType="text"
-                inputPlaceholder="Enter your ticket name"
-                value={eventDataRef.current.ticketName}
-              />
-              <InputComponent
-                ref={ticketPriceRef}
-                inputType="number"
-                inputPlaceholder="Enter ticket price"
-                value={eventDataRef.current.ticketPrice}
-              />
-            </div>
-
-            <Button variant="danger w-100" onClick={handleSubmit}>
+            <Button variant="outline-danger" onClick={handleSubmit}>
               Submit
             </Button>
           </div>
-        </Col>
-
-        {/* )} */}
-      </div>
+        </div>
+      </Col>
     </Container>
   );
 };

@@ -8,6 +8,7 @@ import Registration from "./Components/Registration/Registration";
 import CreateEvent from "./Components/Create Event/CreateEvent";
 import HomepageRouting from "./Components/Homepage/HomepageRouting";
 import Profile from "./Components/Profile/Profile";
+import CreateTicket from "./Components/Create Tickets/CreateTicket";
 
 export const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 
@@ -23,6 +24,7 @@ function App() {
         <Route path="/homepage/*" element={<HomepageRouting />} />
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/create-ticket" element={<CreateTicket />} />
       </Routes>
     </BrowserRouter>
   );

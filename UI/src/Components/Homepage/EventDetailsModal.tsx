@@ -22,8 +22,7 @@ type eventData = {
   eventPlace: string;
   eventType: string;
   eventDescription: string;
-  ticketName: string;
-  ticketPrice: number;
+  
 };
 
 type userDetails = {
@@ -119,9 +118,6 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
       setLoading(false);
     }
   }; 
-  
-
-
   useEffect(() => {
     if (visibility && eventId) {
       handleEventsGeneration();
@@ -158,8 +154,6 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
             <ListGroup className="list-group-flush">
               <ListGroup.Item className={classes.eventInfo}>Date: {events?.eventDate}</ListGroup.Item>
               <ListGroup.Item className={classes.eventInfo}>Type: {events?.eventType}</ListGroup.Item>
-              <ListGroup.Item className={classes.eventInfo}>Ticket Name: {events?.ticketName}</ListGroup.Item>
-              <ListGroup.Item className={classes.eventInfo}>Ticket Price: {events?.ticketPrice}</ListGroup.Item>
             </ListGroup>
             <Card.Body>
               <Button variant="danger w-100">Get Tickets</Button>
