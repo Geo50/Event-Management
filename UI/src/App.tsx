@@ -1,14 +1,13 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-import Homepage from "./Components/Homepage/Homepage";
+import CreateEvent from "./Components/Create Event/CreateEvent";
+import CreateTicket from "./Components/Create Tickets/CreateTicket";
+import HomepageRouting from "./Components/Homepage/HomepageRouting";
 import ForgotPassword from "./Components/Login/ForgotPassword";
 import Login from "./Components/Login/Login";
 import Navbar from "./Components/Navbar/Navbar";
-import Registration from "./Components/Registration/Registration";
-import CreateEvent from "./Components/Create Event/CreateEvent";
-import HomepageRouting from "./Components/Homepage/HomepageRouting";
 import Profile from "./Components/Profile/Profile";
-import CreateTicket from "./Components/Create Tickets/CreateTicket";
+import Registration from "./Components/Registration/Registration";
 
 export const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 

@@ -16,7 +16,7 @@ namespace SQL_Queries.Queries
 
         public static string GetPlace = "SELECT eventplace FROM public.event WHERE eventplace = @Place";
 
-        public static string CreateNewTicket = "INSERT INTO public.tickets ( eventid, ticketname, ticketprice) VALUES (@eventid, @ticketname, @ticketprice) RETURNING ";
+        public static string CreateNewTicket = "INSERT INTO public.tickets ( eventid, ticketname, ticketprice) VALUES (@eventid, @ticketname, @ticketprice)";
 
         public static string GetEventTickets = "SELECT ticketname, ticketprice FROM public.tickets WHERE eventid = @eventid";
 
@@ -32,6 +32,5 @@ namespace SQL_Queries.Queries
                                                    JOIN public.event_details ed ON e.eventid = ed.eventid                                                 
                                                    WHERE e.eventid = :eventid";
 
-        
     }
 }

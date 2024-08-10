@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
 import { ToastContainer, toast } from "react-toastify";
-import EventLogin from "../../assets/event-login.png.jpg"
+import EventLogin from "../../assets/event-login.png.jpg";
 import ModalComponent from "../Modal/Modal";
 import classes from "./Login.module.css";
 

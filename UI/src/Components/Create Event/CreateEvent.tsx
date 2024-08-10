@@ -1,15 +1,18 @@
 import axios from "axios";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { jwtDecode } from "jwt-decode";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Button, Col, Container, Nav } from "react-bootstrap";
+import { Button, Col, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
 import { toast, ToastContainer } from "react-toastify";
+import { key } from "../../App";
 import WhiteTable from "../../assets/Table-Background.jpg";
 import { storage } from "../../Firebase/Firebase";
+import ModalComponent from "../Modal/Modal";
 import classes from "./CreateEvent.module.css";
 import InputComponent, { ComponentFunctions } from "./InputComponent";
-import ModalComponent from "../Modal/Modal";
 
 type eventCredentials = {
   eventName: string;
@@ -43,9 +46,33 @@ const CreateEvent: React.FC = () => {
   const [errorDisplay, setErrorDisplay] = useState<string>("");
   const [eventId, setEventId] = useState<number>(0);
 
-  const navigate = useNavigate();
-
   const [file, setFile] = useState<File | null>(null);
+
+  const getToken = () => {
+    const token = secureLocalStorage.getItem(key);
+    return typeof token === "string" ? token : null;
+  };
+
+  const decodeToken = () => {
+    const token = getToken();
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        const userId: number = parseInt(decodedToken?.unique_name, 10);
+        const currentTime = Math.floor(Date.now() / 1000);
+
+        if (decodedToken.exp < currentTime) {
+          toast.error("Your session has expired. Please log in again.");
+          return null;
+        }
+        return userId;
+      } catch (error) {
+        toast.error("Failed to decode token.");
+        return null;
+      }
+    }
+    return null;
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -75,6 +102,7 @@ const CreateEvent: React.FC = () => {
     document.body.style.backgroundRepeat = "no-repeat";
     document.body.style.height = "100vh";
     document.body.style.backdropFilter = "blur(3px)";
+    decodeToken();
 
     return () => {
       document.body.style.backgroundImage = "";
@@ -84,6 +112,24 @@ const CreateEvent: React.FC = () => {
       document.body.style.backdropFilter = "";
     };
   }, []);
+
+  const handleAddBookmark = async (eventValues: eventCredentials) => {
+    setLoading(true);
+    try {
+      const userId = decodeToken(); // Extract userId from token
+      if (userId) {
+        await axios.post("https://localhost:7083/api/Event/CreateNewBookmark", {
+          UserId: userId, // UserId from the token
+          EventId: eventId, // EventId from the event data
+          EventName: eventValues.eventName,
+        });
+      }
+    } catch (error: any) {
+      toast.error(`An error occurred: ${error.response?.status}: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = () => {
     let isValid: boolean = true;
@@ -160,34 +206,39 @@ const CreateEvent: React.FC = () => {
     }
   };
 
-  const handleDatabaseInjection = useCallback(
-    async (eventValues: eventCredentials) => {
-      setLoading(true);
-      await axios
-        .post("https://localhost:7083/api/Event/CreateNewEvent", {
-          EventName: eventValues.eventName,
-          EventDate: eventValues.eventDate,
-          EventPlace: eventValues.eventPlace,
-          EventType: eventValues.eventType,
-          EventImage: eventValues.eventImage,
-          EventDescription: eventValues.eventDescription,
-        })
-        .then((response) => {
-          const eventId = response.data.eventId;
-          setEventId(eventId);
-          setModalShow(true);
-          setModalType("Create Event");
-          console.log("Event ID after creation:", eventId);
-        })
-        .catch((error) => {
-          toast.error(`Failed to create event. Status code: ${error.status}: ${error.message}`);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    },
-    [navigate]
-  );
+  const handleDatabaseInjection = useCallback(async (eventValues: eventCredentials) => {
+    setLoading(true);
+    await axios
+      .post("https://localhost:7083/api/Event/CreateNewEvent", {
+        EventName: eventValues.eventName,
+        EventDate: eventValues.eventDate,
+        EventPlace: eventValues.eventPlace,
+        EventType: eventValues.eventType,
+        EventImage: eventValues.eventImage,
+        EventDescription: eventValues.eventDescription,
+      })
+      .then((response) => {
+        const eventId = response.data.eventId;
+        setEventId(eventId);
+        setModalShow(true);
+        setModalType("Create Event");
+  
+        if (eventId !== 0) {
+          handleAddBookmark(eventValues);
+          toast.success("Successfully added to profile bookmarks.");
+        } else {
+          toast.error("Couldn't add to bookmark.");
+        }
+      })
+      .catch((error) => {
+        toast.error(`Failed to create event. Status code: ${error.status}: ${error.message}`);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+  
+
 
   const handleCloseDetails = useCallback((): void => {
     setModalShow(false);
@@ -200,7 +251,7 @@ const CreateEvent: React.FC = () => {
         handleClose={handleCloseDetails}
         modalType={modalType}
         errorDisplayProp=""
-        eventIdProp = {eventId}
+        eventIdProp={eventId}
       />
       <ToastContainer />
       {loading && (

@@ -50,7 +50,7 @@ const Homepage: React.FC = () => {
       document.body.style.backgroundRepeat = "";
       document.body.style.height = "";
     };
-  }, [navigate]);
+  }, []);
 
   const handleCloseDetails = useCallback((): void => {
     setModalShow(false);
@@ -82,20 +82,23 @@ const Homepage: React.FC = () => {
                     variant="top"
                     src={events!.eventImage}
                     className={classes.imageElement}
+                    loading="lazy"
                   />
                   <Card.Body>
                     <Card.Title className={classes.title}>Name : {events.eventName}</Card.Title>
                   </Card.Body>
                   <ListGroup className="list-group-flush">
                     <ListGroup.Item className={classes.eventInfo}>Date : {events.eventDate}</ListGroup.Item>
-                    <ListGroup.Item className={classes.eventInfo}>Type : {events.eventType}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Place : {events.eventPlace}</ListGroup.Item>
+                    <ListGroup.Item className={classes.eventInfo}>Type : {events.eventType}</ListGroup.Item>
                   </ListGroup>
                 </Card>
               </Col>
             ))}
           </Row>
-          <EventDetailsModal visibility={modalShow} handleClose={handleCloseDetails} eventId={selectedEventId || 0} />
+          <div className={classes.detailsParent}>
+            <EventDetailsModal visibility={modalShow} handleClose={handleCloseDetails} eventId={selectedEventId || 0} />
+          </div>
 
           <div className={classes.createEventButton}>
             <Link to="/create-event">

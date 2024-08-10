@@ -9,19 +9,20 @@
 }
 
 .createEventButton {
-  position: sticky;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
+  position: fixed;
+  bottom: 0.5rem; 
+  right: 0.2rem;  
 }
 
 .plusIcon {
-  font-size: 10rem;
-  transition: ease 0.5s;
+  font-size: 7rem; 
+  color: var(--registration-blue); 
+  cursor: pointer;
+  transition: 0.4s ease;
 }
 
 .plusIcon:hover {
-  color: white;
+  color: var(--registration-blue-hover)
 }
 
 .eventInfo {
@@ -78,8 +79,14 @@
 
 .imageElement {
   width: 100%;
-  height: 20rem;
+  height: 15rem;
   max-width: 100%;
   object-fit: cover;
   cursor: pointer;
+}
+
+.detailParent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

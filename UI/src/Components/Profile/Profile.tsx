@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 import { key } from "../../App";
 import { jwtDecode } from "jwt-decode";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
@@ -133,6 +133,7 @@ const Profile: React.FC = () => {
 
   return (
     <div className={`${classes.allContainer}`}>
+      <ToastContainer />
       <Container className={classes.container}>
         <Row>
           <h1>Welcome, {username}!</h1>

@@ -1,7 +1,7 @@
 import { Button, Container, Row } from "react-bootstrap";
 import classes from "./CreateTicket.module.css";
 import { useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 
@@ -55,7 +55,6 @@ const CreateTicket: React.FC = () => {
         ticketName: nameRef.current?.value,
         ticketPrice: parseFloat(priceRef.current?.value || "0")
       });
-  
       // Notify the user about successful ticket creation
       toast.success("Ticket created successfully!");
   
@@ -90,6 +89,7 @@ const CreateTicket: React.FC = () => {
 
   return (
     <div className={classes.allContainer}>
+      <ToastContainer />
       <Container className={classes.container}>
         <Row>
           <h1>Manage tickets for your event</h1>
