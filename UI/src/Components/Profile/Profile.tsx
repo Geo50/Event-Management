@@ -6,7 +6,7 @@ import { key } from "../../App";
 import { jwtDecode } from "jwt-decode";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
 import EventDetailsModal from "../Homepage/EventDetailsModal";
 
@@ -45,6 +45,7 @@ const Profile: React.FC = () => {
         const currentTime = Math.floor(Date.now() / 1000);
         if (decodedToken.exp < currentTime) {
           toast.error("Your session has expired. Please log in again.");
+          navigate("/homepage");
           return null;
         }
         return userId;
@@ -88,8 +89,6 @@ const Profile: React.FC = () => {
         setLoading(false);
       }
     };
-    console.log(events + "hello");
-
     fetchUserDetails();
     handleEventsGeneration();
   }, []);
@@ -111,6 +110,7 @@ const Profile: React.FC = () => {
     }
   };
 
+  const navigate = useNavigate()
   const handleButtonClick = () => {
     if (isEditing) {
       // Save mode
@@ -130,6 +130,14 @@ const Profile: React.FC = () => {
   const handleCloseDetails = useCallback((): void => {
     setModalShow(false);
   }, []);
+
+  const handleNavigation = (event: eventData) => {
+    navigate("/create-ticket", {
+      state: {
+        eventId: event.eventId
+      },
+    });
+  };
 
   return (
     <div className={`${classes.allContainer}`}>
@@ -209,6 +217,7 @@ const Profile: React.FC = () => {
                             <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
                             <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
                             <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
+                            <ListGroup.Item><Button variant="outline-danger" onClick={() => {handleNavigation(event)}}>View Event Tickes</Button></ListGroup.Item>
                           </ListGroup>
                         </Card>
                       </Col>

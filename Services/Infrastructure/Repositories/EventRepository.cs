@@ -124,7 +124,9 @@ namespace Infrastructure.Repositories
                 {
                     eventid = tickets.EventId,
                     ticketname = tickets.TicketName,
-                    ticketprice = tickets.TicketPrice
+                    ticketprice = tickets.TicketPrice,
+                    category = tickets.Category,
+                    benefits = tickets.Benefits
                 });
             }
         }

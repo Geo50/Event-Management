@@ -36,7 +36,6 @@ namespace Application.Services
             _repository = repository;
             _mapper = mapper;
         }
-        //        public async Task<(string ticketName, int ticketPrice)> CreateNewTicket(Tickets tickets)
 
         public async Task<int> CreateNewEvent(CreateEventDTO EventDTO)
         {
@@ -64,11 +63,6 @@ namespace Application.Services
             return eventDTO;
         }
 
-        //public Task CreateTicket(CreateTicketDTO TicketDTO)
-        //{
-        //    var newTicket = _mapper.Map<Tickets>(TicketDTO);
-        //    return _repository.CreateNewTicket(newTicket);
-        //}
 
         public async Task<IEnumerable<GetEventsDTO>> GetEventsInHomepage()
         {

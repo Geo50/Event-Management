@@ -119,9 +119,13 @@ const Registration: React.FC = () => {
           navigate("/homepage");
         })
         .catch((error) => {
-          setErrorDisplay(error.message);
-          setModalType("error");
-          setModalShow(true);
+          if (error.response && error.response.data.includes("User already exists.")) {
+            toast.error("Your account already exists.");
+          } else {
+            setErrorDisplay(error.message);
+            setModalType("error");
+            setModalShow(true);
+          }
         })
         .finally(() => {
           setLoading(false);
@@ -131,101 +135,74 @@ const Registration: React.FC = () => {
   );
 
   return (
-    <Container fluid className={classes.componentContainer}>
-      <ToastContainer />
-      <Row className={classes.rowProperties}>
-        <Col xs={12} lg={4} xl={4} className={classes.firstColumn}>
-          {loading && (
-            <div className={classes.loader}>
-              <PuffLoader color="var(--registration-blue)" size={130} />
-            </div>
-          )}
-          {modalShow && (
-            <ModalComponent
-              visibility={modalShow}
-              modalType={modalType}
-              errorDisplayProp={errorDisplay}
-              handleClose={handleCloseDetails}
-              eventIdProp={0}
-            />
-          )}
-          <form className={classes.formContainer} onSubmit={validationUserInfo}>
-            <h1 className={`display-4 ${classes.title}`}>
-              Jump into the action
-            </h1>
-            <br />
-            <h1 className={`display-6 ${classes.subTitle}`}>Sign up!</h1>
-            <br />
-            <div className={classes.logoContainer}>
-              <i className={`bi bi-person-circle ${classes.iconClass}`}></i>
-              <input
-                type="text"
-                ref={nameRef}
-                placeholder="Username"
-                className={classes.inputElements}
+    <div>
+      
+      <Container fluid className={classes.componentContainer}>
+        <ToastContainer />
+        {loading && (
+        <div className={classes.loader}>
+          <PuffLoader color="var(--registration-blue)" size={130} />
+        </div>
+      )}
+        <Row className={classes.rowProperties}>
+          <Col xs={12} lg={4} xl={4} className={classes.firstColumn}>
+            {modalShow && (
+              <ModalComponent
+                visibility={modalShow}
+                modalType={modalType}
+                errorDisplayProp={errorDisplay}
+                handleClose={handleCloseDetails}
+                eventIdProp={0}
               />
-            </div>
-            <div className={classes.logoContainer}>
-              <i className={`bi bi-envelope-at-fill ${classes.iconClass}`}></i>
-              <input
-                type="text"
-                ref={emailRef}
-                placeholder="Email"
-                className={classes.inputElements}
-              />
-            </div>
-            <div className={classes.logoContainer}>
-              <i className={`bi bi-key-fill ${classes.iconClass}`}></i>
-              <input
-                type="password"
-                ref={passwordRef}
-                placeholder="Password"
-                className={classes.inputElements}
-              />
-            </div>
-            <div className={classes.logoContainer}>
-              <i className={`${classes.iconClass} bi bi-incognito`}></i>
-              <input
-                type="text"
-                ref={verifyRef}
-                placeholder="What is your best friend's name?"
-                className={classes.inputElements}
-              />
-            </div>
-            <div className={classes.flexedElements}>
-              <p className={classes.linkText}>Are you an administrator? </p>
-              <Form.Check
-                type="switch"
-                ref={adminRef}
-                className={classes.switch}
-              />
-            </div>
-            <Button
-              variant="outline-primary"
-              type="submit"
-              className={classes.submitButton}
-            >
-              Register
-            </Button>
-            <div>
-              <p className={classes.linkText}>
-                Already have an account?
-                <Link to="/" className={classes.linkElement}>
-                  {" "}
-                  Login Now
-                </Link>
-              </p>
-            </div>
-          </form>
-        </Col>
-        <Col
-          xs={0}
-          lg={8}
-          xl={8}
-          className={`d-none d-lg-block ${classes.rightSide}`}
-        ></Col>
-      </Row>
-    </Container>
+            )}
+            <form className={classes.formContainer} onSubmit={validationUserInfo}>
+              <h1 className={`display-4 ${classes.title}`}>Jump into the action</h1>
+              <br />
+              <h1 className={`display-6 ${classes.subTitle}`}>Sign up!</h1>
+              <br />
+              <div className={classes.logoContainer}>
+                <i className={`bi bi-person-circle ${classes.iconClass}`}></i>
+                <input type="text" ref={nameRef} placeholder="Username" className={classes.inputElements} />
+              </div>
+              <div className={classes.logoContainer}>
+                <i className={`bi bi-envelope-at-fill ${classes.iconClass}`}></i>
+                <input type="text" ref={emailRef} placeholder="Email" className={classes.inputElements} />
+              </div>
+              <div className={classes.logoContainer}>
+                <i className={`bi bi-key-fill ${classes.iconClass}`}></i>
+                <input type="password" ref={passwordRef} placeholder="Password" className={classes.inputElements} />
+              </div>
+              <div className={classes.logoContainer}>
+                <i className={`${classes.iconClass} bi bi-incognito`}></i>
+                <input
+                  type="text"
+                  ref={verifyRef}
+                  placeholder="What is your best friend's name?"
+                  className={classes.inputElements}
+                />
+              </div>
+              <div className={classes.flexedElements}>
+                <p className={classes.linkText}>Are you an administrator? </p>
+                <Form.Check type="switch" ref={adminRef} className={classes.switch} />
+              </div>
+              <Button variant="outline-primary" type="submit" className={classes.submitButton}>
+                Register
+              </Button>
+              <div>
+                <p className={classes.linkText}>
+                  Already have an account?
+                  <Link to="/" className={classes.linkElement}>
+                    {" "}
+                    Login Now
+                  </Link>
+                </p>
+              </div>
+            </form>
+          </Col>
+          <Col xs={0} lg={8} xl={8} className={`d-none d-lg-block ${classes.rightSide}`}></Col>
+        </Row>
+      </Container>
+    </div>
   );
 };
 

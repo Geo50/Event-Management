@@ -72,7 +72,7 @@ const NavbarComponent: React.FC = () => {
             aria-labelledby={`offcanvasNavbarLabel-expand-md`}
             placement="end"
             className={classes.navbarBurger}
-          >
+            >
             <Offcanvas.Header closeButton>
               <Offcanvas.Title id={`offcanvasNavbarLabel-expand-md`}>Organiser Events</Offcanvas.Title>
             </Offcanvas.Header>

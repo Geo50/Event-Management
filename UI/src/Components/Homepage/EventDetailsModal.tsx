@@ -46,7 +46,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
     const token = secureLocalStorage.getItem(key);
     return typeof token === "string" ? token : null;
   };
-  
+
   const decodeToken = () => {
     const token = getToken();
     if (token) {
@@ -58,8 +58,6 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         if (decodedToken.exp < currentTime) {
           return null;
         }
-
-        console.log(decodedToken);
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
@@ -88,17 +86,32 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
     if (userId) {
       const userDetailsResponse = await fetchUserDetails(); // Fetch user details to get the username
       if (userDetailsResponse) {
-        await axios.post("https://localhost:7083/api/Event/CreateNewBookmark", {
-          UserId: userId, // UserId from the token
-          EventId: eventId, // EventId from the event data in map
-          EventName: events?.eventName, // EventName from the event data in map
-        });
-        toast.success("Successfully added to bookmarks", {
-          autoClose: 3000,
-        });
+        await axios
+          .post("https://localhost:7083/api/Event/CreateNewBookmark", {
+            UserId: userId, // UserId from the token
+            EventId: eventId, // EventId from the event data in map
+            EventName: events?.eventName, // EventName from the event data in map
+          })
+          .then(() => {
+            toast.success("Successfully added to bookmarks", {
+              autoClose: 3000,
+            });
+          })
+          .catch((error: any) => {
+            if (error.response && error.response.data.includes("Bookmark already exists")) {
+              toast.error("Bookmark already exists");
+            } else {
+              toast.error(
+                `Something went wrong while bookmarking the event. Status Code: ${error.response?.status}, ${error.message}`
+              );
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       }
     } else {
-      toast.error("You need to be logged in to bookmark events")
+      toast.error("You need to be logged in to bookmark events");
       navigate("/login");
     }
   };
@@ -109,13 +122,16 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
   }, [visibility, eventId]);
 
   return (
-    <Container fluid className={classes.modalContainer}>
-      <Modal show={visibility} onHide={handleClose} className={classes.eventModal}>
-        {loading && (
+    <div>
+      {loading && (
           <div className={classes.loader}>
             <PuffLoader color="var(--registration-blue)" size={130} />
           </div>
         )}
+         <Container fluid className={classes.modalContainer}>
+      
+      <Modal show={visibility} onHide={handleClose} className={classes.eventModal}>
+        
         <Modal.Body>
           <ToastBody />
           <Card className={classes.eventCard}>
@@ -128,12 +144,14 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
               </div>
             </div>
             <Modal.Header closeButton>
-              <Modal.Title >
+              <Modal.Title>
                 <p className={classes.title}>{events?.eventName}</p>
               </Modal.Title>
             </Modal.Header>
             <Card.Body>
-              <Card.Title><p className={classes.eventDescription}>{events?.eventDescription}</p></Card.Title>
+              <Card.Title>
+                <p className={classes.eventDescription}>{events?.eventDescription}</p>
+              </Card.Title>
             </Card.Body>
             <ListGroup className="list-group-flush">
               <ListGroup.Item className={classes.eventInfo}>Date: {events?.eventDate}</ListGroup.Item>
@@ -147,7 +165,12 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         </Modal.Body>
       </Modal>
     </Container>
+    </div>
+   
   );
 };
 
 export default EventDetailsModal;
+function InvalidOperationException(reason: any): PromiseLike<never> {
+  throw new Error("Function not implemented.");
+}

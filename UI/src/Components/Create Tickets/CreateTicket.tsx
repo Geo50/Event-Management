@@ -1,46 +1,63 @@
-import { Button, Container, Row } from "react-bootstrap";
-import classes from "./CreateTicket.module.css";
-import { useRef, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import classes from "./CreateTicket.module.css";
 
 type TicketValues = {
-  TicketName: string;
-  TicketPrice: number;
+  ticketId: number;
+  ticketName: string;
+  ticketPrice: number;
+  category: string;
+  benefits: string;
 };
 
-
 const CreateTicket: React.FC = () => {
-    const location = useLocation()
-    const { eventId } = location.state || {};
+  const location = useLocation();
+  const { eventId } = location.state || {};
 
   const [visible, setVisible] = useState<boolean>(false);
-  const nameRef = useRef<HTMLInputElement>(null);
-  const priceRef = useRef<HTMLInputElement>(null);
+  const [ticketName, setTicketName] = useState<string>("");
+  const [ticketPrice, setTicketPrice] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [benefits, setBenefits] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [isValid, setIsValid] = useState<boolean>(true);
-  const [tickets, setTickets] = useState<TicketValues[]>([]);
+  const [ticketsData, setTicketsData] = useState<TicketValues[]>([]);
+
+  useEffect(() => {
+    if (eventId) {
+      fetchTickets();
+    }
+  }, [eventId]);
+
+  const fetchTickets = async () => {
+    try {
+      const response = await axios.get(`https://localhost:7083/api/Event/GetEventTickets?eventId=${eventId}`);
+      setTicketsData(response.data);
+    } catch (error: any) {
+      toast.error(`Error getting the tickets: ${error.message}`);
+    }
+  };
 
   const inputValidation = () => {
     let valid = true;
-    const name: string = nameRef?.current ? nameRef.current.value : "";
-    const priceString = priceRef?.current ? priceRef.current.value : "";
 
-    if (name === "") {
+    if (ticketName === "") {
       toast.error("Please fill the ticket name field.");
-      nameRef.current?.classList.add(classes.inputError);
       valid = false;
-    } else {
-      nameRef.current?.classList.remove(classes.inputError);
     }
 
-    if (priceString === "") {
+    if (ticketPrice === "") {
       toast.error("Please fill the ticket price field.");
-      priceRef.current?.classList.add(classes.inputError);
       valid = false;
-    } else {
-      priceRef.current?.classList.remove(classes.inputError);
+    }
+
+    if (selectedCategory === "") {
+      // Check if a category is selected
+      toast.error("Please select a ticket category.");
+      valid = false;
     }
 
     setIsValid(valid);
@@ -49,30 +66,25 @@ const CreateTicket: React.FC = () => {
 
   const handleValues = async () => {
     try {
-      // Send a request to create a new ticket
       await axios.post("https://localhost:7083/api/Event/CreateNewTicket", {
         eventId: eventId,
-        ticketName: nameRef.current?.value,
-        ticketPrice: parseFloat(priceRef.current?.value || "0")
+        ticketName: ticketName,
+        ticketPrice: parseFloat(ticketPrice),
+        category: selectedCategory,
+        benefits: benefits,
       });
-      // Notify the user about successful ticket creation
       toast.success("Ticket created successfully!");
-  
-      // Fetch all tickets for the event
-      try {
-        const response = await axios.get(`https://localhost:7083/api/Event/GetEventTickets?eventId=${eventId}`);
-        const tickets = response.data; 
-        setTickets(tickets);
-        console.log("Response is " + response)
-        console.log("State var is " + tickets)
-        console.log("First element is " + tickets[0])
-      } catch (fetchError: any) {
-        toast.error(`Error getting the tickets. Status code: ${fetchError.response?.status} : ${fetchError.message}`);
-      }
+      fetchTickets();
+      setTicketName("");
+      setTicketPrice("");
+      setSelectedCategory("");
+      setBenefits("");
+      setVisible(false);
+      setIsEditing(false);
     } catch (error: any) {
-      toast.error(`Failed to create the ticket. Status code: ${error.response?.status} : ${error.message}`);
+      toast.error(`Failed to create the ticket: ${error.message}`);
     }
-  };  
+  };
 
   const handleButtonClick = () => {
     if (!isEditing) {
@@ -82,39 +94,119 @@ const CreateTicket: React.FC = () => {
       const valid = inputValidation();
       if (valid) {
         handleValues();
-        setIsEditing(false); // Optionally toggle editing off after saving
       }
     }
+  };
+
+  const handleCancelClick = () => {
+    setVisible(false);
+    setIsEditing(false);
+    setTicketName("");
+    setTicketPrice("");
   };
 
   return (
     <div className={classes.allContainer}>
       <ToastContainer />
-      <Container className={classes.container}>
+      <Container className={classes.container} fluid>
         <Row>
           <h1>Manage tickets for your event</h1>
         </Row>
         <Row className={classes.rowClass}>
-          <Button className={classes.editButton} onClick={handleButtonClick}>
-            {isEditing ? "Submit Ticket" : "Create Ticket"}
+          <Button className={classes.createButton} variant="primary" onClick={handleButtonClick} disabled={isEditing}>
+            Create Ticket
           </Button>
         </Row>
         {visible && (
           <div>
-            <Row className={classes.rowClass}>
-              <input type="text" placeholder="Ticket Name" ref={nameRef} />
-            </Row>
-            <Row className={classes.rowClass}>
-              <input type="text" placeholder="Ticket Price" ref={priceRef} />
-            </Row>
-            <Row>
-              <div>
-                <h1>Here are your tickets for this event.</h1>
-                {/* Render tickets here */}
+            <div className="input-group mb-3">
+              <div className="input-group-prepend">
+                <label className="input-group-text" htmlFor="inputGroupSelect01">
+                  Ticket Category
+                </label>
               </div>
+              <select
+                className="custom-select"
+                id="inputGroupSelect01"
+                value={selectedCategory}
+                onChange={(event) =>  setSelectedCategory(event.target.value)} // Update selected category on change
+              >
+                <option value="">Choose your new ticket category</option> {/* Default empty value */}
+                <option value="Regular">Regular</option>
+                <option value="VIP">VIP</option>
+                <option value="VVIP">VVIP</option>
+              </select>
+            </div>
+            <Row className={classes.rowClass}>
+              <Col>
+                <input
+                  type="text"
+                  placeholder="Ticket Name"
+                  value={ticketName}
+                  onChange={(event) =>  setTicketName(event.target.value)}
+                />
+              </Col>
+              <Col>
+                <input
+                  type="number"
+                  placeholder="Ticket Price"
+                  value={ticketPrice}
+                  onChange={(event) =>  setTicketPrice(event.target.value)}
+                />
+              </Col>
+              <Row>
+                <Col>
+                  {" "}
+                  <input
+                    type="text"
+                    placeholder="Ticket Benefits"
+                    value={benefits}
+                    onChange={(event) =>  setBenefits(event.target.value)}
+                  />
+                </Col>
+              </Row>
+              {isEditing && (
+                <div className="d-flex justify-content-around">
+                  <Button className={classes.ticketsButton} variant="success" onClick={handleButtonClick}>
+                    Submit Ticket
+                  </Button>
+                  <Button className={classes.ticketsButton} variant="danger" onClick={handleCancelClick}>
+                    Cancel
+                  </Button>
+                </div>
+              )}
             </Row>
           </div>
         )}
+        <Row>
+          <div>
+            <h1>Here are your tickets for this event.</h1>
+            <Container fluid className={classes.ticketsContainer}>
+              <table className={classes.ticketTable}>
+                <thead>
+                  <tr>
+                    <th>Ticket Id</th>
+                    <th>Ticket Name</th>
+                    <th>Ticket Category</th>
+                    <th>Ticket Price</th>
+                    <th>Ticket Benefits</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ticketsData.map((ticket) => (
+                    <tr key={ticket.ticketId}>
+                      <td>{ticket.ticketId}</td>
+                      <td>{ticket.ticketName}</td>
+                      <td>{ticket.category}</td>
+                      <td>{ticket.ticketPrice}</td>
+                      <td>{ticket.benefits}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Container>
+          </div>
+        </Row>
       </Container>
     </div>
   );

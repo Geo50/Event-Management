@@ -62,5 +62,12 @@
   color: red;
   background-color: transparent;
   border: 1px solid red;
+}
 
+.navbarBurger .navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.navbarBurger .navbar-toggler-icon {
+  background-color: white;
 }

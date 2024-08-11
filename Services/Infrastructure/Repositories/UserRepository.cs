@@ -97,10 +97,20 @@ namespace Infrastructure.Repositories
 
             using (var connection = Connection)
             {
-                return await connection.QueryFirstOrDefaultAsync<User>(query, new
+                var result = await connection.QueryFirstOrDefaultAsync<User>(query, new
                 {
                     UserName = userName
                 });
+
+                if (result == null)
+                {
+                    throw new InvalidOperationException("User already exists.");
+                }
+                else
+                {
+                    return result;
+                }
+                
             }
         }
 

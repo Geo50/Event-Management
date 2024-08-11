@@ -4,7 +4,7 @@ import { Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
 import { toast } from "react-toastify";
-import RedBlacK from "../../assets/Firecrackers.jpg";
+import RedBlacK from "../../assets/Night-Sky.jpg";
 import EventDetailsModal from "./EventDetailsModal";
 import classes from "./Homepage.module.css";
 
@@ -22,13 +22,10 @@ const Homepage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     document.body.style.backgroundImage = `url(${RedBlacK})`;
-    document.body.style.backgroundSize = "cover";
-    document.body.style.height = "100vh";
-    document.body.style.backgroundRepeat = "no-repeat";
+    
 
     const handleEventsGeneration = async () => {
       setLoading(true);
@@ -55,6 +52,9 @@ const Homepage: React.FC = () => {
   const handleCloseDetails = useCallback((): void => {
     setModalShow(false);
   }, []);
+
+
+
 
   return (
     <div>

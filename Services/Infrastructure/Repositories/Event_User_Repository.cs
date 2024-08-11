@@ -34,13 +34,25 @@ namespace Infrastructure.Repositories
             var query = Event_User_Queries.CreateNewBookmark;
             using (var connection = Connection)
             {
-                await connection.ExecuteAsync(query, new
+                try
                 {
-                    UserId = bookmark.UserId,
-                    EventId = bookmark.EventId,
-                    EventName = bookmark.EventName
-                });
+                    await connection.ExecuteAsync(query, new
+                    {
+                        UserId = bookmark.UserId,
+                        EventId = bookmark.EventId,
+                        EventName = bookmark.EventName
+                    });
+                }
+                catch (Npgsql.PostgresException ex)
+                {
+                    // Check if the exception is due to a unique constraint violation
+                    if (ex.SqlState == "23505") // PostgreSQL error code for unique constraint violation
+                    {
+                        throw new InvalidOperationException("Bookmark already exists.");
+                    }
+                }
             }
+
         }
 
         public async Task<IEnumerable<CombinedProperties>> GetEventsInProfile(int UserId)
