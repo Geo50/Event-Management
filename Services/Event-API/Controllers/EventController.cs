@@ -87,5 +87,13 @@ namespace Event_API.Controllers
             var tickets = await _eventService.GetEventTickets(eventId);
             return Ok(tickets);
         }
+
+        [HttpGet("GetUsernameFromId")]
+
+        public async Task<ActionResult<string>> GetUsernameFromId(int userid)
+        {
+            var username = await _eventService.GetUsernameFromId(userid);
+            return Ok(username);
+        }
     }
 }

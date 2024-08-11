@@ -28,6 +28,7 @@ namespace Infrastructure.Repositories
         public Task<bool> GetPlace(string place);
         public Task CreateNewTicket(Tickets tickets);
         public Task<IEnumerable<Tickets>> GetEventTickets(int eventid);
+        public Task<string> GetUsernameFromId (int userid);
     }
 
     public class EventRepository : IEventRepository
@@ -69,6 +70,16 @@ namespace Infrastructure.Repositories
             }
         }
 
+        public async Task<string> GetUsernameFromId(int userid)
+        {
+            var query = EventQueries.GetUsernameFromId;
+            using (var connection = Connection)
+            {
+                var result = await connection.QueryFirstOrDefaultAsync<string>(query, new { Userid = userid });
+                return result;
+            }
+        }
+
         public async Task<IEnumerable<Event>> GetEventsInHomepage()
         {
             var query = EventQueries.GetEventsInHomepage;
@@ -78,6 +89,7 @@ namespace Infrastructure.Repositories
                 return result;
             }
         }
+
         public async Task<int> CreateNewEvent(CombinedProperties newEvent)
         {
             var insertEvent = EventQueries.CreateNewEvent;
@@ -101,6 +113,7 @@ namespace Infrastructure.Repositories
                         EventPlace = newEvent.EventPlace,
                         EventType = newEvent.EventType,
                         EventImage = newEvent.EventImage,
+                        Organiser_id = newEvent.Organiser_id
                     });                    
 
                     await connection.ExecuteAsync(insertEventDetails, new

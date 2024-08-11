@@ -22,7 +22,7 @@ namespace Application.Services
         public Task<bool> GetDate(DateTime date);
         public Task<bool> GetPlace(string place);
         public Task<IEnumerable<CreateEventDTO>> GetEventInDetails(int eventId);
-
+        public Task<string> GetUsernameFromId(int userid);
 
 
     }
@@ -43,6 +43,13 @@ namespace Application.Services
             var eventId = await _repository.CreateNewEvent(newEvent);
             return eventId;
         }
+
+        public async Task<string> GetUsernameFromId(int userid)
+        {
+            var username = await _repository.GetUsernameFromId(userid);
+            return username;
+        }
+
         public async Task CreateNewTicket(CreateTicketDTO createTicketDTO)
         {
             var newTicket = _mapper.Map<Tickets>(createTicketDTO);

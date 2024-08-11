@@ -21,7 +21,9 @@ type eventCredentials = {
   eventType: string;
   eventImage: string;
   eventDescription: string;
+  organiser_id: number;
 };
+
 
 const CreateEvent: React.FC = () => {
   const eventNameRef = useRef<ComponentFunctions>(null);
@@ -37,6 +39,7 @@ const CreateEvent: React.FC = () => {
     eventImage: "",
     eventType: "",
     eventDescription: "",
+    organiser_id: 0
   });
 
   const [imageURL, setImageURL] = useState<string>("");
@@ -132,6 +135,7 @@ const CreateEvent: React.FC = () => {
   };
 
   const handleSubmit = () => {
+    const organiserID = decodeToken();
     let isValid: boolean = true;
     let today = new Date();
     const eventValues: eventCredentials = {
@@ -141,6 +145,7 @@ const CreateEvent: React.FC = () => {
       eventImage: imageURL || "",
       eventType: (eventTypeRef.current?.value as string) || "",
       eventDescription: (eventDescriptionRef.current?.value as string) || "",
+      organiser_id: organiserID || 0
     };
     let inputDate: number = new Date(eventValues.eventDate).getTime();
     let todayTimestamp = today.getTime();
@@ -207,6 +212,8 @@ const CreateEvent: React.FC = () => {
   };
 
   const handleDatabaseInjection = useCallback(async (eventValues: eventCredentials) => {
+    const organiserID = decodeToken();
+    console.log(organiserID)
     setLoading(true);
     await axios
       .post("https://localhost:7083/api/Event/CreateNewEvent", {
@@ -216,13 +223,13 @@ const CreateEvent: React.FC = () => {
         EventType: eventValues.eventType,
         EventImage: eventValues.eventImage,
         EventDescription: eventValues.eventDescription,
+        organiser_id: organiserID
       })
       .then((response) => {
         const eventId = response.data.eventId;
         setEventId(eventId);
         setModalShow(true);
         setModalType("Create Event");
-  
         if (eventId !== 0) {
           handleAddBookmark(eventValues);
           toast.success("Successfully added to profile bookmarks.");

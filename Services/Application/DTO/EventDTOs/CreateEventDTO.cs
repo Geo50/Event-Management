@@ -8,11 +8,12 @@ namespace Application.DTO.EventDTOs
 {
     public class CreateEventDTO
     {
-        public string EventName { get; set; }
+        public required string EventName { get; set; }
         public DateTime EventDate { get; set; }
-        public string EventPlace { get; set; }
-        public string EventType { get; set; }
-        public string EventImage { get; set; }
-        public string EventDescription { get; set; }
+        public required string EventPlace { get; set; }
+        public required string EventType { get; set; }
+        public required string EventImage { get; set; }
+        public required string EventDescription { get; set; }
+        public int Organiser_id { get; set; }
     }
 }
