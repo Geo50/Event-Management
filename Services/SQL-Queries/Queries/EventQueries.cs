@@ -28,7 +28,7 @@ namespace SQL_Queries.Queries
 
         public static string GetEventIdByName = "SELECT eventid FROM public.event WHERE eventname = @eventname;";
 
-        public static string GetEventInDetails => @"SELECT e.eventid, e.eventname, e.eventdate, e.eventplace, e.eventtype, e.eventimage,organiser_id 
+        public static string GetEventInDetails => @"SELECT e.eventid, e.eventname, e.eventdate, e.eventplace, e.eventtype, e.eventimage, e.organiser_id,
                                                    ed.eventdescription
                                                    FROM public.event e 
                                                    JOIN public.event_details ed ON e.eventid = ed.eventid                                                 

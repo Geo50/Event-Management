@@ -23,6 +23,8 @@ type eventData = {
   eventPlace: string;
   eventType: string;
   eventDescription: string;
+  organiser_id: number;
+  organiserName: string;
 };
 
 const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, eventId }) => {
@@ -35,7 +37,15 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
       const result = await axios.post(`https://localhost:7083/api/Event/GetEventInDetails?eventId=${eventId}`, {
         eventId: eventId,
       });
-      setEvents(result.data[0]);
+      const eventData = result.data[0];
+      const organiserResponse = await axios.get(
+        `https://localhost:7083/api/Event/GetUsernameFromId?userid=${eventData.organiser_id}`
+      );
+      
+      setEvents({
+        ...eventData,
+        organiserName: organiserResponse.data
+      });
     } catch (error: any) {
       toast.error(`Failed to generate events. Status code: ${error.response?.status}: ${error.message}`);
     } finally {
@@ -157,6 +167,8 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
               <ListGroup.Item className={classes.eventInfo}>Date: {events?.eventDate}</ListGroup.Item>
               <ListGroup.Item className={classes.eventInfo}>Type: {events?.eventType}</ListGroup.Item>
               <ListGroup.Item className={classes.eventInfo}>Place: {events?.eventPlace}</ListGroup.Item>
+              <ListGroup.Item className={classes.eventInfo}>Organizer: {events?.organiserName}</ListGroup.Item>
+
             </ListGroup>
             <Card.Body>
               <Button variant="danger w-100">Get Tickets</Button>
