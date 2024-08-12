@@ -1,7 +1,7 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
-import { Button, Card, Container, ListGroup, Modal, ToastBody } from "react-bootstrap";
+import { Button, Card, Container, ListGroup, Modal, ToastBody, ToastContainer } from "react-bootstrap";
 import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
 import { toast } from "react-toastify";
@@ -124,7 +124,6 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
       }
     } else {
       toast.error("You need to be logged in to bookmark events");
-      navigate("/login");
     }
   };
   useEffect(() => {
@@ -151,7 +150,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
       <Container fluid className={classes.modalContainer}>
         <Modal show={visibility} onHide={handleClose} className={`${classes.eventModal}`}>
           <Modal.Body className={`bg-dark ${classes.modalBody}`}>
-            <ToastBody />
+            <ToastContainer />
             <Card className={`bg-dark ${classes.eventCard}`}>
               <div className={classes.parentContainer}>
                 <Card.Img variant="top" src={events?.eventImage} className={classes.imageElement} />

@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import RedBlacK from "../../assets/Night-Sky.jpg";
 import EventDetailsModal from "./EventDetailsModal";
 import classes from "./Homepage.module.css";
@@ -80,6 +80,7 @@ const Homepage: React.FC = () => {
 
   return (
     <div>
+      <ToastContainer />
       {loading ? (
         <div className={classes.loader}>
           <PuffLoader color="var(--registration-blue)" size={130} />

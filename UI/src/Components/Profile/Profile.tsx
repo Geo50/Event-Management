@@ -132,7 +132,7 @@ const Profile: React.FC = () => {
   }, []);
 
   const handleNavigation = (event: eventData) => {
-    navigate("/create-ticket", {
+    navigate("/view-tickets", {
       state: {
         eventId: event.eventId
       },
@@ -217,7 +217,7 @@ const Profile: React.FC = () => {
                             <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
                             <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
                             <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
-                            <ListGroup.Item><Button variant="outline-danger" onClick={() => {handleNavigation(event)}}>View Event Tickes</Button></ListGroup.Item>
+                            <ListGroup.Item><Button variant="outline-danger" onClick={() => {handleNavigation(event)}}>View Event Tickets</Button></ListGroup.Item>
                           </ListGroup>
                         </Card>
                       </Col>

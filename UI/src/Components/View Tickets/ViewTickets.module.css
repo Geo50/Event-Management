@@ -27,6 +27,11 @@
     margin-right: 0.5rem;
     margin-left: 0.5;
   }
+
+  .noTicketsFound {
+    font-size: 3rem;
+    font-weight: 600;
+  }
   
   
   @media (max-width: 768px) {

@@ -60,13 +60,17 @@ const ViewTickets: React.FC = () => {
                   <td>${ticket.ticketPrice}</td>
                   <td>{ticket.benefits}</td>
                   <td>{ticket.ticket_Limit}</td>
-                  <td><Button variant="danger">Buy Ticket</Button></td>
+                  <td>
+                    <Button variant="danger">Buy Ticket</Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         ) : (
-          <p>No tickets found for this event.</p>
+          <div className="d-flex justify-content-center">
+            <p className={classes.noTicketsFound}>There are no tickets for this event..</p>
+          </div>
         )}
       </Container>
     </div>
