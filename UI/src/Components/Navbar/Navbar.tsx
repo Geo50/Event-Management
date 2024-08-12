@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import classes from "./Navbar.module.css";
 import secureLocalStorage from "react-secure-storage";
 import { key } from "../../App"; // Ensure this is correctly defined in your App file
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { toast, ToastContainer } from "react-toastify";
@@ -85,16 +85,20 @@ const NavbarComponent: React.FC = () => {
                   Homepage
                 </Link>
                 {username !== "" ? (
-                  <div>
+                  <Fragment>
+                    <div>
                     <Link to="/profile" className={classes.navbarLink}>
                       Hello, <p className={classes.highlight}> {username}</p>
                     </Link>{" "}
+                    </div>
+                    <div>
                     <Link to="/homepage" className={classes.navbarLink}>
                       <Button onClick={destroyToken} className={classes.logoutButton}>
                         Logout
                       </Button>
                     </Link>
-                  </div>
+                    </div>
+                    </Fragment>                  
                 ) : (
                   <Link to="/login" className={classes.navbarLink}>
                     <p className={classes.highlight}>Login Now</p>

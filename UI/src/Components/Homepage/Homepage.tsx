@@ -29,6 +29,7 @@ const Homepage: React.FC = () => {
 
   useEffect(() => {
     document.body.style.backgroundImage = `url(${RedBlacK})`;
+    document.body.style.height = `100vh`;
 
     const handleEventsGeneration = async () => {
       setLoading(true);
@@ -121,6 +122,8 @@ const Homepage: React.FC = () => {
                         />
                         <Card.Body>
                           <Card.Title className={classes.title}>{event.eventName}</Card.Title>
+                          </Card.Body>
+
                           <ListGroup className="list-group-flush">
                             <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
                             <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
@@ -129,19 +132,16 @@ const Homepage: React.FC = () => {
                               Organiser: {event.organiserName}
                             </ListGroup.Item>
                           </ListGroup>
-                        </Card.Body>
                       </Card>
                     </div>
                   ))}
                 </div>
               </div>
-              <button className="carousel-control-prev" type="button" onClick={handlePrevious}>
-                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span className="visually-hidden">Previous</span>
+              <button className={`carousel-control-prev ${classes.navigationButton}` } type="button" onClick={handlePrevious}>
+                <span className={`carousel-control-prev-icon ${classes.navigationIcon}`} aria-hidden="true"></span>
               </button>
-              <button className="carousel-control-next" type="button" onClick={handleNext}>
-                <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                <span className="visually-hidden">Next</span>
+              <button className={`carousel-control-prev ${classes.navigationButton}` } type="button" onClick={handleNext} >
+                <span className={`carousel-control-next-icon ${classes.navigationIcon}`} aria-hidden="true"></span>
               </button>
             </div>
           </Row>

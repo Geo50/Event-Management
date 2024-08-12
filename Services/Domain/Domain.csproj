@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.1" />
     <PackageReference Include="Npgsql" Version="8.0.3" />
+    <PackageReference Include="Stripe.net" Version="45.7.0" />
   </ItemGroup>
 
 </Project>

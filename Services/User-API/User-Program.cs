@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -18,6 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddAutoMapper(typeof(UserMapper));
 builder.Services.AddScoped<UserInfo>();
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
 
 // Add JWT settings

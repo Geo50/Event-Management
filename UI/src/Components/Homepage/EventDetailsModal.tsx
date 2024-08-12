@@ -41,10 +41,10 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
       const organiserResponse = await axios.get(
         `https://localhost:7083/api/Event/GetUsernameFromId?userid=${eventData.organiser_id}`
       );
-      
+
       setEvents({
         ...eventData,
-        organiserName: organiserResponse.data
+        organiserName: organiserResponse.data,
       });
     } catch (error: any) {
       toast.error(`Failed to generate events. Status code: ${error.response?.status}: ${error.message}`);
@@ -134,51 +134,47 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
   return (
     <div>
       {loading && (
-          <div className={classes.loader}>
-            <PuffLoader color="var(--registration-blue)" size={130} />
-          </div>
-        )}
-         <Container fluid className={classes.modalContainer}>
-      
-      <Modal show={visibility} onHide={handleClose} className={classes.eventModal}>
-        
-        <Modal.Body>
-          <ToastBody />
-          <Card className={classes.eventCard}>
-            <div className={classes.parentContainer}>
-              <Card.Img variant="top" src={events?.eventImage} className={classes.imageElement} />
-              <div className={classes.bookmarkPosition}>
-                <Button variant="outline-danger" onClick={() => handleAddBookmark()}>
-                  <i className="bi bi-bookmarks-fill"></i>
-                </Button>
+        <div className={classes.loader}>
+          <PuffLoader color="var(--registration-blue)" size={130} />
+        </div>
+      )}
+      <Container fluid className={classes.modalContainer}>
+        <Modal show={visibility} onHide={handleClose} className={`${classes.eventModal}`}>
+          <Modal.Body className={`bg-dark ${classes.modalBody}`}>
+            <ToastBody />
+            <Card className={`bg-dark ${classes.eventCard}`}>
+              <div className={classes.parentContainer}>
+                <Card.Img variant="top" src={events?.eventImage} className={classes.imageElement} />
+                <div className={classes.bookmarkPosition}>
+                  <Button variant="outline-danger" onClick={() => handleAddBookmark()}>
+                    <i className="bi bi-bookmarks-fill"></i>
+                  </Button>
+                </div>
               </div>
-            </div>
-            <Modal.Header closeButton>
-              <Modal.Title>
-                <p className={classes.title}>{events?.eventName}</p>
-              </Modal.Title>
-            </Modal.Header>
-            <Card.Body>
-              <Card.Title>
-                <p className={classes.eventDescription}>{events?.eventDescription}</p>
-              </Card.Title>
-            </Card.Body>
-            <ListGroup className="list-group-flush">
-              <ListGroup.Item className={classes.eventInfo}>Date: {events?.eventDate}</ListGroup.Item>
-              <ListGroup.Item className={classes.eventInfo}>Type: {events?.eventType}</ListGroup.Item>
-              <ListGroup.Item className={classes.eventInfo}>Place: {events?.eventPlace}</ListGroup.Item>
-              <ListGroup.Item className={classes.eventInfo}>Organizer: {events?.organiserName}</ListGroup.Item>
-
-            </ListGroup>
-            <Card.Body>
-              <Button variant="danger w-100">Get Tickets</Button>
-            </Card.Body>
-          </Card>
-        </Modal.Body>
-      </Modal>
-    </Container>
+              <Modal.Header closeButton>
+                <Modal.Title>
+                  <p className={classes.title}>{events?.eventName}</p>
+                </Modal.Title>
+              </Modal.Header>
+              <Card.Body>
+                <Card.Title>
+                  <p className={classes.eventDescription}>{events?.eventDescription}</p>
+                </Card.Title>
+              </Card.Body>
+              <ListGroup className=" list-group-flush">
+                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Date: {events?.eventDate}</ListGroup.Item>
+                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Type: {events?.eventType}</ListGroup.Item>
+                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Place: {events?.eventPlace}</ListGroup.Item>
+                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Organizer: {events?.organiserName}</ListGroup.Item>
+              </ListGroup>
+              <Card.Body>
+                <Button variant="danger w-100">View Tickets</Button>
+              </Card.Body>
+            </Card>
+          </Modal.Body>
+        </Modal>
+      </Container>
     </div>
-   
   );
 };
 

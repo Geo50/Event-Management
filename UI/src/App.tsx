@@ -14,17 +14,19 @@ export const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Navigate to="/homepage" />} />
-        <Route path="/registration" element={<Registration />} />
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/homepage/*" element={<HomepageRouting />} />
-        <Route path="/create-event" element={<CreateEvent />} />
-        <Route path="/profile" element={<Profile />}></Route>
-        <Route path="/create-ticket" element={<CreateTicket />} />
-      </Routes>
+      {/* <StripeProvider> */}
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Navigate to="/homepage" />} />
+          <Route path="/registration" element={<Registration />} />
+          <Route path="/login" element={<Login />}></Route>
+          <Route path="/forgotpassword" element={<ForgotPassword />} />
+          <Route path="/homepage/*" element={<HomepageRouting />} />
+          <Route path="/create-event" element={<CreateEvent />} />
+          <Route path="/profile" element={<Profile />}></Route>
+          <Route path="/create-ticket" element={<CreateTicket />} />
+        </Routes>
+      {/* </StripeProvider> */}
     </BrowserRouter>
   );
 }
