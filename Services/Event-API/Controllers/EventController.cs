@@ -56,6 +56,15 @@ namespace Event_API.Controllers
             return Ok(events);
         }
 
+        [HttpPost("GetEventAttendees")]
+
+        public async Task<ActionResult<int>> GetEventAttendees(int eventId)
+        {
+            var limit = await _eventService.GetEventAttendees(eventId);
+            return Ok(limit);
+        }
+
+
         [HttpPost("GetEventInDetails")]
 
         public async Task<ActionResult<IEnumerable<CombinedProperties>>> GetEventInDetails( [FromQuery] int eventId)
@@ -74,7 +83,7 @@ namespace Event_API.Controllers
 
         [HttpPost("GetEventsInProfile")]
 
-        public async Task<ActionResult<IEnumerable<CombinedProperties>>> GetEventsInProfile(int UserId)
+        public async Task<ActionResult<IEnumerable<Event>>> GetEventsInProfile(int UserId)
         {
             var events = await _event_User_Service.GetEventsInProfile(UserId);
             return Ok(events);

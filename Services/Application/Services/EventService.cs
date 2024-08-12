@@ -14,6 +14,8 @@ namespace Application.Services
     {
         public Task<IEnumerable<EventService>> GetEventByName(string EventName);
         public Task<IEnumerable<GetEventsDTO>> GetEventsInHomepage();
+        public Task<int> GetEventAttendees(int eventId);
+
         public Task<IEnumerable<EventService>> UpdateEventByName(string EventName);
         public Task DeleteEvent(string EventName);
         public Task<int> CreateNewEvent(CreateEventDTO newEvent);
@@ -77,6 +79,12 @@ namespace Application.Services
             var eventDTOs = _mapper.Map<IEnumerable<GetEventsDTO>>(events);
             return eventDTOs;
         }
+        public async Task<int> GetEventAttendees(int eventId)
+        {
+            var limit = await _repository.GetEventAttendees(eventId);
+            return limit;
+        }
+
         public Task<bool> GetDate(DateTime date)
         {
             return _repository.GetDate(date);

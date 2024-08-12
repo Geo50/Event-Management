@@ -25,11 +25,13 @@ type eventData = {
   eventDescription: string;
   organiser_id: number;
   organiserName: string;
-};
+  eventAttendeesLimit: number
+}
 
 const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, eventId }) => {
-  const [events, setEvents] = useState<eventData | null>(null);
+  const [events, setEvents] = useState<eventData | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   const handleEventsGeneration = async () => {
@@ -85,7 +87,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         });
         return result.data;
       } catch (error: any) {
-        console.log(`Failed to get user details. Status code: ${error.response?.status}: ${error.message}`);
+        toast.error(`Failed to get user details. Status code: ${error.response?.status}: ${error.message}`);
       }
     }
   };
@@ -131,6 +133,14 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
     }
   }, [visibility, eventId]);
 
+  const handleViewTickets = () => {
+    navigate("/view-tickets", {
+      state: {
+        eventId: eventId, // Using events?.eventId instead of eventId
+      },
+    });
+  };
+  
   return (
     <div>
       {loading && (
@@ -166,17 +176,22 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Type: {events?.eventType}</ListGroup.Item>
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Place: {events?.eventPlace}</ListGroup.Item>
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Organizer: {events?.organiserName}</ListGroup.Item>
+                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Attendees: {events?.eventAttendeesLimit}</ListGroup.Item>
               </ListGroup>
               <Card.Body>
-                <Button variant="danger w-100">View Tickets</Button>
+                {events  && (
+                  <Button variant="danger w-100" onClick={handleViewTickets}>View Tickets</Button>
+                )}
+                
               </Card.Body>
-            </Card>
+            </Card> 
           </Modal.Body>
         </Modal>
       </Container>
     </div>
   );
 };
+
 
 export default EventDetailsModal;
 function InvalidOperationException(reason: any): PromiseLike<never> {

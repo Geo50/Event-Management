@@ -77,10 +77,7 @@ const NavbarComponent: React.FC = () => {
               <Offcanvas.Title id={`offcanvasNavbarLabel-expand-md`}>Organiser Events</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              <Nav className="justify-content-end gap-5 flex-grow-1 pe-3">
-                <Link to="/registration" className={classes.navbarLink}>
-                  Register
-                </Link>
+              <Nav className="justify-content-end gap-5 flex-grow-1 pe-3">               
                 <Link to="/homepage" className={classes.navbarLink}>
                   Homepage
                 </Link>

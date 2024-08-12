@@ -15,5 +15,7 @@ namespace Application.DTO.EventDTOs
         public required string EventImage { get; set; }
         public required string EventDescription { get; set; }
         public int Organiser_id { get; set; }
+        public int EventAttendeesLimit { get; set; }
+
     }
 }

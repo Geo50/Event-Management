@@ -8,13 +8,15 @@ import Login from "./Components/Login/Login";
 import Navbar from "./Components/Navbar/Navbar";
 import Profile from "./Components/Profile/Profile";
 import Registration from "./Components/Registration/Registration";
+import ViewTickets from "./Components/View Tickets/ViewTickets";
+import StripeProvider from "./Components/Stripe Payment/StripeProvider";
 
 export const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 
 function App() {
   return (
     <BrowserRouter>
-      {/* <StripeProvider> */}
+      <StripeProvider>
         <Navbar />
         <Routes>
           <Route path="/" element={<Navigate to="/homepage" />} />
@@ -25,8 +27,9 @@ function App() {
           <Route path="/create-event" element={<CreateEvent />} />
           <Route path="/profile" element={<Profile />}></Route>
           <Route path="/create-ticket" element={<CreateTicket />} />
+          <Route path="/view-tickets" element={<ViewTickets />} />
         </Routes>
-      {/* </StripeProvider> */}
+      </StripeProvider>
     </BrowserRouter>
   );
 }

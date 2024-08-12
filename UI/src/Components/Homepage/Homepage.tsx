@@ -17,6 +17,7 @@ type eventData = {
   eventType: string;
   organiserName: string;
   organiser_Id: number;
+  eventAttendeesLimit: number;
 };
 
 const Homepage: React.FC = () => {
@@ -48,7 +49,6 @@ const Homepage: React.FC = () => {
         );
         setEvents(eventsWithUsernames);
         setFeaturedEvents(eventsWithUsernames.slice(0, 3));
-        console.log(eventsWithUsernames);
       } catch (error: any) {
         toast.error(`Failed to create event. Status code: ${error.response?.status}: ${error.message}`);
       } finally {
@@ -113,8 +113,7 @@ const Homepage: React.FC = () => {
                         <Card.Img
                           variant="top"
                           src={event.eventImage}
-                          className={classes.imageElement}
-                          loading="lazy"
+                          className={classes.imageElement}                          
                           onClick={() => {
                             setModalShow(true);
                             setSelectedEventId(event.eventId);
@@ -122,25 +121,36 @@ const Homepage: React.FC = () => {
                         />
                         <Card.Body>
                           <Card.Title className={classes.title}>{event.eventName}</Card.Title>
-                          </Card.Body>
+                        </Card.Body>
 
-                          <ListGroup className="list-group-flush">
-                            <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>
-                              Organiser: {event.organiserName}
-                            </ListGroup.Item>
-                          </ListGroup>
+                        <ListGroup className="list-group-flush">
+                          <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
+                          <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
+                          <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
+                          <ListGroup.Item className={classes.eventInfo}>
+                            Organiser: {event.organiserName}
+                          </ListGroup.Item>
+                          <ListGroup.Item className={classes.eventInfo}>
+                            Attendees: {event.eventAttendeesLimit}
+                          </ListGroup.Item>
+                        </ListGroup>
                       </Card>
                     </div>
                   ))}
                 </div>
               </div>
-              <button className={`carousel-control-prev ${classes.navigationButton}` } type="button" onClick={handlePrevious}>
+              <button
+                className={`carousel-control-prev ${classes.navigationButton}`}
+                type="button"
+                onClick={handlePrevious}
+              >
                 <span className={`carousel-control-prev-icon ${classes.navigationIcon}`} aria-hidden="true"></span>
               </button>
-              <button className={`carousel-control-prev ${classes.navigationButton}` } type="button" onClick={handleNext} >
+              <button
+                className={`carousel-control-prev ${classes.navigationButton}`}
+                type="button"
+                onClick={handleNext}
+              >
                 <span className={`carousel-control-next-icon ${classes.navigationIcon}`} aria-hidden="true"></span>
               </button>
             </div>
@@ -165,13 +175,16 @@ const Homepage: React.FC = () => {
                     loading="lazy"
                   />
                   <Card.Body>
-                    <Card.Title className={classes.title}>Name: {event.eventName}</Card.Title>
+                    <Card.Title className={classes.title}> {event.eventName}</Card.Title>
                   </Card.Body>
                   <ListGroup className="list-group-flush">
                     <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Organiser: {event.organiserName}</ListGroup.Item>
+                    <ListGroup.Item className={classes.eventInfo}>
+                      Attendees: {event.eventAttendeesLimit}
+                    </ListGroup.Item>
                   </ListGroup>
                 </Card>
               </Col>
