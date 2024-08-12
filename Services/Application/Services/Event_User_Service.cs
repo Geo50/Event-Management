@@ -12,7 +12,7 @@ namespace Application.Services
     public interface IEvent_User_Service
     {
         public Task CreateNewBookmark(Bookmarks bookmark);
-        public Task<IEnumerable<CombinedProperties>> GetEventsInProfile(int UserId);
+        public Task<IEnumerable<Event>> GetEventsInProfile(int UserId);
 
     }
     public class Event_User_Service : IEvent_User_Service
@@ -27,7 +27,7 @@ namespace Application.Services
         {
             await _repository.CreateNewBookmark(bookmark);
         }
-        public async Task<IEnumerable<CombinedProperties>> GetEventsInProfile(int UserId)
+        public async Task<IEnumerable<Event>> GetEventsInProfile(int UserId)
         {
             var result = await _repository.GetEventsInProfile(UserId);
             return result;

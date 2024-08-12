@@ -29,7 +29,7 @@ type eventData = {
 }
 
 const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, eventId }) => {
-  const [events, setEvents] = useState<eventData | undefined>(undefined);
+  const [events, setEvents] = useState<eventData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();

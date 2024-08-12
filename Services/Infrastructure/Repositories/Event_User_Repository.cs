@@ -16,7 +16,7 @@ namespace Infrastructure.Repositories
     public interface IEvent_User_Repository
     {
         public Task CreateNewBookmark(Bookmarks bookmark);
-        public Task<IEnumerable<CombinedProperties>> GetEventsInProfile(int UserId);
+        public Task<IEnumerable<Event>> GetEventsInProfile(int UserId);
     }
 
     public class Event_User_Repository : IEvent_User_Repository
@@ -55,12 +55,12 @@ namespace Infrastructure.Repositories
 
         }
 
-        public async Task<IEnumerable<CombinedProperties>> GetEventsInProfile(int UserId)
+        public async Task<IEnumerable<Event>> GetEventsInProfile(int UserId)
         {
             var query = Event_User_Queries.GetEventsInProfile;
             using (var connection = Connection)
             {
-                var result = await connection.QueryAsync<CombinedProperties>(query, new
+                var result = await connection.QueryAsync<Event>(query, new
                 {
                     userid = UserId,
                 });

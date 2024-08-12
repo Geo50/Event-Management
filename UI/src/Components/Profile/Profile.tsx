@@ -1,22 +1,24 @@
-import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
-import classes from "./Profile.module.css";
-import { useCallback, useEffect, useRef, useState } from "react";
-import secureLocalStorage from "react-secure-storage";
-import { key } from "../../App";
-import { jwtDecode } from "jwt-decode";
-import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
+import { toast, ToastContainer } from "react-toastify";
+import { key } from "../../App";
 import EventDetailsModal from "../Homepage/EventDetailsModal";
+import classes from "./Profile.module.css";
 
 type eventData = {
   eventId: number;
-  eventName: string;
-  eventImage: string;
-  eventDate: string;
-  eventPlace: string;
-  eventType: string;
+  eventname: string;
+  eventimage: string;
+  eventdate: string;
+  eventplace: string;
+  eventtype: string;
+  organiser_Id: number;
+  eventAttendeesLimit: number;
 };
 
 const Profile: React.FC = () => {
@@ -67,7 +69,7 @@ const Profile: React.FC = () => {
           });
           setUsername(result.data.userName);
           setEmail(result.data.userEmail);
-          setUserValue(result.data.userName); // Set the userValue for the input field
+          setUserValue(result.data.userName); 
         } catch (error: any) {
           console.log(`Failed to get user details. Status code: ${error.response?.status}: ${error.message}`);
         }
@@ -105,12 +107,13 @@ const Profile: React.FC = () => {
       });
       const result: string = response.data;
       setUsername(result);
+      toast.success("Successfully updated your username!")
     } catch (error) {
       console.error("Error updating username:", error);
     }
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleButtonClick = () => {
     if (isEditing) {
       // Save mode
@@ -134,7 +137,7 @@ const Profile: React.FC = () => {
   const handleNavigation = (event: eventData) => {
     navigate("/view-tickets", {
       state: {
-        eventId: event.eventId
+        eventId: event.eventId,
       },
     });
   };
@@ -207,17 +210,28 @@ const Profile: React.FC = () => {
                               setSelectedEventId(event.eventId);
                             }}
                             variant="top"
-                            src={event.eventImage}
+                            src={event.eventimage}
                             className={classes.imageElement}
                           />
                           <Card.Body>
-                            <Card.Title className={classes.title}>Name: {event.eventName}</Card.Title>
+                            <Card.Title className={classes.title}>Name: {event.eventname}</Card.Title>
                           </Card.Body>
                           <ListGroup className="list-group-flush">
-                            <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
-                            <ListGroup.Item><Button variant="outline-danger" onClick={() => {handleNavigation(event)}}>View Event Tickets</Button></ListGroup.Item>
+                            <ListGroup.Item className={classes.eventInfo}>Date: {event.eventdate}</ListGroup.Item>
+                            <ListGroup.Item className={classes.eventInfo}>Type: {event.eventtype}</ListGroup.Item>
+                            <ListGroup.Item className={classes.eventInfo}>Place: {event.eventplace}</ListGroup.Item>
+                            <ListGroup.Item className={classes.eventInfo}>Attendees: {event.eventAttendeesLimit}</ListGroup.Item>
+                            <ListGroup.Item className={classes.eventInfo}>Organiser: {event.organiser_Id}</ListGroup.Item>
+                            <ListGroup.Item>
+                              <Button
+                                variant="outline-danger"
+                                onClick={() => {
+                                  handleNavigation(event);
+                                }}
+                              >
+                                View Event Tickets
+                              </Button>
+                            </ListGroup.Item>
                           </ListGroup>
                         </Card>
                       </Col>
