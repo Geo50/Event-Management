@@ -11,6 +11,7 @@ type TicketValues = {
   ticketPrice: number;
   category: string;
   benefits: string;
+  ticket_Limit: number;
 };
 
 const CreateTicket: React.FC = () => {
@@ -20,6 +21,7 @@ const CreateTicket: React.FC = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [ticketName, setTicketName] = useState<string>("");
   const [ticketPrice, setTicketPrice] = useState<string>("");
+  const [ticketLimit, setTicketLimit] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [benefits, setBenefits] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
@@ -53,6 +55,10 @@ const CreateTicket: React.FC = () => {
       toast.error("Please fill the ticket price field.");
       valid = false;
     }
+    if (ticketLimit === "") {
+      toast.error("Please fill the ticket limit field.");
+      valid = false;
+    }
 
     if (selectedCategory === "") {
       // Check if a category is selected
@@ -69,14 +75,16 @@ const CreateTicket: React.FC = () => {
       await axios.post("https://localhost:7083/api/Event/CreateNewTicket", {
         eventId: eventId,
         ticketName: ticketName,
-        ticketPrice: parseFloat(ticketPrice),
+        ticketPrice: parseInt(ticketPrice),
         category: selectedCategory,
         benefits: benefits,
+        ticket_limit: parseInt(ticketLimit)
       });
       toast.success("Ticket created successfully!");
       fetchTickets();
       setTicketName("");
       setTicketPrice("");
+      setTicketLimit("");
       setSelectedCategory("");
       setBenefits("");
       setVisible(false);
@@ -103,6 +111,8 @@ const CreateTicket: React.FC = () => {
     setIsEditing(false);
     setTicketName("");
     setTicketPrice("");
+    setTicketLimit("");
+    setBenefits("");
   };
 
   return (
@@ -154,6 +164,14 @@ const CreateTicket: React.FC = () => {
                   onChange={(event) =>  setTicketPrice(event.target.value)}
                 />
               </Col>
+              <Col>
+                <input
+                  type="number"
+                  placeholder="How many tickets can you sell of this ticket?"
+                  value={ticketLimit}
+                  onChange={(event) =>  setTicketLimit(event.target.value)}
+                />
+              </Col>
               <Row>
                 <Col>
                   {" "}
@@ -190,6 +208,7 @@ const CreateTicket: React.FC = () => {
                     <th>Ticket Category</th>
                     <th>Ticket Price</th>
                     <th>Ticket Benefits</th>
+                    <th>Ticket Limit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -198,8 +217,9 @@ const CreateTicket: React.FC = () => {
                       <td>{ticket.ticketId}</td>
                       <td>{ticket.ticketName}</td>
                       <td>{ticket.category}</td>
-                      <td>{ticket.ticketPrice}</td>
+                      <td>${ticket.ticketPrice}</td>
                       <td>{ticket.benefits}</td>
+                      <td>{ticket.ticket_Limit}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -139,7 +139,8 @@ namespace Infrastructure.Repositories
                     ticketname = tickets.TicketName,
                     ticketprice = tickets.TicketPrice,
                     category = tickets.Category,
-                    benefits = tickets.Benefits
+                    benefits = tickets.Benefits,
+                    ticket_limit = tickets.Ticket_Limit
                 });
             }
         }
