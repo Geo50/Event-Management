@@ -17,6 +17,7 @@ type eventData = {
   eventdate: string;
   eventplace: string;
   eventtype: string;
+  organiserName: string;
   organiser_Id: number;
   eventAttendeesLimit: number;
 };
@@ -69,7 +70,7 @@ const Profile: React.FC = () => {
           });
           setUsername(result.data.userName);
           setEmail(result.data.userEmail);
-          setUserValue(result.data.userName); 
+          setUserValue(result.data.userName);
         } catch (error: any) {
           console.log(`Failed to get user details. Status code: ${error.response?.status}: ${error.message}`);
         }
@@ -84,7 +85,18 @@ const Profile: React.FC = () => {
         const result = await axios.post(`https://localhost:7083/api/Event/GetEventsInProfile?UserId=${userId}`, {
           UserId: userId,
         });
-        setEvents(result.data);
+        const eventsWithUsernames = await Promise.all(
+          result.data.map(async (event: eventData) => {
+            const organiserResponse = await axios.get(
+              `https://localhost:7083/api/Event/GetUsernameFromId?userid=${event.organiser_Id}`
+            );
+            return {
+              ...event,
+              organiserName: organiserResponse.data,
+            };
+          })
+        );
+        setEvents(eventsWithUsernames);
       } catch (error: any) {
         toast.error(`Failed to create event. Status code: ${error.response?.status}: ${error.message}`);
       } finally {
@@ -107,7 +119,7 @@ const Profile: React.FC = () => {
       });
       const result: string = response.data;
       setUsername(result);
-      toast.success("Successfully updated your username!")
+      toast.success("Successfully updated your username!");
     } catch (error) {
       console.error("Error updating username:", error);
     }
@@ -220,8 +232,12 @@ const Profile: React.FC = () => {
                             <ListGroup.Item className={classes.eventInfo}>Date: {event.eventdate}</ListGroup.Item>
                             <ListGroup.Item className={classes.eventInfo}>Type: {event.eventtype}</ListGroup.Item>
                             <ListGroup.Item className={classes.eventInfo}>Place: {event.eventplace}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>Attendees: {event.eventAttendeesLimit}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>Organiser: {event.organiser_Id}</ListGroup.Item>
+                            <ListGroup.Item className={classes.eventInfo}>
+                              Attendees: {event.eventAttendeesLimit}
+                            </ListGroup.Item>
+                            <ListGroup.Item className={classes.eventInfo}>
+                              Organiser: {event.organiserName}
+                            </ListGroup.Item>
                             <ListGroup.Item>
                               <Button
                                 variant="outline-danger"
