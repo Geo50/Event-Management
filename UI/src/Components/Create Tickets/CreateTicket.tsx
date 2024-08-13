@@ -16,7 +16,7 @@ type TicketValues = {
 
 const CreateTicket: React.FC = () => {
   const location = useLocation();
-  const { eventId } = location.state || {};
+  const { eventid } = location.state || {};
 
   const [visible, setVisible] = useState<boolean>(false);
   const [ticketName, setTicketName] = useState<string>("");
@@ -31,14 +31,14 @@ const CreateTicket: React.FC = () => {
   const [attendeesLimit, setAttendeesLimit] = useState<number | null>(null); // Change to number or null
 
   useEffect(() => {
-    if (eventId) {
+    if (eventid) {
       fetchTickets();
     }
-  }, [eventId]);
+  }, [eventid]);
 
   const fetchTickets = async () => {
     try {
-      const response = await axios.get(`https://localhost:7083/api/Event/GetEventTickets?eventId=${eventId}`);
+      const response = await axios.get(`https://localhost:7083/api/Event/GetEventTickets?eventId=${eventid}`);
       setTicketsData(response.data);
       await getEventAttendees()
     } catch (error: any) {
@@ -47,8 +47,8 @@ const CreateTicket: React.FC = () => {
   };
 
   const getEventAttendees = async () => {
-    await axios.post(`https://localhost:7083/api/Event/GetEventAttendees?eventId=${eventId}`, {
-      eventId: eventId
+    await axios.post(`https://localhost:7083/api/Event/GetEventAttendees?eventId=${eventid}`, {
+      eventId: eventid
     })
     .then((response) => {
       setAttendeesLimit(Number(response.data)); // Convert to number
@@ -118,7 +118,7 @@ const CreateTicket: React.FC = () => {
     try {
 
       await axios.post("https://localhost:7083/api/Event/CreateNewTicket", {
-        eventId: eventId,
+        eventId: eventid,
         ticketName: ticketName,
         ticketPrice: parseInt(ticketPrice),
         category: selectedCategory,

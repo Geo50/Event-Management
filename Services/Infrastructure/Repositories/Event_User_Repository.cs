@@ -82,24 +82,24 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<Event>> GetEventsInProfile(int UserId)
-        {
-            var query = Event_User_Queries.GetEventsInProfile;
-            using (var connection = Connection)
-            {
-                var result = await connection.QueryAsync<Event>(query, new
-                {
-                    userid = UserId,
-                });
-                return result;
-            }
-        }
         public async Task<IEnumerable<Transaction>> GetTransaction(int UserId)
         {
             var query = Event_User_Queries.GetTransaction;
             using (var connection = Connection)
             {
                 var result = await connection.QueryAsync<Transaction>(query, new
+                {
+                    userid = UserId,
+                });
+                return result;
+            }
+        }
+        public async Task<IEnumerable<Event>> GetEventsInProfile(int UserId)
+        {
+            var query = Event_User_Queries.GetEventsInProfile;
+            using (var connection = Connection)
+            {
+                var result = await connection.QueryAsync<Event>(query, new
                 {
                     userid = UserId,
                 });
