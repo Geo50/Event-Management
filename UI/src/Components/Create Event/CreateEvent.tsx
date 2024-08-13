@@ -89,19 +89,19 @@ const CreateEvent: React.FC = () => {
   };
 
   const handleUpload = async (file: File) => {
-    const fileRef = ref(storage, `event-images/${file.name}`);
+    const fileRef = ref(storage, event-images/${file.name});
     setLoading(true);
     try {
       await uploadBytes(fileRef, file);
       const downloadURL = await getDownloadURL(fileRef);
       setImageURL(downloadURL);
     } catch (uploadError: any) {
-      toast.error(`Upload failed: ${uploadError.message}`);
+      toast.error(Upload failed: ${uploadError.message});
     } finally {
       setLoading(false);
     }
   };
-
+  
   useEffect(() => {
     document.body.style.backgroundImage = `url(${WhiteTable})`;
     document.body.style.backgroundSize = "cover";

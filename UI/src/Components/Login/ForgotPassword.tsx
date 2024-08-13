@@ -1,4 +1,4 @@
-import { Button, Container, Row } from "react-bootstrap";
+import { Button, Container, Row, ToastContainer } from "react-bootstrap";
 import classes from "./Login.module.css";
 import React, { useEffect, useRef, useState } from "react";
 import NightCity from "../../assets/NightCity.jpg";
@@ -6,17 +6,19 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ModalComponent from "../Modal/Modal";
 import { HashLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 type resetValuesTemplate = {
-  UserName: string;
-  UserPassword: string;
-  PassVerificationAnswer: string;
+  userName: string;
+  userPassword: string;
+  passVerificationAnswer: string;
 };
 
 const ForgotPassword: React.FC = () => {
   const usernameRef = useRef<HTMLInputElement>(null);
   const verificationRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
@@ -38,15 +40,6 @@ const ForgotPassword: React.FC = () => {
     };
   }, []);
 
-  const UserName = usernameRef.current?.value || "";
-  const UserPassword = passwordRef.current?.value || "";
-  const PassVerificationAnswer = passwordRef.current?.value || "";
-
-  const resetValues: resetValuesTemplate = {
-    UserName,
-    UserPassword,
-    PassVerificationAnswer,
-  };
   const navigate = useNavigate();
 
   const handleCloseDetails = () => {
@@ -57,17 +50,17 @@ const ForgotPassword: React.FC = () => {
     setLoading(true);
     axios
       .post("https://localhost:7273/api/User/UpdatingPassword", {
-        UserName: resetValues.UserName,
-        UserPassword: resetValues.UserPassword,
-        PassVerificationAnswer: resetValues.PassVerificationAnswer
+        UserName: resetValues.userName,
+        UserPassword: resetValues.userPassword,
+        PassVerificationAnswer: resetValues.passVerificationAnswer
       })
       .then((response) => {
         if (response.status === 200) {
-          navigate("/homescreen");
+          navigate("/homepage");
+          toast.success("You have successfully reset your password. Welcome to your account.")
         }
       })
       .catch((error) => {
-        debugger;
         setErrorDisplay(error.message);
         setModalType("error");
         setModalShow(true);
@@ -79,14 +72,34 @@ const ForgotPassword: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+
+    const userName = usernameRef.current?.value || "";
+    const userPassword = passwordRef.current?.value || "";
+    const confirmPassword = confirmPasswordRef.current?.value || "";
+    const passVerificationAnswer = verificationRef.current?.value || "";
+
+    if (userPassword !== confirmPassword) {
+      setErrorDisplay("Passwords do not match.");
+      setModalType("error");
+      setModalShow(true);
+      return;
+    }
+
+    const resetValues: resetValuesTemplate = {
+      userName,
+      userPassword,
+      passVerificationAnswer
+    };
+
     handleDatabaseInjection(resetValues);
   };
 
   return (
     <Container fluid className={classes.componentContainer_centered}>
+      <ToastContainer />
       {loading && (
         <div className={classes.loader}>
-          <HashLoader color="#a80e0e" size={100} speedMultiplier={1.3} />{" "}
+          <HashLoader color="#a80e0e" size={100} speedMultiplier={1.3} />
         </div>
       )}
       {modalShow && (
@@ -127,6 +140,7 @@ const ForgotPassword: React.FC = () => {
                 type="password"
                 className={classes.inputElements}
                 placeholder="Re-enter your new password"
+                ref={confirmPasswordRef}
               />
             </div>
           </Row>

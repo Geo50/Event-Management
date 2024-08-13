@@ -11,7 +11,7 @@ import EventDetailsModal from "../Homepage/EventDetailsModal";
 import classes from "./Profile.module.css";
 
 type eventData = {
-  eventId: number;
+  eventid: number;
   eventname: string;
   eventimage: string;
   eventdate: string;
@@ -29,6 +29,8 @@ const Profile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [userValue, setUserValue] = useState<string>("");
   const usernameRef = useRef<HTMLInputElement>(null);
+  const createTicketsButtonRef = useRef<HTMLButtonElement>(null);
+  const viewTicketsButtonRef = useRef<HTMLButtonElement>(null);
   const [events, setEvents] = useState<eventData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
@@ -60,6 +62,8 @@ const Profile: React.FC = () => {
     return null;
   };
 
+  const userId = decodeToken();
+
   useEffect(() => {
     const fetchUserDetails = async () => {
       const userId = decodeToken();
@@ -79,14 +83,19 @@ const Profile: React.FC = () => {
     const token: any = getToken();
     const decodedToken: any = jwtDecode(token);
     const userId: number = parseInt(decodedToken?.unique_name, 10);
+
     const handleEventsGeneration = async () => {
       setLoading(true);
       try {
         const result = await axios.post(`https://localhost:7083/api/Event/GetEventsInProfile?UserId=${userId}`, {
           UserId: userId,
         });
+        console.log("Result data" + result.data[0])
+
         const eventsWithUsernames = await Promise.all(
           result.data.map(async (event: eventData) => {
+            console.log("EventId in map " +event)
+            setSelectedEventId(event.eventid)
             const organiserResponse = await axios.get(
               `https://localhost:7083/api/Event/GetUsernameFromId?userid=${event.organiser_Id}`
             );
@@ -94,8 +103,11 @@ const Profile: React.FC = () => {
               ...event,
               organiserName: organiserResponse.data,
             };
+            
           })
+          
         );
+        console.log(`This is the selected event id outside map ${selectedEventId}`)
         setEvents(eventsWithUsernames);
       } catch (error: any) {
         toast.error(`Failed to create event. Status code: ${error.response?.status}: ${error.message}`);
@@ -106,6 +118,12 @@ const Profile: React.FC = () => {
     fetchUserDetails();
     handleEventsGeneration();
   }, []);
+
+  useEffect(() => {
+    events.forEach((event) => {
+      userOrganizerDistinguisher(event);
+    });
+  }, [events]);
 
   const handleEdit = async () => {
     const token: any = getToken();
@@ -146,12 +164,36 @@ const Profile: React.FC = () => {
     setModalShow(false);
   }, []);
 
-  const handleNavigation = (event: eventData) => {
+  const handleViewTicketsNavigation = (event: eventData) => {
+    console.log(`From navigation ${event.eventid}`);
     navigate("/view-tickets", {
       state: {
-        eventId: event.eventId,
+        eventid: event.eventid,
       },
     });
+  };
+  const handleCreateTicketNavigation = (event: eventData) => {
+    navigate("/create-ticket", {
+      state: {
+        eventid: event.eventid,
+      },
+    });
+  };
+
+  const handleImageClick = (eventid: number) => {
+    setModalShow(true);
+    setSelectedEventId(eventid);
+    console.log(selectedEventId); // Ensure eventId is correctly passed
+    console.log(eventid);
+  };
+  const userOrganizerDistinguisher = (events: eventData) => {
+    const organizer = events.organiser_Id;
+    const user = decodeToken();
+    if (organizer != user) {
+      createTicketsButtonRef.current?.classList.add(classes.hiddenElement);
+    } else {
+      viewTicketsButtonRef.current?.classList.add(classes.hiddenElement);
+    }
   };
 
   return (
@@ -213,45 +255,58 @@ const Profile: React.FC = () => {
                     <div className={classes.headerContainer}></div>
                   </Row>
                   <Row>
-                    {events.map((event) => (
-                      <Col key={event.eventId} xs={12} sm={6} lg={4}>
-                        <Card className={classes.eventCard}>
-                          <Card.Img
-                            onClick={() => {
-                              setModalShow(true);
-                              setSelectedEventId(event.eventId);
-                            }}
-                            variant="top"
-                            src={event.eventimage}
-                            className={classes.imageElement}
-                          />
-                          <Card.Body>
-                            <Card.Title className={classes.title}>Name: {event.eventname}</Card.Title>
-                          </Card.Body>
-                          <ListGroup className="list-group-flush">
-                            <ListGroup.Item className={classes.eventInfo}>Date: {event.eventdate}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>Type: {event.eventtype}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>Place: {event.eventplace}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>
-                              Attendees: {event.eventAttendeesLimit}
-                            </ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>
-                              Organiser: {event.organiserName}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                              <Button
-                                variant="outline-danger"
-                                onClick={() => {
-                                  handleNavigation(event);
-                                }}
-                              >
-                                View Event Tickets
-                              </Button>
-                            </ListGroup.Item>
-                          </ListGroup>
-                        </Card>
-                      </Col>
-                    ))}
+                    {events.map((event) => {
+                      const isUserOrganizer = event.organiser_Id === userId;
+
+                      return (
+                        <Col key={event.eventid} xs={12} sm={6} lg={4}>
+                          <Card className={classes.eventCard}>
+                            <Card.Img
+                              onClick={() => handleImageClick(event.eventid)} // Use the handler function
+                              variant="top"
+                              src={event.eventimage}
+                              className={classes.imageElement}
+                            />
+                            <Card.Body>
+                              <Card.Title className={classes.title}>Name: {event.eventname}</Card.Title>
+                            </Card.Body>
+                            <ListGroup className="list-group-flush">
+                              <ListGroup.Item className={classes.eventInfo}>Date: {event.eventdate}</ListGroup.Item>
+                              <ListGroup.Item className={classes.eventInfo}>Type: {event.eventtype}</ListGroup.Item>
+                              <ListGroup.Item className={classes.eventInfo}>Place: {event.eventplace}</ListGroup.Item>
+                              <ListGroup.Item className={classes.eventInfo}>
+                                Attendees: {event.eventAttendeesLimit}
+                              </ListGroup.Item>
+                              <ListGroup.Item className={classes.eventInfo}>
+                                Organiser: {event.organiserName}
+                              </ListGroup.Item>
+                              <ListGroup.Item>
+                                {isUserOrganizer ? (
+                                  <Button
+                                    variant="outline-danger"
+                                    onClick={() => {
+                                      handleCreateTicketNavigation(event);
+                                    }}
+                                  >
+                                    Create Event Ticket
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    variant="outline-danger"
+                                    onClick={() => {
+                                      handleViewTicketsNavigation(event);
+                                      console.log(`After render: ${event.eventid}`)
+                                    }}
+                                  >
+                                    View Event Tickets
+                                  </Button>
+                                )}
+                              </ListGroup.Item>
+                            </ListGroup>
+                          </Card>
+                        </Col>
+                      );
+                    })}
                   </Row>
                   <EventDetailsModal
                     visibility={modalShow}

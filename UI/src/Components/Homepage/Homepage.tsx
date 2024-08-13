@@ -45,8 +45,10 @@ const Homepage: React.FC = () => {
               ...event,
               organiserName: organiserResponse.data,
             };
+            
           })
         );
+        
         setEvents(eventsWithUsernames);
         setFeaturedEvents(eventsWithUsernames.slice(0, 3));
       } catch (error: any) {
@@ -60,8 +62,6 @@ const Homepage: React.FC = () => {
 
     return () => {
       document.body.style.backgroundImage = "";
-      document.body.style.backgroundSize = "";
-      document.body.style.backgroundRepeat = "";
       document.body.style.height = "";
     };
   }, []);

@@ -1,13 +1,13 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
-import { Button, Card, Container, ListGroup, Modal, ToastBody, ToastContainer } from "react-bootstrap";
+import { Button, Card, Container, ListGroup, Modal, ToastContainer } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { key } from "../../App";
 import classes from "./EventDetailsModal.module.css";
-import { Navigate, useNavigate } from "react-router-dom";
 
 type inputProps = {
   visibility: boolean;
@@ -22,10 +22,10 @@ type eventData = {
   eventDate: string;
   eventPlace: string;
   eventType: string;
-  eventDescription: string;
   organiser_id: number;
   organiserName: string;
   eventAttendeesLimit: number
+  eventDescription: string;
 }
 
 const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, eventId }) => {
@@ -48,6 +48,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         ...eventData,
         organiserName: organiserResponse.data,
       });
+      console.log(eventId)
     } catch (error: any) {
       toast.error(`Failed to generate events. Status code: ${error.response?.status}: ${error.message}`);
     } finally {
