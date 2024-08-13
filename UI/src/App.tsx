@@ -10,6 +10,7 @@ import Profile from "./Components/Profile/Profile";
 import Registration from "./Components/Registration/Registration";
 import ViewTickets from "./Components/View Tickets/ViewTickets";
 import StripeProvider from "./Components/Stripe Payment/StripeProvider";
+import PaymentSuccess from "./Components/PaymentSuccess";
 
 export const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/profile" element={<Profile />}></Route>
           <Route path="/create-ticket" element={<CreateTicket />} />
           <Route path="/view-tickets" element={<ViewTickets />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
         </Routes>
       </StripeProvider>
     </BrowserRouter>

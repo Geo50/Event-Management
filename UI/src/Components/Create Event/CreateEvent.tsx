@@ -67,10 +67,7 @@ const CreateEvent: React.FC = () => {
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
 
-        if (decodedToken.exp < currentTime) {
-          toast.error("Your session has expired. Please log in again.");
-          return null;
-        }
+        
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");

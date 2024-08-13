@@ -48,10 +48,7 @@ const Homepage: React.FC = () => {
         console.log("isAdmin value:", isAdmin);
         const currentTime = Math.floor(Date.now() / 1000);
 
-        if (decodedToken.exp < currentTime) {
-          navigate("/homepage");
-          return null;
-        }
+        
         setIsAdmin(isAdmin);
       } catch (error) {
         console.error("Error decoding token:", error); // Add this line

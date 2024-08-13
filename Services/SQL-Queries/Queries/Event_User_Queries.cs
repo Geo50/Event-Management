@@ -19,5 +19,11 @@ namespace SQL_Queries.Queries
         public static string CreateTransaction => "INSERT INTO public.transaction ( ticketid, eventid, userid) VALUES ( @ticketid, @eventid, @userid)";
 
         public static string GetTransaction => "SELECT ticketid, eventid, userid FROM public.transaction WHERE userid = @userid";
+
+        public static string GetTicketsBought => @"SELECT t.ticketid, t.ticketname, t.category, t.benefits, e.eventname, e.eventdate, e.eventplace 
+                                                   FROM public.tickets t 
+                                                   JOIN public.transaction tr ON t.ticketid = tr.ticketid 
+                                                   JOIN public.event e ON tr.eventid = e.eventid 
+                                                   WHERE tr.userid = @userid;";
     }
 }
