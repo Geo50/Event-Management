@@ -19,7 +19,7 @@ namespace Application.JwtToken
             _audience = audience;
         }
 
-        public string GenerateToken(string userId)
+        public string GenerateToken(string userId, bool isadmin)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -28,7 +28,9 @@ namespace Application.JwtToken
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, userId)
+                    new Claim(ClaimTypes.Name, userId),
+                   new Claim(ClaimTypes.Role, isadmin ? "Admin" : "User")// Add isAdmin claim
+
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(60),
                 Issuer = _issuer,

@@ -28,7 +28,7 @@ namespace User_API.Controllers
             await _userService.CreateNewUser(newUser);
 
             var user = await _userService.GetUserByUName(newUser.UserName);           
-            var token = _tokenService.GenerateToken(user.UserId.ToString());
+            var token = _tokenService.GenerateToken(user.UserId.ToString(), user.isadmin);
 
             return Ok(new
             {
@@ -83,7 +83,7 @@ namespace User_API.Controllers
             {
                 return Unauthorized("Invalid username or password.");
             }
-            var token = _tokenService.GenerateToken(user.UserId.ToString());
+            var token = _tokenService.GenerateToken(user.UserId.ToString(), user.isadmin);
 
             return Ok(new
             {

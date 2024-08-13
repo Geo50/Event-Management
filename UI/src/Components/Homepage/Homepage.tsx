@@ -1,12 +1,15 @@
 import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { Card, Col, Container, ListGroup, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
 import { toast, ToastContainer } from "react-toastify";
 import RedBlacK from "../../assets/Night-Sky.jpg";
 import EventDetailsModal from "./EventDetailsModal";
 import classes from "./Homepage.module.css";
+import secureLocalStorage from "react-secure-storage";
+import { jwtDecode } from "jwt-decode";
+import { key } from "../../App";
 
 type eventData = {
   eventId: number;
@@ -27,6 +30,36 @@ const Homepage: React.FC = () => {
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [isAdmin, setIsAdmin] = useState<string>("");
+  const navigate = useNavigate();
+
+  const getToken = () => {
+    const token = secureLocalStorage.getItem(key);
+    return typeof token === "string" ? token : null;
+  };
+
+  const decodeToken = () => {
+    const token = getToken();
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        const isAdmin: string = decodedToken?.role;
+        console.log("Decoded token:", decodedToken); // Add this line
+        console.log("isAdmin value:", isAdmin);
+        const currentTime = Math.floor(Date.now() / 1000);
+
+        if (decodedToken.exp < currentTime) {
+          navigate("/homepage");
+          return null;
+        }
+        setIsAdmin(isAdmin);
+      } catch (error) {
+        console.error("Error decoding token:", error); // Add this line
+        toast.error("Failed to decode token.");
+      }
+    }
+    return null;
+  };
 
   useEffect(() => {
     document.body.style.backgroundImage = `url(${RedBlacK})`;
@@ -45,10 +78,9 @@ const Homepage: React.FC = () => {
               ...event,
               organiserName: organiserResponse.data,
             };
-            
           })
         );
-        
+
         setEvents(eventsWithUsernames);
         setFeaturedEvents(eventsWithUsernames.slice(0, 3));
       } catch (error: any) {
@@ -59,6 +91,7 @@ const Homepage: React.FC = () => {
     };
 
     handleEventsGeneration();
+    decodeToken();
 
     return () => {
       document.body.style.backgroundImage = "";
@@ -114,7 +147,7 @@ const Homepage: React.FC = () => {
                         <Card.Img
                           variant="top"
                           src={event.eventImage}
-                          className={classes.imageElement}                          
+                          className={classes.imageElement}
                           onClick={() => {
                             setModalShow(true);
                             setSelectedEventId(event.eventId);
@@ -194,12 +227,13 @@ const Homepage: React.FC = () => {
           <div className={classes.detailsParent}>
             <EventDetailsModal visibility={modalShow} handleClose={handleCloseDetails} eventId={selectedEventId || 0} />
           </div>
-
-          <div className={classes.createEventButton}>
-            <Link to="/create-event">
-              <i className={`bi bi-plus ${classes.plusIcon}`}></i>
-            </Link>
-          </div>
+          {isAdmin === "Admin" ? (
+            <div className={classes.createEventButton}>
+              <Link to="/create-event">
+                <i className={`bi bi-plus ${classes.plusIcon}`}></i>
+              </Link>
+            </div>
+          ) : null}
         </Container>
       )}
     </div>

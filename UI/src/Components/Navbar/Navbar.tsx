@@ -1,5 +1,5 @@
 import { Navbar, Container, Offcanvas, Nav, Button, ToastBody } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import classes from "./Navbar.module.css";
 import secureLocalStorage from "react-secure-storage";
 import { key } from "../../App"; // Ensure this is correctly defined in your App file
@@ -10,7 +10,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 const NavbarComponent: React.FC = () => {
   const [username, setUsername] = useState<string>("");
-
+  const navigate = useNavigate();
   const getToken = () => {
     const token = secureLocalStorage.getItem(key);
     return typeof token === "string" ? token : null;
@@ -18,7 +18,7 @@ const NavbarComponent: React.FC = () => {
 
   const destroyToken = () => {
     secureLocalStorage.clear();
-    toast.error("You have just logged out. Refresh the page for the effect to happen.");
+    navigate("/homepage")
   };
 
   const decodeToken = () => {
@@ -31,6 +31,7 @@ const NavbarComponent: React.FC = () => {
 
         if (decodedToken.exp < currentTime) {
           toast.error("Your session has expired. Please log in again.");
+          navigate("/homepage")
           return null;
         }
         return userId;
