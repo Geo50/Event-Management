@@ -22,6 +22,16 @@ type eventData = {
   eventAttendeesLimit: number;
 };
 
+type boughtTicketsType = {
+  eventName: string;
+  eventDate: string;
+  eventPlace: string;
+  ticketId: number;
+  ticketName: string;
+  category: string;
+  benefits: string;
+};
+
 const Profile: React.FC = () => {
   const [disabled, setDisabled] = useState<boolean>(true);
   const [username, setUsername] = useState<string>("");
@@ -35,6 +45,7 @@ const Profile: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
+  const [boughtTicketsData, setBoughtTicketsData] = useState<boughtTicketsType[]>([]);
 
   const getToken = () => {
     const token = secureLocalStorage.getItem(key);
@@ -48,7 +59,7 @@ const Profile: React.FC = () => {
         const decodedToken: any = jwtDecode(token);
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
-       
+
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
@@ -59,6 +70,17 @@ const Profile: React.FC = () => {
   };
 
   const userId = decodeToken();
+
+  const handleBoughtTickets = async () => {
+    const response = await axios
+      .get(`https://localhost:7083/api/Event/GetBoughtTickets?UserId=${userId}`)
+      .then((response) => {
+        setBoughtTicketsData(response.data);
+      })
+      .catch((error: any) => {
+        toast.error("Error while fetching tickets data");
+      });
+  };
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -86,12 +108,12 @@ const Profile: React.FC = () => {
         const result = await axios.post(`https://localhost:7083/api/Event/GetEventsInProfile?UserId=${userId}`, {
           UserId: userId,
         });
-        console.log("Result data" + result.data[0])
+        console.log("Result data" + result.data[0]);
 
         const eventsWithUsernames = await Promise.all(
           result.data.map(async (event: eventData) => {
-            console.log("EventId in map " +event)
-            setSelectedEventId(event.eventid)
+            console.log("EventId in map " + event);
+            setSelectedEventId(event.eventid);
             const organiserResponse = await axios.get(
               `https://localhost:7083/api/Event/GetUsernameFromId?userid=${event.organiser_Id}`
             );
@@ -99,11 +121,9 @@ const Profile: React.FC = () => {
               ...event,
               organiserName: organiserResponse.data,
             };
-            
           })
-          
         );
-        console.log(`This is the selected event id outside map ${selectedEventId}`)
+        console.log(`This is the selected event id outside map ${selectedEventId}`);
         setEvents(eventsWithUsernames);
       } catch (error: any) {
         toast.error(`Failed to create event. Status code: ${error.response?.status}: ${error.message}`);
@@ -113,6 +133,7 @@ const Profile: React.FC = () => {
     };
     fetchUserDetails();
     handleEventsGeneration();
+    handleBoughtTickets();
   }, []);
 
   useEffect(() => {
@@ -291,7 +312,7 @@ const Profile: React.FC = () => {
                                     variant="outline-danger"
                                     onClick={() => {
                                       handleViewTicketsNavigation(event);
-                                      console.log(`After render: ${event.eventid}`)
+                                      console.log(`After render: ${event.eventid}`);
                                     }}
                                   >
                                     View Event Tickets
@@ -316,6 +337,40 @@ const Profile: React.FC = () => {
         ) : (
           <h1>Oops, you haven't bookmarked any events yet...</h1>
         )}
+      </Container>
+      <Container fluid>
+        <div>
+          <h1>And here are your bought tickets!</h1>
+          {boughtTicketsData.length > 0 ? (
+            <table className={classes.ticketTable}>
+              <thead>
+                <tr>
+                  <th>Ticket Id</th>
+                  <th>Ticket Name</th>
+                  <th>Ticket Category</th>
+                  <th>Ticket Benefits</th>
+                  <th>Event Name</th>
+                  <th>Event Date</th>
+                  <th>Event Place</th>
+                </tr>
+              </thead>
+              <tbody>
+                {boughtTicketsData.map((ticket) => (
+                  <tr key={ticket.ticketId}>
+                    <td>{ticket.ticketId}</td>
+                    <td>{ticket.ticketName}</td>
+                    <td>{ticket.category}</td>
+                    <td>{ticket.benefits}</td>
+                    <td>{ticket.eventName}</td>
+                    <td>{ticket.eventDate}</td>
+                    <td>{ticket.eventPlace}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : 
+          <h1>It seems like you haven't bought any ticket yet..</h1>}
+        </div>
       </Container>
     </div>
   );

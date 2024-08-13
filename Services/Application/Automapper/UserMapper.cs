@@ -30,6 +30,8 @@ namespace Application
             CreateMap<Tickets, ViewTicketDTO>().ReverseMap();
 
             CreateMap<Transaction, TransactionDTO>().ReverseMap();
+
+            CreateMap<CombinedProperties, ViewBoughtTicketsDTO>().ReverseMap();
         }
     }
 }

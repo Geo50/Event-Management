@@ -120,5 +120,14 @@ namespace Event_API.Controllers
             return Ok(transaction);
         }
 
+        [HttpGet("GetBoughtTickets")]
+
+        public async Task<ActionResult<IEnumerable<ViewBoughtTicketsDTO>>> GetBoughtTickets(int UserId)
+        {
+            var tickets = await _event_User_Service.GetBoughtTickets(UserId);
+            return Ok(tickets);
+        }
+
+
     }
 }

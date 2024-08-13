@@ -19,6 +19,7 @@ namespace Infrastructure.Repositories
         public Task<IEnumerable<Event>> GetEventsInProfile(int UserId);
         public Task<IEnumerable<Transaction>> GetTransaction(int UserId);
         public Task CreateTransaction(Transaction transaction);
+        public Task<IEnumerable<CombinedProperties>> GetBoughtTickets(int UserId);
 
     }
 
@@ -31,6 +32,19 @@ namespace Infrastructure.Repositories
         }
 
         private IDbConnection Connection => new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+        public async Task<IEnumerable<CombinedProperties>> GetBoughtTickets(int UserId)
+        {
+            var query = Event_User_Queries.GetBoughtTickets;
+            using (var connection = Connection)
+            {
+                var result = await connection.QueryAsync<CombinedProperties>(query, new
+                {
+                    userid = UserId
+                });
+                return result;
+            }
+        }
 
         public async Task CreateNewBookmark(Bookmarks bookmark)
         {

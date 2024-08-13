@@ -7,6 +7,7 @@ using Application.DTO.EventDTOs;
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Repositories;
+using SQL_Queries.Queries;
 
 namespace Application.Services
 {
@@ -16,6 +17,8 @@ namespace Application.Services
         public Task<IEnumerable<Event>> GetEventsInProfile(int UserId);
         public Task CreateTransaction(TransactionDTO transactionDTO);
         public Task<IEnumerable<TransactionDTO>> GetTransaction(int UserId);
+        public Task<IEnumerable<ViewBoughtTicketsDTO>> GetBoughtTickets(int UserId);
+        
 
 
 
@@ -29,6 +32,12 @@ namespace Application.Services
         {
             _repository = repository;
             _mapper = mapper;
+        }
+        public async Task<IEnumerable<ViewBoughtTicketsDTO>> GetBoughtTickets(int UserId)
+        {
+            var fullTickets = await _repository.GetBoughtTickets(UserId);
+            var ticketsDTO = _mapper.Map<IEnumerable<ViewBoughtTicketsDTO>>(fullTickets);
+            return ticketsDTO;
         }
 
         public async Task CreateNewBookmark(Bookmarks bookmark)

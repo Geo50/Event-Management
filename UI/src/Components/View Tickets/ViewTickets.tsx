@@ -65,20 +65,6 @@ const ViewTickets: React.FC = () => {
     }
   };
 
-  const fetchBoughtTickets = async () => {
-    try {
-      const Userid = decodeToken();
-      const response = await axios.get(`https://localhost:7083/api/Event/GetTransaction?UserId=${Userid}`);
-
-      // Assuming the API response has the ticket data in `response.data`
-      setBoughtTickets(response.data);
-
-      toast.success("Successfully fetched bought tickets");
-    } catch (error: any) {
-      toast.error(`Error while fetching bought tickets ${error.response?.status || ""}: ${error.message}`);
-    }
-  };
-
   const handleBuyTicket = async (singleTicket: TicketValues) => {
     const userId = decodeToken();
     try {
@@ -122,7 +108,6 @@ const ViewTickets: React.FC = () => {
   useEffect(() => {
     if (eventId) {
       fetchTickets();
-      fetchBoughtTickets();
     }
   }, []);
 
@@ -176,44 +161,7 @@ const ViewTickets: React.FC = () => {
           </div>
         )}
       </Container>
-      <Container fluid className={classes.ticketsContainer}>
-        {boughtTickets.length > 0 ? (
-          <table className={classes.ticketTable}>
-            <thead>
-              <tr>
-                <th>Ticket Id</th>
-                <th>Ticket Name</th>
-                <th>Ticket Category</th>
-                <th>Ticket Price</th>
-                <th>Ticket Benefits</th>
-                <th>Ticket Limit</th>
-                <th>Buy Ticket</th>
-              </tr>
-            </thead>
-            <tbody>
-              {boughtTickets.map((ticket) => (
-                <tr key={ticket.ticketId}>
-                  <td>{ticket.ticketId}</td>
-                  <td>{ticket.ticketName}</td>
-                  <td>{ticket.category}</td>
-                  <td>${ticket.ticketPrice}</td>
-                  <td>{ticket.benefits}</td>
-                  <td>{ticket.ticket_Limit}</td>
-                  <td>
-                    <Button variant="danger" onClick={() => handleBuyTicket(ticket)}>
-                      Buy Ticket
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <div className="d-flex justify-content-center">
-            <p className={classes.noTicketsFound}>You haven't bought any tickets yet!</p>
-          </div>
-        )}
-      </Container>
+      
     </div>
   );
 };
