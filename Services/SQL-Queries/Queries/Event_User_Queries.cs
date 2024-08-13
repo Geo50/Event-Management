@@ -16,6 +16,8 @@ namespace SQL_Queries.Queries
                                                      JOIN public.event_details ed ON e.eventid = ed.eventid 
                                                      JOIN public.bookmarks b ON e.eventid = b.eventid 
                                                      WHERE b.userid = :UserId";
+        public static string CreateTransaction => "INSERT INTO public.transaction ( ticketid, eventid, userid) VALUES ( @ticketid, @eventid, @userid)";
 
+        public static string GetTransaction => "SELECT ticketid, eventid, userid FROM public.transaction WHERE userid = @userid";
     }
 }

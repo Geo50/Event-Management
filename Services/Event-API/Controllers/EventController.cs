@@ -104,5 +104,21 @@ namespace Event_API.Controllers
             var username = await _eventService.GetUsernameFromId(userid);
             return Ok(username);
         }
+
+        [HttpPost("CreateTransaction")]
+        public async Task<IActionResult> CreateTransaction(TransactionDTO transactionDTO)
+        {
+            await _event_User_Service.CreateTransaction(transactionDTO);
+            return Ok();
+        }
+
+        [HttpGet("GetTransaction")]
+
+        public async Task<ActionResult<IEnumerable<TransactionDTO>>> GetTransaction(int UserId)
+        {
+            var transaction = await _event_User_Service.GetTransaction(UserId);
+            return Ok(transaction);
+        }
+
     }
 }

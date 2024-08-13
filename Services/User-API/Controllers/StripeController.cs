@@ -23,23 +23,23 @@ public class PaymentController : ControllerBase
         {
             PaymentMethodTypes = new List<string> { "card" },
             LineItems = new List<SessionLineItemOptions>
+        {
+            new SessionLineItemOptions
             {
-                new SessionLineItemOptions
+                PriceData = new SessionLineItemPriceDataOptions
                 {
-                    PriceData = new SessionLineItemPriceDataOptions
+                    UnitAmount = checkoutRequest.Amount, // Amount in cents
+                    Currency = "usd",
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
-                        UnitAmount = checkoutRequest.Amount, // Amount in cents
-                        Currency = "usd",
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
-                        {
-                            Name = "Event Ticket"
-                        },
+                        Name = "Event Ticket"
                     },
-                    Quantity = 1,
                 },
+                Quantity = 1,
             },
+        },
             Mode = "payment",
-            SuccessUrl = "http://localhost:3000/payment-success={CHECKOUT_SESSION_ID}",
+            SuccessUrl = "http://localhost:3000/payment-success?session_id={CHECKOUT_SESSION_ID}",
             CancelUrl = "http://localhost:3000/homepage",
         };
 
@@ -48,9 +48,9 @@ public class PaymentController : ControllerBase
 
         return Ok(new { id = session.Id });
     }
-}
 
-public class CheckoutRequest
-{
-    public long Amount { get; set; } 
+    public class CheckoutRequest
+    {
+        public long Amount { get; set; }
+    }
 }

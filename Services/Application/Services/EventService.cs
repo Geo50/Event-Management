@@ -15,7 +15,6 @@ namespace Application.Services
         public Task<IEnumerable<EventService>> GetEventByName(string EventName);
         public Task<IEnumerable<GetEventsDTO>> GetEventsInHomepage();
         public Task<int> GetEventAttendees(int eventId);
-
         public Task<IEnumerable<EventService>> UpdateEventByName(string EventName);
         public Task DeleteEvent(string EventName);
         public Task<int> CreateNewEvent(CreateEventDTO newEvent);
