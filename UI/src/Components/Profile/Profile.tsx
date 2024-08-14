@@ -189,7 +189,7 @@ const Profile: React.FC = () => {
       },
     });
   };
-  
+
   const handleCreateTicketNavigation = (event: eventData) => {
     navigate("/create-ticket", {
       state: {
@@ -340,9 +340,10 @@ const Profile: React.FC = () => {
         )}
       </Container>
       <Container fluid>
-        <div>
-          <h1>And here are your bought tickets!</h1>
-          {boughtTicketsData.length > 0 ? (
+        {boughtTicketsData.length > 0 ? (
+          <div>
+            <h1>And here are your bought tickets!</h1>
+
             <table className={classes.ticketTable}>
               <thead>
                 <tr>
@@ -369,9 +370,11 @@ const Profile: React.FC = () => {
                 ))}
               </tbody>
             </table>
-          ) : 
-          <h1>It seems like you haven't bought any ticket yet..</h1>}
-        </div>
+          </div>
+        ) : (
+          <h1>It seems like you haven't bought any ticket yet..</h1>
+        )}
+        <div></div>
       </Container>
     </div>
   );
