@@ -13,7 +13,6 @@ import ModalComponent from "../Modal/Modal";
 import classes from "./CreateEvent.module.css";
 import InputComponent, { ComponentFunctions } from "./InputComponent";
 import { useNavigate } from "react-router-dom";
-const navigate = useNavigate();
 
 type eventCredentials = {
   eventName: string;
@@ -34,6 +33,7 @@ const CreateEvent: React.FC = () => {
   const eventImageRef = useRef<HTMLInputElement>(null);
   const eventDescriptionRef = useRef<ComponentFunctions>(null);
   const eventAttendeesLimit = useRef<ComponentFunctions>(null);
+  const navigate = useNavigate();
 
   const eventDataRef = useRef<eventCredentials>({
     eventName: "",
