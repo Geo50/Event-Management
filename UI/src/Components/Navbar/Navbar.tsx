@@ -1,5 +1,5 @@
 import { Navbar, Container, Offcanvas, Nav, Button, ToastBody } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import classes from "./Navbar.module.css";
 import secureLocalStorage from "react-secure-storage";
 import { key } from "../../App"; // Ensure this is correctly defined in your App file
@@ -10,7 +10,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 const NavbarComponent: React.FC = () => {
   const [username, setUsername] = useState<string>("");
-
+  const navigate = useNavigate();
   const getToken = () => {
     const token = secureLocalStorage.getItem(key);
     return typeof token === "string" ? token : null;
@@ -18,7 +18,7 @@ const NavbarComponent: React.FC = () => {
 
   const destroyToken = () => {
     secureLocalStorage.clear();
-    toast.error("You have just logged out. Refresh the page for the effect to happen.");
+    navigate("/homepage")
   };
 
   const decodeToken = () => {
@@ -29,10 +29,7 @@ const NavbarComponent: React.FC = () => {
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
 
-        if (decodedToken.exp < currentTime) {
-          toast.error("Your session has expired. Please log in again.");
-          return null;
-        }
+       
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
@@ -77,10 +74,7 @@ const NavbarComponent: React.FC = () => {
               <Offcanvas.Title id={`offcanvasNavbarLabel-expand-md`}>Organiser Events</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              <Nav className="justify-content-end gap-5 flex-grow-1 pe-3">
-                <Link to="/registration" className={classes.navbarLink}>
-                  Register
-                </Link>
+              <Nav className="justify-content-end gap-5 flex-grow-1 pe-3">               
                 <Link to="/homepage" className={classes.navbarLink}>
                   Homepage
                 </Link>

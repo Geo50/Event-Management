@@ -11,72 +11,125 @@ type TicketValues = {
   ticketPrice: number;
   category: string;
   benefits: string;
+  ticket_Limit: number;
 };
 
 const CreateTicket: React.FC = () => {
   const location = useLocation();
-  const { eventId } = location.state || {};
+  const { eventid } = location.state || {};
 
   const [visible, setVisible] = useState<boolean>(false);
   const [ticketName, setTicketName] = useState<string>("");
   const [ticketPrice, setTicketPrice] = useState<string>("");
+  const [ticketLimit, setTicketLimit] = useState<string>("");
+  const [ticketLimitSum, setTicketLimitSum] = useState<number>();
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [benefits, setBenefits] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [isValid, setIsValid] = useState<boolean>(true);
   const [ticketsData, setTicketsData] = useState<TicketValues[]>([]);
+  const [attendeesLimit, setAttendeesLimit] = useState<number | null>(null); // Change to number or null
 
   useEffect(() => {
-    if (eventId) {
+    if (eventid) {
       fetchTickets();
     }
-  }, [eventId]);
+  }, [eventid]);
 
   const fetchTickets = async () => {
     try {
-      const response = await axios.get(`https://localhost:7083/api/Event/GetEventTickets?eventId=${eventId}`);
+      const response = await axios.get(`https://localhost:7083/api/Event/GetEventTickets?eventId=${eventid}`);
       setTicketsData(response.data);
+      await getEventAttendees()
     } catch (error: any) {
       toast.error(`Error getting the tickets: ${error.message}`);
     }
   };
 
+  const getEventAttendees = async () => {
+    await axios.post(`https://localhost:7083/api/Event/GetEventAttendees?eventId=${eventid}`, {
+      eventId: eventid
+    })
+    .then((response) => {
+      setAttendeesLimit(Number(response.data)); // Convert to number
+      console.log(response.data);
+    })
+    .catch((error: any) => {
+      toast.error(`There has been a problem fetching the event attendees limit: ${error.status} : ${error.message}`);
+    });
+  }
+
   const inputValidation = () => {
     let valid = true;
 
+    const handleTicketLimits = (eventAttendeesLimit: number) => {
+      const ticketLimitNumber = Number(ticketLimit);
+      const currentTicketLimitSum = ticketsData.reduce((sum, ticket) => sum + ticket.ticket_Limit, 0);
+      const newTotalLimit = currentTicketLimitSum + ticketLimitNumber;
+
+      if (ticketLimitNumber <= 0) {
+        toast.error("Ticket limit must be greater than 0.");
+        valid = false;
+        return;
+      }
+    
+      setTicketLimitSum(prev => (prev ?? 0) + ticketLimitNumber);
+      
+      if (newTotalLimit > eventAttendeesLimit) {
+        toast.error(`Sorry, the total ticket limit (${newTotalLimit}) would surpass your attendees limit (${eventAttendeesLimit}).`);
+        valid = false;
+        return;
+      }
+
+    }
+    
     if (ticketName === "") {
       toast.error("Please fill the ticket name field.");
       valid = false;
     }
-
+  
     if (ticketPrice === "") {
       toast.error("Please fill the ticket price field.");
       valid = false;
     }
-
+  
+    if (ticketLimit === "") {
+      toast.error("Please fill the ticket limit field.");
+      valid = false;
+    }
+    if (benefits === "") {
+      toast.error("Please fill the ticket benefits field.");
+      valid = false;
+    }
+  
     if (selectedCategory === "") {
-      // Check if a category is selected
       toast.error("Please select a ticket category.");
       valid = false;
     }
-
+  
+    const eventAttendeesLimit = attendeesLimit || 0;
+    handleTicketLimits(eventAttendeesLimit);
+  
     setIsValid(valid);
     return valid;
   };
-
+    
   const handleValues = async () => {
     try {
+
       await axios.post("https://localhost:7083/api/Event/CreateNewTicket", {
-        eventId: eventId,
+        eventId: eventid,
         ticketName: ticketName,
-        ticketPrice: parseFloat(ticketPrice),
+        ticketPrice: parseInt(ticketPrice),
         category: selectedCategory,
         benefits: benefits,
+        ticket_limit: parseInt(ticketLimit)
       });
       toast.success("Ticket created successfully!");
       fetchTickets();
       setTicketName("");
       setTicketPrice("");
+      setTicketLimit("");
       setSelectedCategory("");
       setBenefits("");
       setVisible(false);
@@ -103,6 +156,8 @@ const CreateTicket: React.FC = () => {
     setIsEditing(false);
     setTicketName("");
     setTicketPrice("");
+    setTicketLimit("");
+    setBenefits("");
   };
 
   return (
@@ -154,6 +209,14 @@ const CreateTicket: React.FC = () => {
                   onChange={(event) =>  setTicketPrice(event.target.value)}
                 />
               </Col>
+              <Col>
+                <input
+                  type="number"
+                  placeholder="How many tickets can you sell of this ticket?"
+                  value={ticketLimit}
+                  onChange={(event) =>  setTicketLimit(event.target.value)}
+                />
+              </Col>
               <Row>
                 <Col>
                   {" "}
@@ -190,6 +253,7 @@ const CreateTicket: React.FC = () => {
                     <th>Ticket Category</th>
                     <th>Ticket Price</th>
                     <th>Ticket Benefits</th>
+                    <th>Ticket Limit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -198,8 +262,9 @@ const CreateTicket: React.FC = () => {
                       <td>{ticket.ticketId}</td>
                       <td>{ticket.ticketName}</td>
                       <td>{ticket.category}</td>
-                      <td>{ticket.ticketPrice}</td>
+                      <td>${ticket.ticketPrice}</td>
                       <td>{ticket.benefits}</td>
+                      <td>{ticket.ticket_Limit}</td>
                     </tr>
                   ))}
                 </tbody>

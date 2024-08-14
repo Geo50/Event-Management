@@ -8,7 +8,7 @@ namespace SQL_Queries.Queries
 {
     public class EventQueries
     {
-        public static string CreateNewEvent = "INSERT INTO public.event (eventname, eventdate, eventplace, eventtype, eventimage, organiser_id) VALUES (@eventname, @eventdate, @eventplace, @eventtype, @eventimage, @organiser_id) RETURNING eventid ";
+        public static string CreateNewEvent = "INSERT INTO public.event (eventname, eventdate, eventplace, eventtype, eventimage, organiser_id, eventAttendeesLimit) VALUES (@eventname, @eventdate, @eventplace, @eventtype, @eventimage, @organiser_id, @eventAttendeesLimit) RETURNING eventid ";
 
         public static string GetUsernameFromId = "SELECT username FROM public.user_details WHERE userid = @Userid";
 
@@ -18,21 +18,21 @@ namespace SQL_Queries.Queries
 
         public static string GetPlace = "SELECT eventplace FROM public.event WHERE eventplace = @Place";
 
-        public static string CreateNewTicket = "INSERT INTO public.tickets ( eventid, ticketname, ticketprice, category, benefits) VALUES (@eventid, @ticketname, @ticketprice, @category, @benefits)";
+        public static string CreateNewTicket = "INSERT INTO public.tickets ( eventid, ticketname, ticketprice, category, benefits, ticket_limit) VALUES (@eventid, @ticketname, @ticketprice, @category, @benefits, @ticket_limit)";
 
-        public static string GetEventTickets = "SELECT ticketid, ticketname, ticketprice, category, benefits FROM public.tickets WHERE eventid = @eventid";
+        public static string GetEventTickets = "SELECT ticketid, ticketname, ticketprice, category, benefits, ticket_limit FROM public.tickets WHERE eventid = @eventid";
 
         public static string InsertEventDetails = "INSERT INTO public.event_details ( eventid, eventdescription) VALUES (@EventId, @eventdescription)";
 
-        public static string GetEventsInHomepage => "SELECT eventid, eventname, eventdate, eventplace, eventtype, eventimage, organiser_id FROM public.event";
+        public static string GetEventsInHomepage => "SELECT eventid, eventname, eventdate, eventplace, eventtype, eventimage, organiser_id, eventAttendeesLimit FROM public.event";
 
         public static string GetEventIdByName = "SELECT eventid FROM public.event WHERE eventname = @eventname;";
 
-        public static string GetEventInDetails => @"SELECT e.eventid, e.eventname, e.eventdate, e.eventplace, e.eventtype, e.eventimage, e.organiser_id,
+        public static string GetEventInDetails => @"SELECT e.eventid, e.eventname, e.eventdate, e.eventplace, e.eventtype, e.eventimage, e.organiser_id,eventAttendeesLimit,
                                                    ed.eventdescription
                                                    FROM public.event e 
                                                    JOIN public.event_details ed ON e.eventid = ed.eventid                                                 
                                                    WHERE e.eventid = :eventid";
-
+        public static string GetEventAttendees => "SELECT eventAttendeesLimit FROM public.event WHERE eventid = @eventid ";
     }
 }

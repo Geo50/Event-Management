@@ -16,7 +16,11 @@ namespace Infrastructure.Repositories
     public interface IEvent_User_Repository
     {
         public Task CreateNewBookmark(Bookmarks bookmark);
-        public Task<IEnumerable<CombinedProperties>> GetEventsInProfile(int UserId);
+        public Task<IEnumerable<Event>> GetEventsInProfile(int UserId);
+        public Task<IEnumerable<Transaction>> GetTransaction(int UserId);
+        public Task CreateTransaction(Transaction transaction);
+        public Task<IEnumerable<CombinedProperties>> GetBoughtTickets(int UserId);
+
     }
 
     public class Event_User_Repository : IEvent_User_Repository
@@ -28,6 +32,19 @@ namespace Infrastructure.Repositories
         }
 
         private IDbConnection Connection => new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+        public async Task<IEnumerable<CombinedProperties>> GetBoughtTickets(int UserId)
+        {
+            var query = Event_User_Queries.GetBoughtTickets;
+            using (var connection = Connection)
+            {
+                var result = await connection.QueryAsync<CombinedProperties>(query, new
+                {
+                    userid = UserId
+                });
+                return result;
+            }
+        }
 
         public async Task CreateNewBookmark(Bookmarks bookmark)
         {
@@ -55,12 +72,48 @@ namespace Infrastructure.Repositories
 
         }
 
-        public async Task<IEnumerable<CombinedProperties>> GetEventsInProfile(int UserId)
+        public async Task CreateTransaction(Transaction transaction)
+        {
+            var query = Event_User_Queries.CreateTransaction;
+            using (var connection = Connection)
+            {
+                try
+                {
+                    await connection.ExecuteAsync(query, new
+                    {
+                        ticketid = transaction.TicketId,
+                        eventid = transaction.eventid,
+                        userid = transaction.UserId
+                    });
+                }
+                catch (Npgsql.PostgresException ex)
+                {
+                    if (ex.SqlState == "23505") 
+                    {
+                        throw new InvalidOperationException("You already bought this ticket");
+                    }
+                }
+            }
+        }
+
+        public async Task<IEnumerable<Transaction>> GetTransaction(int UserId)
+        {
+            var query = Event_User_Queries.GetTransaction;
+            using (var connection = Connection)
+            {
+                var result = await connection.QueryAsync<Transaction>(query, new
+                {
+                    userid = UserId,
+                });
+                return result;
+            }
+        }
+        public async Task<IEnumerable<Event>> GetEventsInProfile(int UserId)
         {
             var query = Event_User_Queries.GetEventsInProfile;
             using (var connection = Connection)
             {
-                var result = await connection.QueryAsync<CombinedProperties>(query, new
+                var result = await connection.QueryAsync<Event>(query, new
                 {
                     userid = UserId,
                 });

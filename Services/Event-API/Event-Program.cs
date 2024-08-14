@@ -23,6 +23,8 @@ builder.Services.AddAutoMapper(typeof(UserMapper));
 builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<Event_User_Service>();
 builder.Services.AddScoped<Event_User_Repository>();
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+
 // Add JWT settings
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.Configure<JwtSettings>(jwtSettings);
@@ -61,7 +63,6 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod();
         });
 });
-
 
 var app = builder.Build();  
 

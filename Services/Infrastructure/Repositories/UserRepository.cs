@@ -130,7 +130,7 @@ namespace Infrastructure.Repositories
                     var updateQuery = UserQueries.UpdateUserPassword;
                     await connection.ExecuteAsync(updateQuery, new
                     {
-                        UserPassword = user.UserPassword,
+                        userpassword = user.UserPassword,
                         UserName = user.UserName
                     });
                 }

@@ -56,6 +56,15 @@ namespace Event_API.Controllers
             return Ok(events);
         }
 
+        [HttpPost("GetEventAttendees")]
+
+        public async Task<ActionResult<int>> GetEventAttendees(int eventId)
+        {
+            var limit = await _eventService.GetEventAttendees(eventId);
+            return Ok(limit);
+        }
+
+
         [HttpPost("GetEventInDetails")]
 
         public async Task<ActionResult<IEnumerable<CombinedProperties>>> GetEventInDetails( [FromQuery] int eventId)
@@ -74,7 +83,7 @@ namespace Event_API.Controllers
 
         [HttpPost("GetEventsInProfile")]
 
-        public async Task<ActionResult<IEnumerable<CombinedProperties>>> GetEventsInProfile(int UserId)
+        public async Task<ActionResult<IEnumerable<Event>>> GetEventsInProfile(int UserId)
         {
             var events = await _event_User_Service.GetEventsInProfile(UserId);
             return Ok(events);
@@ -95,5 +104,30 @@ namespace Event_API.Controllers
             var username = await _eventService.GetUsernameFromId(userid);
             return Ok(username);
         }
+
+        [HttpPost("CreateTransaction")]
+        public async Task<IActionResult> CreateTransaction(TransactionDTO transactionDTO)
+        {
+            await _event_User_Service.CreateTransaction(transactionDTO);
+            return Ok();
+        }
+
+        [HttpGet("GetTransaction")]
+
+        public async Task<ActionResult<IEnumerable<TransactionDTO>>> GetTransaction(int UserId)
+        {
+            var transaction = await _event_User_Service.GetTransaction(UserId);
+            return Ok(transaction);
+        }
+
+        [HttpGet("GetBoughtTickets")]
+
+        public async Task<ActionResult<IEnumerable<ViewBoughtTicketsDTO>>> GetBoughtTickets(int UserId)
+        {
+            var tickets = await _event_User_Service.GetBoughtTickets(UserId);
+            return Ok(tickets);
+        }
+
+
     }
 }

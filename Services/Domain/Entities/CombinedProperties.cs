@@ -17,8 +17,11 @@ namespace Domain.Entities
         public int EventDetailId { get; set; }
         public required string EventDescription { get; set; }
         public int Organiser_id { get; set; }
+        public int EventAttendeesLimit { get; set; }
         public int TicketId { get; set; }
         public required string TicketName { get; set; }
-        public int TicketPrice { get; set; }      
+        public int TicketPrice { get; set; }
+        public required string Category { get; set; }
+        public required string Benefits { get; set; }
     }
 }

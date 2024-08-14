@@ -13,5 +13,6 @@ namespace Application.DTO.EventDTOs
         public int TicketPrice { get; set; }
         public required string Category { get; set; }
         public required string Benefits { get; set; }
+        public int Ticket_Limit { get; set; }
     }
 }

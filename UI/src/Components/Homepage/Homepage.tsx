@@ -1,12 +1,15 @@
 import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { Card, Col, Container, ListGroup, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import RedBlacK from "../../assets/Night-Sky.jpg";
-import EventDetailsModal from "./EventDetailsModal";
+import EventDetailsModal from "../Event Details/EventDetailsModal";
 import classes from "./Homepage.module.css";
+import secureLocalStorage from "react-secure-storage";
+import { jwtDecode } from "jwt-decode";
+import { key } from "../../App";
 
 type eventData = {
   eventId: number;
@@ -17,6 +20,7 @@ type eventData = {
   eventType: string;
   organiserName: string;
   organiser_Id: number;
+  eventAttendeesLimit: number;
 };
 
 const Homepage: React.FC = () => {
@@ -26,6 +30,33 @@ const Homepage: React.FC = () => {
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [isAdmin, setIsAdmin] = useState<string>("");
+  const navigate = useNavigate();
+
+  const getToken = () => {
+    const token = secureLocalStorage.getItem(key);
+    return typeof token === "string" ? token : null;
+  };
+
+  const decodeToken = () => {
+    const token = getToken();
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        const isAdmin: string = decodedToken?.role;
+        console.log("Decoded token:", decodedToken); // Add this line
+        console.log("isAdmin value:", isAdmin);
+        const currentTime = Math.floor(Date.now() / 1000);
+
+        
+        setIsAdmin(isAdmin);
+      } catch (error) {
+        console.error("Error decoding token:", error); // Add this line
+        toast.error("Failed to decode token.");
+      }
+    }
+    return null;
+  };
 
   useEffect(() => {
     document.body.style.backgroundImage = `url(${RedBlacK})`;
@@ -46,9 +77,9 @@ const Homepage: React.FC = () => {
             };
           })
         );
+
         setEvents(eventsWithUsernames);
         setFeaturedEvents(eventsWithUsernames.slice(0, 3));
-        console.log(eventsWithUsernames);
       } catch (error: any) {
         toast.error(`Failed to create event. Status code: ${error.response?.status}: ${error.message}`);
       } finally {
@@ -57,11 +88,10 @@ const Homepage: React.FC = () => {
     };
 
     handleEventsGeneration();
+    decodeToken();
 
     return () => {
       document.body.style.backgroundImage = "";
-      document.body.style.backgroundSize = "";
-      document.body.style.backgroundRepeat = "";
       document.body.style.height = "";
     };
   }, []);
@@ -80,6 +110,7 @@ const Homepage: React.FC = () => {
 
   return (
     <div>
+      <ToastContainer />
       {loading ? (
         <div className={classes.loader}>
           <PuffLoader color="var(--registration-blue)" size={130} />
@@ -114,7 +145,6 @@ const Homepage: React.FC = () => {
                           variant="top"
                           src={event.eventImage}
                           className={classes.imageElement}
-                          loading="lazy"
                           onClick={() => {
                             setModalShow(true);
                             setSelectedEventId(event.eventId);
@@ -122,25 +152,36 @@ const Homepage: React.FC = () => {
                         />
                         <Card.Body>
                           <Card.Title className={classes.title}>{event.eventName}</Card.Title>
-                          </Card.Body>
+                        </Card.Body>
 
-                          <ListGroup className="list-group-flush">
-                            <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>
-                              Organiser: {event.organiserName}
-                            </ListGroup.Item>
-                          </ListGroup>
+                        <ListGroup className="list-group-flush">
+                          <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
+                          <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
+                          <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
+                          <ListGroup.Item className={classes.eventInfo}>
+                            Organiser: {event.organiserName}
+                          </ListGroup.Item>
+                          <ListGroup.Item className={classes.eventInfo}>
+                            Attendees: {event.eventAttendeesLimit}
+                          </ListGroup.Item>
+                        </ListGroup>
                       </Card>
                     </div>
                   ))}
                 </div>
               </div>
-              <button className={`carousel-control-prev ${classes.navigationButton}` } type="button" onClick={handlePrevious}>
+              <button
+                className={`carousel-control-prev ${classes.navigationButton}`}
+                type="button"
+                onClick={handlePrevious}
+              >
                 <span className={`carousel-control-prev-icon ${classes.navigationIcon}`} aria-hidden="true"></span>
               </button>
-              <button className={`carousel-control-prev ${classes.navigationButton}` } type="button" onClick={handleNext} >
+              <button
+                className={`carousel-control-prev ${classes.navigationButton}`}
+                type="button"
+                onClick={handleNext}
+              >
                 <span className={`carousel-control-next-icon ${classes.navigationIcon}`} aria-hidden="true"></span>
               </button>
             </div>
@@ -165,13 +206,16 @@ const Homepage: React.FC = () => {
                     loading="lazy"
                   />
                   <Card.Body>
-                    <Card.Title className={classes.title}>Name: {event.eventName}</Card.Title>
+                    <Card.Title className={classes.title}> {event.eventName}</Card.Title>
                   </Card.Body>
                   <ListGroup className="list-group-flush">
                     <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Organiser: {event.organiserName}</ListGroup.Item>
+                    <ListGroup.Item className={classes.eventInfo}>
+                      Attendees: {event.eventAttendeesLimit}
+                    </ListGroup.Item>
                   </ListGroup>
                 </Card>
               </Col>
@@ -180,12 +224,13 @@ const Homepage: React.FC = () => {
           <div className={classes.detailsParent}>
             <EventDetailsModal visibility={modalShow} handleClose={handleCloseDetails} eventId={selectedEventId || 0} />
           </div>
-
-          <div className={classes.createEventButton}>
-            <Link to="/create-event">
-              <i className={`bi bi-plus ${classes.plusIcon}`}></i>
-            </Link>
-          </div>
+          {isAdmin === "Admin" ? (
+            <div className={classes.createEventButton}>
+              <Link to="/create-event">
+                <i className={`bi bi-plus ${classes.plusIcon}`}></i>
+              </Link>
+            </div>
+          ) : null}
         </Container>
       )}
     </div>

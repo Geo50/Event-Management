@@ -17,9 +17,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<Event_User_Repository>();
+builder.Services.AddScoped<IEvent_User_Service, Event_User_Service>();
 builder.Services.AddAutoMapper(typeof(UserMapper));
 builder.Services.AddScoped<UserInfo>();
-builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
 
 // Add JWT settings

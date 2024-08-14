@@ -22,8 +22,8 @@ type eventCredentials = {
   eventImage: string;
   eventDescription: string;
   organiser_id: number;
+  eventAttendeesLimit: number;
 };
-
 
 const CreateEvent: React.FC = () => {
   const eventNameRef = useRef<ComponentFunctions>(null);
@@ -32,6 +32,8 @@ const CreateEvent: React.FC = () => {
   const eventTypeRef = useRef<ComponentFunctions>(null);
   const eventImageRef = useRef<HTMLInputElement>(null);
   const eventDescriptionRef = useRef<ComponentFunctions>(null);
+  const eventAttendeesLimit = useRef<ComponentFunctions>(null);
+
   const eventDataRef = useRef<eventCredentials>({
     eventName: "",
     eventDate: "",
@@ -39,7 +41,8 @@ const CreateEvent: React.FC = () => {
     eventImage: "",
     eventType: "",
     eventDescription: "",
-    organiser_id: 0
+    organiser_id: 0,
+    eventAttendeesLimit: 1,
   });
 
   const [imageURL, setImageURL] = useState<string>("");
@@ -64,10 +67,7 @@ const CreateEvent: React.FC = () => {
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
 
-        if (decodedToken.exp < currentTime) {
-          toast.error("Your session has expired. Please log in again.");
-          return null;
-        }
+        
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
@@ -76,7 +76,6 @@ const CreateEvent: React.FC = () => {
     }
     return null;
   };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
@@ -98,7 +97,6 @@ const CreateEvent: React.FC = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     document.body.style.backgroundImage = `url(${WhiteTable})`;
     document.body.style.backgroundSize = "cover";
@@ -145,7 +143,8 @@ const CreateEvent: React.FC = () => {
       eventImage: imageURL || "",
       eventType: (eventTypeRef.current?.value as string) || "",
       eventDescription: (eventDescriptionRef.current?.value as string) || "",
-      organiser_id: organiserID || 0
+      organiser_id: organiserID || 0,
+      eventAttendeesLimit: parseInt(eventAttendeesLimit.current?.value as string, 10),
     };
     let inputDate: number = new Date(eventValues.eventDate).getTime();
     let todayTimestamp = today.getTime();
@@ -213,7 +212,6 @@ const CreateEvent: React.FC = () => {
 
   const handleDatabaseInjection = useCallback(async (eventValues: eventCredentials) => {
     const organiserID = decodeToken();
-    console.log(organiserID)
     setLoading(true);
     await axios
       .post("https://localhost:7083/api/Event/CreateNewEvent", {
@@ -223,7 +221,8 @@ const CreateEvent: React.FC = () => {
         EventType: eventValues.eventType,
         EventImage: eventValues.eventImage,
         EventDescription: eventValues.eventDescription,
-        organiser_id: organiserID
+        organiser_id: organiserID,
+        eventAttendeesLimit: eventValues.eventAttendeesLimit,
       })
       .then((response) => {
         const eventId = response.data.eventId;
@@ -244,8 +243,6 @@ const CreateEvent: React.FC = () => {
         setLoading(false);
       });
   }, []);
-  
-
 
   const handleCloseDetails = useCallback((): void => {
     setModalShow(false);
@@ -323,6 +320,12 @@ const CreateEvent: React.FC = () => {
               inputType="text"
               inputPlaceholder="Enter your Event Type"
               value={eventDataRef.current.eventType}
+            />
+            <InputComponent
+              ref={eventAttendeesLimit}
+              inputType="number"
+              inputPlaceholder="How many people can your event have?"
+              value={eventDataRef.current.eventAttendeesLimit.toString()}
             />
             <Button variant="outline-danger" onClick={handleSubmit}>
               Submit

@@ -1,13 +1,13 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
-import { Button, Card, Container, ListGroup, Modal, ToastBody } from "react-bootstrap";
+import { Button, Card, Container, ListGroup, Modal, ToastContainer } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { key } from "../../App";
 import classes from "./EventDetailsModal.module.css";
-import { Navigate, useNavigate } from "react-router-dom";
 
 type inputProps = {
   visibility: boolean;
@@ -16,20 +16,22 @@ type inputProps = {
 };
 
 type eventData = {
-  eventId: number;
+  eventid: number;
   eventName: string;
   eventImage: string;
   eventDate: string;
   eventPlace: string;
   eventType: string;
-  eventDescription: string;
   organiser_id: number;
   organiserName: string;
-};
+  eventAttendeesLimit: number
+  eventDescription: string;
+}
 
 const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, eventId }) => {
   const [events, setEvents] = useState<eventData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   const handleEventsGeneration = async () => {
@@ -46,12 +48,14 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         ...eventData,
         organiserName: organiserResponse.data,
       });
+      console.log(eventId)
     } catch (error: any) {
       toast.error(`Failed to generate events. Status code: ${error.response?.status}: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
+
   const getToken = () => {
     const token = secureLocalStorage.getItem(key);
     return typeof token === "string" ? token : null;
@@ -65,9 +69,6 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
 
-        if (decodedToken.exp < currentTime) {
-          return null;
-        }
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
@@ -85,7 +86,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         });
         return result.data;
       } catch (error: any) {
-        console.log(`Failed to get user details. Status code: ${error.response?.status}: ${error.message}`);
+        toast.error(`Failed to get user details. Status code: ${error.response?.status}: ${error.message}`);
       }
     }
   };
@@ -122,7 +123,6 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
       }
     } else {
       toast.error("You need to be logged in to bookmark events");
-      navigate("/login");
     }
   };
   useEffect(() => {
@@ -131,6 +131,14 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
     }
   }, [visibility, eventId]);
 
+  const handleViewTickets = () => {
+    navigate("/view-tickets", {
+      state: {
+        eventId: eventId, 
+      },
+    });
+  };
+  
   return (
     <div>
       {loading && (
@@ -141,7 +149,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
       <Container fluid className={classes.modalContainer}>
         <Modal show={visibility} onHide={handleClose} className={`${classes.eventModal}`}>
           <Modal.Body className={`bg-dark ${classes.modalBody}`}>
-            <ToastBody />
+            <ToastContainer />
             <Card className={`bg-dark ${classes.eventCard}`}>
               <div className={classes.parentContainer}>
                 <Card.Img variant="top" src={events?.eventImage} className={classes.imageElement} />
@@ -166,17 +174,22 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Type: {events?.eventType}</ListGroup.Item>
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Place: {events?.eventPlace}</ListGroup.Item>
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Organizer: {events?.organiserName}</ListGroup.Item>
+                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Attendees: {events?.eventAttendeesLimit}</ListGroup.Item>
               </ListGroup>
               <Card.Body>
-                <Button variant="danger w-100">View Tickets</Button>
+                {events  && (
+                  <Button variant="danger w-100" onClick={handleViewTickets}>View Tickets</Button>
+                )}
+                
               </Card.Body>
-            </Card>
+            </Card> 
           </Modal.Body>
         </Modal>
       </Container>
     </div>
   );
 };
+
 
 export default EventDetailsModal;
 function InvalidOperationException(reason: any): PromiseLike<never> {

@@ -21,6 +21,7 @@ namespace Infrastructure.Repositories
     public interface IEventRepository
     {
         public Task<IEnumerable<Event>> GetEventsInHomepage();
+        public Task<int> GetEventAttendees(int eventId);
         public Task<int> GetEventIdByName(string eventName);
         public Task<IEnumerable<CombinedProperties>> GetEventInDetails(int eventId);
         public Task<int> CreateNewEvent(CombinedProperties newEvent);
@@ -60,7 +61,7 @@ namespace Infrastructure.Repositories
                 return result != null;
             }
         }
-        public async Task<IEnumerable<Tickets>>GetEventTickets(int eventid)
+        public async Task<IEnumerable<Tickets>> GetEventTickets(int eventid)
         {
             var query = EventQueries.GetEventTickets;
             using (var connection = Connection)
@@ -69,6 +70,17 @@ namespace Infrastructure.Repositories
                 return result;
             }
         }
+
+        public async Task<int> GetEventAttendees(int eventId)
+        {
+            var query = EventQueries.GetEventAttendees;
+            using (var connection = Connection)
+            {
+                var result = await connection.QueryFirstOrDefaultAsync<int>(query, new { eventId = eventId });
+                return result;
+            }
+        }        
+
 
         public async Task<string> GetUsernameFromId(int userid)
         {
@@ -113,7 +125,8 @@ namespace Infrastructure.Repositories
                         EventPlace = newEvent.EventPlace,
                         EventType = newEvent.EventType,
                         EventImage = newEvent.EventImage,
-                        Organiser_id = newEvent.Organiser_id
+                        Organiser_id = newEvent.Organiser_id, 
+                        EventAttendeesLimit = newEvent.EventAttendeesLimit
                     });                    
 
                     await connection.ExecuteAsync(insertEventDetails, new
@@ -139,7 +152,8 @@ namespace Infrastructure.Repositories
                     ticketname = tickets.TicketName,
                     ticketprice = tickets.TicketPrice,
                     category = tickets.Category,
-                    benefits = tickets.Benefits
+                    benefits = tickets.Benefits,
+                    ticket_limit = tickets.Ticket_Limit
                 });
             }
         }

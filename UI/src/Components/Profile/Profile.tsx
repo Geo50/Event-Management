@@ -1,22 +1,35 @@
-import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
-import classes from "./Profile.module.css";
-import { useCallback, useEffect, useRef, useState } from "react";
-import secureLocalStorage from "react-secure-storage";
-import { key } from "../../App";
-import { jwtDecode } from "jwt-decode";
-import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
-import EventDetailsModal from "../Homepage/EventDetailsModal";
+import { toast, ToastContainer } from "react-toastify";
+import { key } from "../../App";
+import EventDetailsModal from "../Event Details/EventDetailsModal";
+import classes from "./Profile.module.css";
 
 type eventData = {
-  eventId: number;
+  eventid: number;
+  eventname: string;
+  eventimage: string;
+  eventdate: string;
+  eventplace: string;
+  eventtype: string;
+  organiserName: string;
+  organiser_Id: number;
+  eventAttendeesLimit: number;
+};
+
+type boughtTicketsType = {
   eventName: string;
-  eventImage: string;
   eventDate: string;
   eventPlace: string;
-  eventType: string;
+  ticketId: number;
+  ticketName: string;
+  category: string;
+  benefits: string;
 };
 
 const Profile: React.FC = () => {
@@ -26,10 +39,13 @@ const Profile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [userValue, setUserValue] = useState<string>("");
   const usernameRef = useRef<HTMLInputElement>(null);
+  const createTicketsButtonRef = useRef<HTMLButtonElement>(null);
+  const viewTicketsButtonRef = useRef<HTMLButtonElement>(null);
   const [events, setEvents] = useState<eventData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
+  const [boughtTicketsData, setBoughtTicketsData] = useState<boughtTicketsType[]>([]);
 
   const getToken = () => {
     const token = secureLocalStorage.getItem(key);
@@ -43,11 +59,7 @@ const Profile: React.FC = () => {
         const decodedToken: any = jwtDecode(token);
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
-        if (decodedToken.exp < currentTime) {
-          toast.error("Your session has expired. Please log in again.");
-          navigate("/homepage");
-          return null;
-        }
+
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
@@ -55,6 +67,19 @@ const Profile: React.FC = () => {
       }
     }
     return null;
+  };
+
+  const userId = decodeToken();
+
+  const handleBoughtTickets = async () => {
+    const response = await axios
+      .get(`https://localhost:7083/api/Event/GetBoughtTickets?UserId=${userId}`)
+      .then((response) => {
+        setBoughtTicketsData(response.data);
+      })
+      .catch((error: any) => {
+        toast.error("Error while fetching tickets data");
+      });
   };
 
   useEffect(() => {
@@ -67,7 +92,7 @@ const Profile: React.FC = () => {
           });
           setUsername(result.data.userName);
           setEmail(result.data.userEmail);
-          setUserValue(result.data.userName); // Set the userValue for the input field
+          setUserValue(result.data.userName);
         } catch (error: any) {
           console.log(`Failed to get user details. Status code: ${error.response?.status}: ${error.message}`);
         }
@@ -76,13 +101,30 @@ const Profile: React.FC = () => {
     const token: any = getToken();
     const decodedToken: any = jwtDecode(token);
     const userId: number = parseInt(decodedToken?.unique_name, 10);
+
     const handleEventsGeneration = async () => {
       setLoading(true);
       try {
         const result = await axios.post(`https://localhost:7083/api/Event/GetEventsInProfile?UserId=${userId}`, {
           UserId: userId,
         });
-        setEvents(result.data);
+        console.log("Result data" + result.data[0]);
+
+        const eventsWithUsernames = await Promise.all(
+          result.data.map(async (event: eventData) => {
+            console.log("EventId in map " + event);
+            setSelectedEventId(event.eventid);
+            const organiserResponse = await axios.get(
+              `https://localhost:7083/api/Event/GetUsernameFromId?userid=${event.organiser_Id}`
+            );
+            return {
+              ...event,
+              organiserName: organiserResponse.data,
+            };
+          })
+        );
+        console.log(`This is the selected event id outside map ${selectedEventId}`);
+        setEvents(eventsWithUsernames);
       } catch (error: any) {
         toast.error(`Failed to create event. Status code: ${error.response?.status}: ${error.message}`);
       } finally {
@@ -91,7 +133,14 @@ const Profile: React.FC = () => {
     };
     fetchUserDetails();
     handleEventsGeneration();
+    handleBoughtTickets();
   }, []);
+
+  useEffect(() => {
+    events.forEach((event) => {
+      userOrganizerDistinguisher(event);
+    });
+  }, [events]);
 
   const handleEdit = async () => {
     const token: any = getToken();
@@ -105,12 +154,13 @@ const Profile: React.FC = () => {
       });
       const result: string = response.data;
       setUsername(result);
+      toast.success("Successfully updated your username!");
     } catch (error) {
       console.error("Error updating username:", error);
     }
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleButtonClick = () => {
     if (isEditing) {
       // Save mode
@@ -131,12 +181,37 @@ const Profile: React.FC = () => {
     setModalShow(false);
   }, []);
 
-  const handleNavigation = (event: eventData) => {
-    navigate("/create-ticket", {
+  const handleViewTicketsNavigation = (event: eventData) => {
+    console.log(`From navigation ${event.eventid}`);
+    navigate("/view-tickets", {
       state: {
-        eventId: event.eventId
+        eventid: event.eventid,
       },
     });
+  };
+
+  const handleCreateTicketNavigation = (event: eventData) => {
+    navigate("/create-ticket", {
+      state: {
+        eventid: event.eventid,
+      },
+    });
+  };
+
+  const handleImageClick = (eventid: number) => {
+    setModalShow(true);
+    setSelectedEventId(eventid);
+    console.log(selectedEventId); // Ensure eventId is correctly passed
+    console.log(eventid);
+  };
+  const userOrganizerDistinguisher = (events: eventData) => {
+    const organizer = events.organiser_Id;
+    const user = decodeToken();
+    if (organizer != user) {
+      createTicketsButtonRef.current?.classList.add(classes.hiddenElement);
+    } else {
+      viewTicketsButtonRef.current?.classList.add(classes.hiddenElement);
+    }
   };
 
   return (
@@ -198,30 +273,58 @@ const Profile: React.FC = () => {
                     <div className={classes.headerContainer}></div>
                   </Row>
                   <Row>
-                    {events.map((event) => (
-                      <Col key={event.eventId} xs={12} sm={6} lg={4}>
-                        <Card className={classes.eventCard}>
-                          <Card.Img
-                            onClick={() => {
-                              setModalShow(true);
-                              setSelectedEventId(event.eventId);
-                            }}
-                            variant="top"
-                            src={event.eventImage}
-                            className={classes.imageElement}
-                          />
-                          <Card.Body>
-                            <Card.Title className={classes.title}>Name: {event.eventName}</Card.Title>
-                          </Card.Body>
-                          <ListGroup className="list-group-flush">
-                            <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
-                            <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
-                            <ListGroup.Item><Button variant="outline-danger" onClick={() => {handleNavigation(event)}}>View Event Tickes</Button></ListGroup.Item>
-                          </ListGroup>
-                        </Card>
-                      </Col>
-                    ))}
+                    {events.map((event) => {
+                      const isUserOrganizer = event.organiser_Id === userId;
+
+                      return (
+                        <Col key={event.eventid} xs={12} sm={6} lg={4}>
+                          <Card className={classes.eventCard}>
+                            <Card.Img
+                              onClick={() => handleImageClick(event.eventid)} // Use the handler function
+                              variant="top"
+                              src={event.eventimage}
+                              className={classes.imageElement}
+                            />
+                            <Card.Body>
+                              <Card.Title className={classes.title}>Name: {event.eventname}</Card.Title>
+                            </Card.Body>
+                            <ListGroup className="list-group-flush">
+                              <ListGroup.Item className={classes.eventInfo}>Date: {event.eventdate}</ListGroup.Item>
+                              <ListGroup.Item className={classes.eventInfo}>Type: {event.eventtype}</ListGroup.Item>
+                              <ListGroup.Item className={classes.eventInfo}>Place: {event.eventplace}</ListGroup.Item>
+                              <ListGroup.Item className={classes.eventInfo}>
+                                Attendees: {event.eventAttendeesLimit}
+                              </ListGroup.Item>
+                              <ListGroup.Item className={classes.eventInfo}>
+                                Organiser: {event.organiserName}
+                              </ListGroup.Item>
+                              <ListGroup.Item>
+                                {isUserOrganizer ? (
+                                  <Button
+                                    variant="outline-danger"
+                                    onClick={() => {
+                                      handleCreateTicketNavigation(event);
+                                    }}
+                                  >
+                                    Create Event Ticket
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    variant="outline-danger"
+                                    onClick={() => {
+                                      handleViewTicketsNavigation(event);
+                                      console.log(`After render: ${event.eventid}`);
+                                    }}
+                                  >
+                                    View Event Tickets
+                                  </Button>
+                                )}
+                              </ListGroup.Item>
+                            </ListGroup>
+                          </Card>
+                        </Col>
+                      );
+                    })}
                   </Row>
                   <EventDetailsModal
                     visibility={modalShow}
@@ -235,6 +338,43 @@ const Profile: React.FC = () => {
         ) : (
           <h1>Oops, you haven't bookmarked any events yet...</h1>
         )}
+      </Container>
+      <Container fluid>
+        {boughtTicketsData.length > 0 ? (
+          <div>
+            <h1>And here are your bought tickets!</h1>
+
+            <table className={classes.ticketTable}>
+              <thead>
+                <tr>
+                  <th>Ticket Id</th>
+                  <th>Ticket Name</th>
+                  <th>Ticket Category</th>
+                  <th>Ticket Benefits</th>
+                  <th>Event Name</th>
+                  <th>Event Date</th>
+                  <th>Event Place</th>
+                </tr>
+              </thead>
+              <tbody>
+                {boughtTicketsData.map((ticket) => (
+                  <tr key={ticket.ticketId}>
+                    <td>{ticket.ticketId}</td>
+                    <td>{ticket.ticketName}</td>
+                    <td>{ticket.category}</td>
+                    <td>{ticket.benefits}</td>
+                    <td>{ticket.eventName}</td>
+                    <td>{ticket.eventDate}</td>
+                    <td>{ticket.eventPlace}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <h1>It seems like you haven't bought any ticket yet..</h1>
+        )}
+        <div></div>
       </Container>
     </div>
   );
