@@ -28,7 +28,7 @@ const PaymentSuccess: React.FC = () => {
       console.log("Payment success response:", response.data);
       toast.success('Payment successful! Your ticket has been purchased.');
       // Navigate to a confirmation page or back to the homepage
-      navigate('/homepage');
+      navigate('/profile');
     } catch (error: any) {
       console.error('Error confirming payment:', error.response ? error.response.data : error.message);
       toast.error('Error confirming payment. Please contact support.');

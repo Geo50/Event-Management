@@ -7,7 +7,7 @@ import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
 import { toast, ToastContainer } from "react-toastify";
 import { key } from "../../App";
-import EventDetailsModal from "../Homepage/EventDetailsModal";
+import EventDetailsModal from "../Event Details/EventDetailsModal";
 import classes from "./Profile.module.css";
 
 type eventData = {
@@ -189,6 +189,7 @@ const Profile: React.FC = () => {
       },
     });
   };
+  
   const handleCreateTicketNavigation = (event: eventData) => {
     navigate("/create-ticket", {
       state: {

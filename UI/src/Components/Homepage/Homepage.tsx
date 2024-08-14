@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
 import { toast, ToastContainer } from "react-toastify";
 import RedBlacK from "../../assets/Night-Sky.jpg";
-import EventDetailsModal from "./EventDetailsModal";
+import EventDetailsModal from "../Event Details/EventDetailsModal";
 import classes from "./Homepage.module.css";
 import secureLocalStorage from "react-secure-storage";
 import { jwtDecode } from "jwt-decode";

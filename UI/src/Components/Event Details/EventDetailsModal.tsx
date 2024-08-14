@@ -16,7 +16,7 @@ type inputProps = {
 };
 
 type eventData = {
-  eventId: number;
+  eventid: number;
   eventName: string;
   eventImage: string;
   eventDate: string;
@@ -55,6 +55,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
       setLoading(false);
     }
   };
+
   const getToken = () => {
     const token = secureLocalStorage.getItem(key);
     return typeof token === "string" ? token : null;
@@ -133,7 +134,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
   const handleViewTickets = () => {
     navigate("/view-tickets", {
       state: {
-        eventId: eventId, // Using events?.eventId instead of eventId
+        eventId: eventId, 
       },
     });
   };
