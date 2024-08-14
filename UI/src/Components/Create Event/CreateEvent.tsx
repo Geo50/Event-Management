@@ -3,7 +3,6 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { jwtDecode } from "jwt-decode";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Col, Container } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
 import { toast, ToastContainer } from "react-toastify";
@@ -13,6 +12,8 @@ import { storage } from "../../Firebase/Firebase";
 import ModalComponent from "../Modal/Modal";
 import classes from "./CreateEvent.module.css";
 import InputComponent, { ComponentFunctions } from "./InputComponent";
+import { useNavigate } from "react-router-dom";
+const navigate = useNavigate();
 
 type eventCredentials = {
   eventName: string;
@@ -49,7 +50,6 @@ const CreateEvent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [modalType, setModalType] = useState<string>("");
-  const [errorDisplay, setErrorDisplay] = useState<string>("");
   const [eventId, setEventId] = useState<number>(0);
 
   const [file, setFile] = useState<File | null>(null);
@@ -66,7 +66,11 @@ const CreateEvent: React.FC = () => {
         const decodedToken: any = jwtDecode(token);
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
-
+        if (decodedToken.exp < currentTime) {
+          toast.error("Your session has expired. Please log in again.");
+          navigate("/homepage");
+          return null;
+        }
         
         return userId;
       } catch (error) {

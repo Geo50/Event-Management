@@ -10,7 +10,7 @@ import Profile from "./Components/Profile/Profile";
 import Registration from "./Components/Registration/Registration";
 import ViewTickets from "./Components/View Tickets/ViewTickets";
 import StripeProvider from "./Components/Stripe Payment/StripeProvider";
-import PaymentSuccess from "./Components/PaymentSuccess";
+import PaymentSuccess from "./Components/Payment Success/PaymentSuccess";
 
 export const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 

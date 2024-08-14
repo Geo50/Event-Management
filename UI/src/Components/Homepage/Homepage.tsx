@@ -47,7 +47,11 @@ const Homepage: React.FC = () => {
         console.log("Decoded token:", decodedToken); // Add this line
         console.log("isAdmin value:", isAdmin);
         const currentTime = Math.floor(Date.now() / 1000);
-
+        if (decodedToken.exp < currentTime) {
+          toast.error("Your session has expired. Please log in again.");
+          navigate("/homepage");
+          return null;
+        }
         
         setIsAdmin(isAdmin);
       } catch (error) {
