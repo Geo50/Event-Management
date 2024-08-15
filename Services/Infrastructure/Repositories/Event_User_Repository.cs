@@ -24,7 +24,7 @@ namespace Infrastructure.Repositories
         public Task<int> GetTransactionsPerUserEvent (Transaction transaction);
     }
 
-    public class Event_User_Repository : IEvent_User_Repository
+    public class Event_User_Repository : IEvent_User_Repository 
     {
         private readonly IConfiguration _configuration;
         public Event_User_Repository(IConfiguration configuration)
@@ -54,7 +54,7 @@ namespace Infrastructure.Repositories
                 var count = await connection.QuerySingleAsync<int>(query, new
                 {
                     eventid = transaction.eventid,
-                    userid = transaction.UserId
+                    Userid = transaction.UserId
                 });
                 return count;
             }

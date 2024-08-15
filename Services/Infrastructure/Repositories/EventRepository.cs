@@ -30,6 +30,8 @@ namespace Infrastructure.Repositories
         public Task CreateNewTicket(Tickets tickets);
         public Task<IEnumerable<Tickets>> GetEventTickets(int eventid);
         public Task<string> GetUsernameFromId(int userid);
+
+        public Task<int> GetEventMaxTicketsPerUser(int eventid);
     }
 
     public class EventRepository : IEventRepository
@@ -42,6 +44,15 @@ namespace Infrastructure.Repositories
 
         private IDbConnection Connection => new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
+        public async Task<int> GetEventMaxTicketsPerUser(int eventid)
+        {
+            var query = EventQueries.GetEventMaxTicketsPerUser;
+            using (var connection = Connection)
+            {
+                var result = await connection.QueryFirstOrDefaultAsync<int>(query, new { eventid = eventid });
+                return result;
+            }
+        }
 
         public async Task<bool> GetDate(DateTime dateToCreate)
         {

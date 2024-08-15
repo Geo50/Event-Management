@@ -23,6 +23,7 @@ type eventCredentials = {
   eventDescription: string;
   organiser_id: number;
   eventAttendeesLimit: number;
+  ticket_limit_per_user: number;
 };
 
 const CreateEvent: React.FC = () => {
@@ -33,6 +34,7 @@ const CreateEvent: React.FC = () => {
   const eventImageRef = useRef<HTMLInputElement>(null);
   const eventDescriptionRef = useRef<ComponentFunctions>(null);
   const eventAttendeesLimit = useRef<ComponentFunctions>(null);
+  const ticket_limit_per_userRef = useRef<ComponentFunctions>(null)
   const navigate = useNavigate();
 
   const eventDataRef = useRef<eventCredentials>({
@@ -44,6 +46,7 @@ const CreateEvent: React.FC = () => {
     eventDescription: "",
     organiser_id: 0,
     eventAttendeesLimit: 1,
+    ticket_limit_per_user: 1
   });
 
   const [imageURL, setImageURL] = useState<string>("");
@@ -149,6 +152,7 @@ const CreateEvent: React.FC = () => {
       eventDescription: (eventDescriptionRef.current?.value as string) || "",
       organiser_id: organiserID || 0,
       eventAttendeesLimit: parseInt(eventAttendeesLimit.current?.value as string, 10),
+      ticket_limit_per_user: parseInt(ticket_limit_per_userRef.current?.value as string, 10)
     };
     let inputDate: number = new Date(eventValues.eventDate).getTime();
     let todayTimestamp = today.getTime();
@@ -227,6 +231,7 @@ const CreateEvent: React.FC = () => {
         EventDescription: eventValues.eventDescription,
         organiser_id: organiserID,
         eventAttendeesLimit: eventValues.eventAttendeesLimit,
+        ticket_limit_per_user: eventValues.ticket_limit_per_user
       })
       .then((response) => {
         const eventId = response.data.eventId;
@@ -331,9 +336,15 @@ const CreateEvent: React.FC = () => {
               inputPlaceholder="How many people can your event have?"
               value={eventDataRef.current.eventAttendeesLimit.toString()}
             />
+             <InputComponent
+              ref={ticket_limit_per_userRef}
+              inputType="number"
+              inputPlaceholder="What is the maximum amount of tickets a single user can buy?"
+              value={eventDataRef.current.ticket_limit_per_user.toString()}
+            />
             <Button variant="danger" onClick={handleSubmit} className={classes.submitButton}>
               Submit
-            </Button>
+            </Button>           
           </div>
         </div>
       </Col>

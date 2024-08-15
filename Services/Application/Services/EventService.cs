@@ -24,6 +24,8 @@ namespace Application.Services
         public Task<bool> GetPlace(string place);
         public Task<IEnumerable<CreateEventDTO>> GetEventInDetails(int eventId);
         public Task<string> GetUsernameFromId(int userid);
+        public Task<int> GetEventMaxTicketsPerUser(int eventid);
+
 
 
     }
@@ -38,6 +40,11 @@ namespace Application.Services
             _mapper = mapper;
         }
 
+        public async Task<int> GetEventMaxTicketsPerUser(int eventid)
+        {
+            var maxTickets = await _repository.GetEventMaxTicketsPerUser(eventid);
+            return maxTickets;
+        }
         public async Task<int> CreateNewEvent(CreateEventDTO EventDTO)
         {
             var newEvent = _mapper.Map<CombinedProperties>(EventDTO);

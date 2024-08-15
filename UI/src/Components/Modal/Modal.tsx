@@ -24,7 +24,7 @@ const ModalComponent: React.FC<ModalProps> = ({
   const handleNavigation = () => {
     navigate("/create-ticket", {
       state: {
-        eventid: eventIdProp
+        eventid: eventIdProp,
       },
     });
   };

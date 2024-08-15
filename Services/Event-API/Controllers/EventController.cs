@@ -137,10 +137,25 @@ namespace Event_API.Controllers
         }
 
         [HttpPost("GetTransactionsPerUserEvent")]
-        public async Task<ActionResult<int>> GetTransactionsPerUserEvent(TransactionCountDTO transactionCountDTO)
+        public async Task<ActionResult<int>> GetTransactionsPerUserEvent([FromBody] TransactionCountDTO transactionCountDTO)
         {
-            var count = await _event_User_Service.GetTransactionsPerUserEvent(transactionCountDTO);
-            return Ok(count);
+            try
+            {
+                var count = await _event_User_Service.GetTransactionsPerUserEvent(transactionCountDTO);
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (e.g., using a logging framework)
+                return StatusCode(500, new { message = "An error occurred while processing your request.", error = ex.Message });
+            }
+        }
+
+        [HttpPost("GetEventMaxTicketsPerUser")]
+        public async Task<int> GetEventMaxTicketsPerUser([FromQuery]int eventid)
+        {
+            var maxTickets = await _eventService.GetEventMaxTicketsPerUser(eventid);
+            return maxTickets;
         }
 
     }
