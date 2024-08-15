@@ -23,10 +23,16 @@ const PaymentSuccess: React.FC = () => {
   }, [location]);
 
   const handlePaymentSuccess = async (sessionId: string) => {
-    try {
+    
+    try {   
       const response = await axios.post(`https://localhost:7083/api/Stripe/payment-success?SessionId=${sessionId}`);
-      console.log("Payment success response:", response.data);
+      const { ticketId, eventId } = response.data;
+
       toast.success('Payment successful! Your ticket has been purchased.');
+      await axios.put(`https://localhost:7083/api/Event/UpdateTicketStatus`, {
+        ticketId: ticketId,
+        eventId: eventId
+      })
       // Navigate to a confirmation page or back to the homepage
       navigate('/profile');
     } catch (error: any) {
