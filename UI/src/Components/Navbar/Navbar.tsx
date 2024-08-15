@@ -28,11 +28,11 @@ const NavbarComponent: React.FC = () => {
         const decodedToken: any = jwtDecode(token);
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
-        if (decodedToken.exp < currentTime) {
-          toast.error("Your session has expired. Please log in again.");
-          navigate("/homepage");
-          return null;
-        }
+        // if (decodedToken.exp < currentTime) {
+        //   toast.error("Your session has expired. Please log in again.");
+        //   navigate("/homepage");
+        //   return null;
+        // }
        
         return userId;
       } catch (error) {

@@ -85,6 +85,16 @@
   cursor: pointer;
 }
 
+.lightText {
+  color: white;
+}
+
+.alertText {
+  color: rgba(255, 0, 0, 0.918);
+  font-weight: 500;
+  font-size: 1.6rem;
+}
+
 .ticketTable {
   width: 100%;
   border-collapse: collapse;

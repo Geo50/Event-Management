@@ -28,7 +28,6 @@ const ViewTickets: React.FC = () => {
   const navigate = useNavigate();
 
   const [ticketsData, setTicketsData] = useState<TicketValues[]>([]);
-  const [boughtTickets, setBoughtTickets] = useState<TicketValues[]>([]);
 
   const getToken = () => {
     const token = secureLocalStorage.getItem(key);
@@ -42,11 +41,7 @@ const ViewTickets: React.FC = () => {
         const decodedToken: any = jwtDecode(token);
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
-        if (decodedToken.exp < currentTime) {
-          toast.error("Your session has expired. Please log in again.");
-          navigate("/homepage");
-          return null;
-        }
+       
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");

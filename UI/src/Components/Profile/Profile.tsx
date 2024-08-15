@@ -33,19 +33,21 @@ type boughtTicketsType = {
 };
 
 const Profile: React.FC = () => {
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const createTicketsButtonRef = useRef<HTMLButtonElement>(null);
+  const viewTicketsButtonRef = useRef<HTMLButtonElement>(null);
+
   const [disabled, setDisabled] = useState<boolean>(true);
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [userValue, setUserValue] = useState<string>("");
-  const usernameRef = useRef<HTMLInputElement>(null);
-  const createTicketsButtonRef = useRef<HTMLButtonElement>(null);
-  const viewTicketsButtonRef = useRef<HTMLButtonElement>(null);
   const [events, setEvents] = useState<eventData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   const [boughtTicketsData, setBoughtTicketsData] = useState<boughtTicketsType[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   const getToken = () => {
     const token = secureLocalStorage.getItem(key);
@@ -59,11 +61,7 @@ const Profile: React.FC = () => {
         const decodedToken: any = jwtDecode(token);
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
-        if (decodedToken.exp < currentTime) {
-          toast.error("Your session has expired. Please log in again.");
-          navigate("/homepage");
-          return null;
-        }
+
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
@@ -75,8 +73,17 @@ const Profile: React.FC = () => {
 
   const userId = decodeToken();
 
+  const checkLoggedin = () => {
+    if (userId != null) {
+      setIsLoggedIn(true)
+    }
+    else {
+      setIsLoggedIn(false)
+    }
+  }
+
   const handleBoughtTickets = async () => {
-    const response = await axios
+    await axios
       .get(`https://localhost:7083/api/Event/GetBoughtTickets?UserId=${userId}`)
       .then((response) => {
         setBoughtTicketsData(response.data);
@@ -138,6 +145,7 @@ const Profile: React.FC = () => {
     fetchUserDetails();
     handleEventsGeneration();
     handleBoughtTickets();
+    checkLoggedin();
   }, []);
 
   useEffect(() => {
@@ -164,6 +172,17 @@ const Profile: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const token = getToken();
+    const userId = decodeToken(); // Decodes the token and checks expiration
+  
+    if (userId !== null) {
+      setIsLoggedIn(true); // User is logged in
+    } else {
+      setIsLoggedIn(false); // User is not logged in
+    }
+  }, []);
+
   const navigate = useNavigate();
   const handleButtonClick = () => {
     if (isEditing) {
@@ -189,7 +208,7 @@ const Profile: React.FC = () => {
     console.log(`From navigation ${event.eventid}`);
     navigate("/view-tickets", {
       state: {
-        eventid: event.eventid,
+        eventId: event.eventid,
       },
     });
   };
@@ -223,9 +242,9 @@ const Profile: React.FC = () => {
       <ToastContainer />
       <Container className={classes.container}>
         <Row>
-          <h1>Welcome, {username}!</h1>
+          <h1 className={classes.header}>Welcome, {username}!</h1>
           <br />
-          <h1>Here are your account details</h1>
+          <h1 className={classes.header}>Here are your account details</h1>
         </Row>
         <Row className={classes.rowClass}>
           <Col md={9} lg={9}>
@@ -264,7 +283,7 @@ const Profile: React.FC = () => {
         {events.length > 0 ? (
           <div>
             <Row className={classes.eventContainer}>
-              <h1>View your bookmarked events</h1>
+              <h1 className={classes.header}>View your bookmarked events</h1>
             </Row>
             <div>
               {loading ? (
@@ -282,9 +301,9 @@ const Profile: React.FC = () => {
 
                       return (
                         <Col key={event.eventid} xs={12} sm={6} lg={4}>
-                          <Card className={classes.eventCard}>
+                          <Card className={classes.eventCard} onClick={() => handleImageClick(event.eventid)}>
                             <Card.Img
-                              onClick={() => handleImageClick(event.eventid)} // Use the handler function
+                               // Use the handler function
                               variant="top"
                               src={event.eventimage}
                               className={classes.imageElement}
@@ -334,20 +353,19 @@ const Profile: React.FC = () => {
                     visibility={modalShow}
                     handleClose={handleCloseDetails}
                     eventId={selectedEventId || 0}
+                    isLoggedin={isLoggedIn}
                   />
                 </Container>
               )}
             </div>
           </div>
         ) : (
-          <h1>Oops, you haven't bookmarked any events yet...</h1>
+          <h1 className={classes.header}>Oops, you haven't bookmarked any events yet...</h1>
         )}
-      </Container>
-      <Container fluid>
         {boughtTicketsData.length > 0 ? (
-          <div>
-            <h1>And here are your bought tickets!</h1>
-
+          <Row>
+            {" "}
+            <h1 className={classes.header}>And here are your bought tickets!</h1>
             <table className={classes.ticketTable}>
               <thead>
                 <tr>
@@ -374,11 +392,10 @@ const Profile: React.FC = () => {
                 ))}
               </tbody>
             </table>
-          </div>
+          </Row>
         ) : (
           <h1>It seems like you haven't bought any ticket yet..</h1>
         )}
-        <div></div>
       </Container>
     </div>
   );

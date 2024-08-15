@@ -18,6 +18,9 @@ input::-webkit-inner-spin-button {
   padding: 2rem;
   border-radius: 10px;
 }
+.submitButton {
+  width: 100%;
+}
 
 .imageContainer {
   margin: 1rem 0;

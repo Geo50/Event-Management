@@ -31,7 +31,10 @@ const Homepage: React.FC = () => {
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [isAdmin, setIsAdmin] = useState<string>("");
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  
 
   const getToken = () => {
     const token = secureLocalStorage.getItem(key);
@@ -44,23 +47,33 @@ const Homepage: React.FC = () => {
       try {
         const decodedToken: any = jwtDecode(token);
         const isAdmin: string = decodedToken?.role;
-        console.log("Decoded token:", decodedToken); // Add this line
-        console.log("isAdmin value:", isAdmin);
+        const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
         if (decodedToken.exp < currentTime) {
           toast.error("Your session has expired. Please log in again.");
           navigate("/homepage");
+          secureLocalStorage.clear();
           return null;
         }
-        
         setIsAdmin(isAdmin);
+        return userId
       } catch (error) {
-        console.error("Error decoding token:", error); // Add this line
         toast.error("Failed to decode token.");
       }
     }
     return null;
   };
+  
+  useEffect(() => {
+    const token = getToken();
+    const userId = decodeToken(); // Decodes the token and checks expiration
+  
+    if (userId !== null) {
+      setIsLoggedIn(true); // User is logged in
+    } else {
+      setIsLoggedIn(false); // User is not logged in
+    }
+  }, []);
 
   useEffect(() => {
     document.body.style.backgroundImage = `url(${RedBlacK})`;
@@ -212,7 +225,7 @@ const Homepage: React.FC = () => {
                   <Card.Body>
                     <Card.Title className={classes.title}> {event.eventName}</Card.Title>
                   </Card.Body>
-                  <ListGroup className="list-group-flush">
+                  <ListGroup className="list-group-flush">  
                     <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
@@ -226,7 +239,7 @@ const Homepage: React.FC = () => {
             ))}
           </Row>
           <div className={classes.detailsParent}>
-            <EventDetailsModal visibility={modalShow} handleClose={handleCloseDetails} eventId={selectedEventId || 0} />
+            <EventDetailsModal visibility={modalShow} handleClose={handleCloseDetails} eventId={selectedEventId || 0} isLoggedin={isLoggedIn} />
           </div>
           {isAdmin === "Admin" ? (
             <div className={classes.createEventButton}>

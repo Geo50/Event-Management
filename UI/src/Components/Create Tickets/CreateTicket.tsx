@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { useCallback, useEffect, useState } from "react";
+import { Button, Col, Container, Modal, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import classes from "./CreateTicket.module.css";
@@ -22,13 +22,13 @@ const CreateTicket: React.FC = () => {
   const [ticketName, setTicketName] = useState<string>("");
   const [ticketPrice, setTicketPrice] = useState<string>("");
   const [ticketLimit, setTicketLimit] = useState<string>("");
-  const [ticketLimitSum, setTicketLimitSum] = useState<number>();
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [benefits, setBenefits] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [isValid, setIsValid] = useState<boolean>(true);
   const [ticketsData, setTicketsData] = useState<TicketValues[]>([]);
-  const [attendeesLimit, setAttendeesLimit] = useState<number | null>(null); // Change to number or null
+  const [attendeesLimit, setAttendeesLimit] = useState<number | null>(null);
+  const [modalShow, setModalShow] = useState<boolean>(false);
 
   useEffect(() => {
     if (eventid) {
@@ -40,24 +40,25 @@ const CreateTicket: React.FC = () => {
     try {
       const response = await axios.get(`https://localhost:7083/api/Event/GetEventTickets?eventId=${eventid}`);
       setTicketsData(response.data);
-      await getEventAttendees()
+      await getEventAttendees();
     } catch (error: any) {
       toast.error(`Error getting the tickets: ${error.message}`);
     }
   };
 
   const getEventAttendees = async () => {
-    await axios.post(`https://localhost:7083/api/Event/GetEventAttendees?eventId=${eventid}`, {
-      eventId: eventid
-    })
-    .then((response) => {
-      setAttendeesLimit(Number(response.data)); // Convert to number
-      console.log(response.data);
-    })
-    .catch((error: any) => {
-      toast.error(`There has been a problem fetching the event attendees limit: ${error.status} : ${error.message}`);
-    });
-  }
+    await axios
+      .post(`https://localhost:7083/api/Event/GetEventAttendees?eventId=${eventid}`, {
+        eventId: eventid,
+      })
+      .then((response) => {
+        setAttendeesLimit(Number(response.data)); // Convert to number
+        console.log(response.data);
+      })
+      .catch((error: any) => {
+        toast.error(`There has been a problem fetching the event attendees limit: ${error.status} : ${error.message}`);
+      });
+  };
 
   const inputValidation = () => {
     let valid = true;
@@ -72,27 +73,26 @@ const CreateTicket: React.FC = () => {
         valid = false;
         return;
       }
-    
-      setTicketLimitSum(prev => (prev ?? 0) + ticketLimitNumber);
-      
+
       if (newTotalLimit > eventAttendeesLimit) {
-        toast.error(`Sorry, the total ticket limit (${newTotalLimit}) would surpass your attendees limit (${eventAttendeesLimit}).`);
+        toast.error(
+          `Sorry, the total ticket limit (${newTotalLimit}) would surpass your attendees limit (${eventAttendeesLimit}).`
+        );
         valid = false;
         return;
       }
+    };
 
-    }
-    
     if (ticketName === "") {
       toast.error("Please fill the ticket name field.");
       valid = false;
     }
-  
+
     if (ticketPrice === "") {
       toast.error("Please fill the ticket price field.");
       valid = false;
     }
-  
+
     if (ticketLimit === "") {
       toast.error("Please fill the ticket limit field.");
       valid = false;
@@ -101,29 +101,28 @@ const CreateTicket: React.FC = () => {
       toast.error("Please fill the ticket benefits field.");
       valid = false;
     }
-  
+
     if (selectedCategory === "") {
       toast.error("Please select a ticket category.");
       valid = false;
     }
-  
+
     const eventAttendeesLimit = attendeesLimit || 0;
     handleTicketLimits(eventAttendeesLimit);
-  
+
     setIsValid(valid);
     return valid;
   };
-    
+
   const handleValues = async () => {
     try {
-
       await axios.post("https://localhost:7083/api/Event/CreateNewTicket", {
         eventId: eventid,
         ticketName: ticketName,
         ticketPrice: parseInt(ticketPrice),
         category: selectedCategory,
         benefits: benefits,
-        ticket_limit: parseInt(ticketLimit)
+        ticket_limit: parseInt(ticketLimit),
       });
       toast.success("Ticket created successfully!");
       fetchTickets();
@@ -134,8 +133,10 @@ const CreateTicket: React.FC = () => {
       setBenefits("");
       setVisible(false);
       setIsEditing(false);
+      setModalShow(false)
     } catch (error: any) {
       toast.error(`Failed to create the ticket: ${error.message}`);
+      setModalShow(false)
     }
   };
 
@@ -146,10 +147,12 @@ const CreateTicket: React.FC = () => {
     } else {
       const valid = inputValidation();
       if (valid) {
-        handleValues();
+        setModalShow(true)
       }
     }
   };
+
+ 
 
   const handleCancelClick = () => {
     setVisible(false);
@@ -160,8 +163,36 @@ const CreateTicket: React.FC = () => {
     setBenefits("");
   };
 
+  const handleCloseDetails = useCallback((): void => {
+    setModalShow(false);
+  }, []);
+
   return (
     <div className={classes.allContainer}>
+      {modalShow && (
+        <Modal show={modalShow} onHide={handleCloseDetails}>
+          <Modal.Header closeButton className="bg-dark">
+            <Modal.Title>
+              <p className={classes.alertText}>Are you sure?</p>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="bg-dark">
+            <div className="bg-dark">
+              <p className={classes.lightText}>
+                This is an irreversible action, you cannot edit your ticket after creating it!
+              </p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer className="bg-dark">
+            <Button variant="outline-success" onClick={handleValues}>
+              Confirm
+            </Button>
+            <Button variant="outline-danger" onClick={handleCloseDetails}>
+              Go back
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
       <ToastContainer />
       <Container className={classes.container} fluid>
         <Row>
@@ -184,7 +215,7 @@ const CreateTicket: React.FC = () => {
                 className="custom-select"
                 id="inputGroupSelect01"
                 value={selectedCategory}
-                onChange={(event) =>  setSelectedCategory(event.target.value)} // Update selected category on change
+                onChange={(event) => setSelectedCategory(event.target.value)} // Update selected category on change
               >
                 <option value="">Choose your new ticket category</option> {/* Default empty value */}
                 <option value="Regular">Regular</option>
@@ -198,7 +229,7 @@ const CreateTicket: React.FC = () => {
                   type="text"
                   placeholder="Ticket Name"
                   value={ticketName}
-                  onChange={(event) =>  setTicketName(event.target.value)}
+                  onChange={(event) => setTicketName(event.target.value)}
                 />
               </Col>
               <Col>
@@ -206,7 +237,7 @@ const CreateTicket: React.FC = () => {
                   type="number"
                   placeholder="Ticket Price"
                   value={ticketPrice}
-                  onChange={(event) =>  setTicketPrice(event.target.value)}
+                  onChange={(event) => setTicketPrice(event.target.value)}
                 />
               </Col>
               <Col>
@@ -214,7 +245,7 @@ const CreateTicket: React.FC = () => {
                   type="number"
                   placeholder="How many tickets can you sell of this ticket?"
                   value={ticketLimit}
-                  onChange={(event) =>  setTicketLimit(event.target.value)}
+                  onChange={(event) => setTicketLimit(event.target.value)}
                 />
               </Col>
               <Row>
@@ -224,7 +255,7 @@ const CreateTicket: React.FC = () => {
                     type="text"
                     placeholder="Ticket Benefits"
                     value={benefits}
-                    onChange={(event) =>  setBenefits(event.target.value)}
+                    onChange={(event) => setBenefits(event.target.value)}
                   />
                 </Col>
               </Row>
