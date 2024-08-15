@@ -136,5 +136,12 @@ namespace Event_API.Controllers
             return Ok();
         }
 
+        [HttpPost("GetTransactionsPerUserEvent")]
+        public async Task<ActionResult<int>> GetTransactionsPerUserEvent(TransactionCountDTO transactionCountDTO)
+        {
+            var count = await _event_User_Service.GetTransactionsPerUserEvent(transactionCountDTO);
+            return Ok(count);
+        }
+
     }
 }

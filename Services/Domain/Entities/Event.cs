@@ -16,5 +16,6 @@ namespace Domain.Entities
         public string eventimage { get; set; }
         public int Organiser_Id { get; set; }
         public int EventAttendeesLimit { get; set; }
+        public  int ticket_limit_per_user { get; set; }
     }
 }

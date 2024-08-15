@@ -8,8 +8,8 @@ namespace SQL_Queries.Queries
 {
     public class EventQueries
     {
-        public static string CreateNewEvent = "INSERT INTO public.event (eventname, eventdate, eventplace, eventtype, eventimage, organiser_id, eventAttendeesLimit) VALUES (@eventname, @eventdate, @eventplace, @eventtype, @eventimage, @organiser_id, @eventAttendeesLimit) RETURNING eventid ";
-
+        public static string CreateNewEvent = @"INSERT INTO public.event (eventname, eventdate, eventplace, eventtype, eventimage, organiser_id, eventAttendeesLimit, ticket_limit_per_user) VALUES (@eventname, @eventdate, @eventplace, @eventtype, @eventimage, @organiser_id, @eventAttendeesLimit, @ticket_limit_per_user) RETURNING eventid ";
+                                             
         public static string GetUsernameFromId = "SELECT username FROM public.user_details WHERE userid = @Userid";
 
         public static string GetDate = "SELECT eventdate FROM public.event WHERE eventdate = @Date";

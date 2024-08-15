@@ -29,7 +29,7 @@ namespace Infrastructure.Repositories
         public Task<bool> GetPlace(string place);
         public Task CreateNewTicket(Tickets tickets);
         public Task<IEnumerable<Tickets>> GetEventTickets(int eventid);
-        public Task<string> GetUsernameFromId (int userid);
+        public Task<string> GetUsernameFromId(int userid);
     }
 
     public class EventRepository : IEventRepository
@@ -79,7 +79,7 @@ namespace Infrastructure.Repositories
                 var result = await connection.QueryFirstOrDefaultAsync<int>(query, new { eventId = eventId });
                 return result;
             }
-        }        
+        }
 
 
         public async Task<string> GetUsernameFromId(int userid)
@@ -125,22 +125,21 @@ namespace Infrastructure.Repositories
                         EventPlace = newEvent.EventPlace,
                         EventType = newEvent.EventType,
                         EventImage = newEvent.EventImage,
-                        Organiser_id = newEvent.Organiser_id, 
-                        EventAttendeesLimit = newEvent.EventAttendeesLimit
-                    });                    
+                        Organiser_id = newEvent.Organiser_id,
+                        EventAttendeesLimit = newEvent.EventAttendeesLimit,
+                        ticket_limit_per_user = newEvent.ticket_limit_per_user
+                    });
 
                     await connection.ExecuteAsync(insertEventDetails, new
                     {
                         EventId = eventId,
-                        EventDescription = newEvent.EventDescription,
-                        //TicketId = ticketid
+                        EventDescription = newEvent.EventDescription
                     });
                     return eventId;
                 }
-                }
-
-
             }
+
+        }
         public async Task CreateNewTicket(Tickets tickets)
         {
             var query = EventQueries.CreateNewTicket;
@@ -165,13 +164,13 @@ namespace Infrastructure.Repositories
         {
             var query = EventQueries.GetEventInDetails;
             using (var connection = Connection)
+            {
+                var result = await connection.QueryAsync<CombinedProperties>(query, new
                 {
-                    var result = await connection.QueryAsync<CombinedProperties>(query, new
-                    {
-                        eventid = eventId
-                    });
-                    return result;
-                }
+                    eventid = eventId
+                });
+                return result;
             }
         }
-    } 
+    }
+}

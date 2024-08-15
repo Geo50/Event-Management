@@ -27,5 +27,7 @@ namespace SQL_Queries.Queries
                                                    WHERE tr.userid = @userid;";
 
         public static string UpdateTicketStatus => "UPDATE public.tickets SET ticket_limit = ticket_limit - 1 WHERE eventid = @eventid AND ticketid= @ticketid AND ticket_limit > 0";
+
+        public static string GetTransactionsPerUserEvent => "SELECT COUNT(*) FROM public.transaction WHERE eventid = @eventid AND userid = @userid";
     }
 }

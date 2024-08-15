@@ -21,7 +21,7 @@ namespace Infrastructure.Repositories
         public Task CreateTransaction(Transaction transaction);
         public Task<IEnumerable<CombinedProperties>> GetBoughtTickets(int UserId);
         public Task UpdateTicketStatus(Tickets tickets);
-
+        public Task<int> GetTransactionsPerUserEvent (Transaction transaction);
     }
 
     public class Event_User_Repository : IEvent_User_Repository
@@ -44,6 +44,19 @@ namespace Infrastructure.Repositories
                     eventid = tickets.EventId,
                     ticketid = tickets.TicketId,
                 });
+            }
+        }
+        public async Task<int> GetTransactionsPerUserEvent(Transaction transaction)
+        {
+            var query = Event_User_Queries.GetTransactionsPerUserEvent;
+            using (var connection = Connection)
+            {
+                var count = await connection.QuerySingleAsync<int>(query, new
+                {
+                    eventid = transaction.eventid,
+                    userid = transaction.UserId
+                });
+                return count;
             }
         }
 
