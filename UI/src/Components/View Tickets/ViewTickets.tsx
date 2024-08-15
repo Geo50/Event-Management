@@ -128,7 +128,6 @@ const ViewTickets: React.FC = () => {
                 <th>Ticket Category</th>
                 <th>Ticket Price</th>
                 <th>Ticket Benefits</th>
-                <th>Ticket Limit</th>
                 <th>Buy Ticket</th>
               </tr>
             </thead>
@@ -140,11 +139,17 @@ const ViewTickets: React.FC = () => {
                   <td>{ticket.category}</td>
                   <td>${ticket.ticketPrice}</td>
                   <td>{ticket.benefits}</td>
-                  <td>{ticket.ticket_Limit}</td>
                   <td>
-                    <Button variant="danger" onClick={() => handleBuyTicket(ticket)}>
-                      Buy Ticket
+                    {ticket.ticket_Limit === 0 ? (
+                      <Button variant="danger" disabled>
+                      Sold out!
                     </Button>
+                    ):(
+                      <Button variant="danger" onClick={() => handleBuyTicket(ticket)}>
+                      Buy Ticket!
+                    </Button>
+                    )}
+                    
                   </td>
                 </tr>
               ))}

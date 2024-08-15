@@ -18,10 +18,7 @@ namespace Application.Services
         public Task CreateTransaction(TransactionDTO transactionDTO);
         public Task<IEnumerable<TransactionDTO>> GetTransaction(int UserId);
         public Task<IEnumerable<ViewBoughtTicketsDTO>> GetBoughtTickets(int UserId);
-        
-
-
-
+        public Task UpdateTicketStatus(UpdateTicketStatusDTO updateTicketStatusDTO);
     }
     public class Event_User_Service : IEvent_User_Service
     {
@@ -39,6 +36,15 @@ namespace Application.Services
             var ticketsDTO = _mapper.Map<IEnumerable<ViewBoughtTicketsDTO>>(fullTickets);
             return ticketsDTO;
         }
+
+        public async Task UpdateTicketStatus(UpdateTicketStatusDTO updateTicketStatusDTO)
+        {
+            //var ticketsDTO = await _mapper.Map<Tickets>(updateTicketStatusDTO);
+            var ticketsDTO =  _mapper.Map<Tickets>(updateTicketStatusDTO);
+            await _repository.UpdateTicketStatus(ticketsDTO);
+            
+        }
+
 
         public async Task CreateNewBookmark(Bookmarks bookmark)
         {

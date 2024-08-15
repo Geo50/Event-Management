@@ -128,6 +128,13 @@ namespace Event_API.Controllers
             return Ok(tickets);
         }
 
+        [HttpPut("UpdateTicketStatus")]
+
+        public async Task<ActionResult> UpdateTicketStatus(UpdateTicketStatusDTO updateTicketStatusDTO)
+        {
+            await _event_User_Service.UpdateTicketStatus(updateTicketStatusDTO);
+            return Ok();
+        }
 
     }
 }

@@ -20,6 +20,7 @@ namespace Infrastructure.Repositories
         public Task<IEnumerable<Transaction>> GetTransaction(int UserId);
         public Task CreateTransaction(Transaction transaction);
         public Task<IEnumerable<CombinedProperties>> GetBoughtTickets(int UserId);
+        public Task UpdateTicketStatus(Tickets tickets);
 
     }
 
@@ -32,6 +33,20 @@ namespace Infrastructure.Repositories
         }
 
         private IDbConnection Connection => new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+        public async Task UpdateTicketStatus(Tickets tickets)
+        {
+            var query = Event_User_Queries.UpdateTicketStatus;
+            using (var connection = Connection)
+            {
+                await connection.ExecuteAsync(query, new
+                {
+                    eventid = tickets.EventId,
+                    ticketid = tickets.TicketId,
+                });
+            }
+        }
+
 
         public async Task<IEnumerable<CombinedProperties>> GetBoughtTickets(int UserId)
         {
