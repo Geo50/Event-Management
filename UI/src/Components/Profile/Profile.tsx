@@ -105,7 +105,6 @@ const Profile: React.FC = () => {
           setEmail(result.data.userEmail);
           setUserValue(result.data.userName);
         } catch (error: any) {
-          console.log(`Failed to get user details. Status code: ${error.response?.status}: ${error.message}`);
         }
       }
     };
@@ -119,11 +118,9 @@ const Profile: React.FC = () => {
         const result = await axios.post(`https://localhost:7083/api/Event/GetEventsInProfile?UserId=${userId}`, {
           UserId: userId,
         });
-        console.log("Result data" + result.data[0]);
 
         const eventsWithUsernames = await Promise.all(
           result.data.map(async (event: eventData) => {
-            console.log("EventId in map " + event);
             setSelectedEventId(event.eventid);
             const organiserResponse = await axios.get(
               `https://localhost:7083/api/Event/GetUsernameFromId?userid=${event.organiser_Id}`
@@ -134,7 +131,6 @@ const Profile: React.FC = () => {
             };
           })
         );
-        console.log(`This is the selected event id outside map ${selectedEventId}`);
         setEvents(eventsWithUsernames);
       } catch (error: any) {
         toast.error(`Failed to create event. Status code: ${error.response?.status}: ${error.message}`);
@@ -205,7 +201,6 @@ const Profile: React.FC = () => {
   }, []);
 
   const handleViewTicketsNavigation = (event: eventData) => {
-    console.log(`From navigation ${event.eventid}`);
     navigate("/view-tickets", {
       state: {
         eventId: event.eventid,
@@ -224,8 +219,6 @@ const Profile: React.FC = () => {
   const handleImageClick = (eventid: number) => {
     setModalShow(true);
     setSelectedEventId(eventid);
-    console.log(selectedEventId); // Ensure eventId is correctly passed
-    console.log(eventid);
   };
   const userOrganizerDistinguisher = (events: eventData) => {
     const organizer = events.organiser_Id;
@@ -239,7 +232,6 @@ const Profile: React.FC = () => {
 
   return (
     <div className={`${classes.allContainer}`}>
-      <ToastContainer />
       <Container className={classes.container}>
         <Row>
           <h1 className={classes.header}>Welcome, {username}!</h1>
@@ -336,7 +328,6 @@ const Profile: React.FC = () => {
                                     variant="outline-danger"
                                     onClick={() => {
                                       handleViewTicketsNavigation(event);
-                                      console.log(`After render: ${event.eventid}`);
                                     }}
                                   >
                                     View Event Tickets

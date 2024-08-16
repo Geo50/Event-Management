@@ -11,7 +11,7 @@ import Registration from "./Components/Registration/Registration";
 import ViewTickets from "./Components/View Tickets/ViewTickets";
 import StripeProvider from "./Components/Stripe Payment/StripeProvider";
 import PaymentSuccess from "./Components/Payment Success/PaymentSuccess";
-import { ToastContainer } from "react-bootstrap";
+import { ToastContainer } from "react-toastify";
 
 export const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 
@@ -19,8 +19,8 @@ function App() {
   return (
     <BrowserRouter>
       <StripeProvider>
+        <ToastContainer />
         <Navbar />
-        <ToastContainer/>
         <Routes>
           <Route path="/" element={<Navigate to="/homepage" />} />
           <Route path="/registration" element={<Registration />} />

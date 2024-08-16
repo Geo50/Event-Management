@@ -20,6 +20,7 @@ namespace Application.Services
         public Task<IEnumerable<ViewBoughtTicketsDTO>> GetBoughtTickets(int UserId);
         public Task UpdateTicketStatus(UpdateTicketStatusDTO updateTicketStatusDTO);
         public Task<int> GetTransactionsPerUserEvent(TransactionCountDTO transactionCountDTO);
+        public Task<int> GetTransactionsPerEvent(int eventid);
 
     }
     public class Event_User_Service : IEvent_User_Service
@@ -38,6 +39,11 @@ namespace Application.Services
             var transactionDTO = _mapper.Map<Transaction>(transactionCountDTO);
             var fullTransaction = await _repository.GetTransactionsPerUserEvent(transactionDTO);
             return fullTransaction;
+        } 
+        public async Task<int> GetTransactionsPerEvent(int eventid)
+        {
+            var count = await _repository.GetTransactionsPerEvent(eventid);
+            return count;
         }
         
         public async Task<IEnumerable<ViewBoughtTicketsDTO>> GetBoughtTickets(int UserId)

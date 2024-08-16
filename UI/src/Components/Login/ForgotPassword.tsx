@@ -96,7 +96,6 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <Container fluid className={classes.componentContainer_centered}>
-      <ToastContainer />
       {loading && (
         <div className={classes.loader}>
           <HashLoader color="#a80e0e" size={100} speedMultiplier={1.3} />

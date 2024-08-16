@@ -22,6 +22,7 @@ namespace Infrastructure.Repositories
         public Task<IEnumerable<CombinedProperties>> GetBoughtTickets(int UserId);
         public Task UpdateTicketStatus(Tickets tickets);
         public Task<int> GetTransactionsPerUserEvent (Transaction transaction);
+        public Task<int> GetTransactionsPerEvent (int eventid);
     }
 
     public class Event_User_Repository : IEvent_User_Repository 
@@ -55,6 +56,18 @@ namespace Infrastructure.Repositories
                 {
                     eventid = transaction.eventid,
                     Userid = transaction.UserId
+                });
+                return count;
+            }
+        }
+        public async Task<int> GetTransactionsPerEvent(int eventid)
+        {
+            var query = Event_User_Queries.GetTransactionsPerEvent;
+            using (var connection = Connection)
+            {
+                var count = await connection.QuerySingleAsync<int>(query, new
+                {
+                    eventid 
                 });
                 return count;
             }

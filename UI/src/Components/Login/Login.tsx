@@ -120,7 +120,6 @@ const Login: React.FC = () => {
       ) : ( null)}
         <Container fluid className={classes.componentContainer}>
           
-          <ToastContainer />
           <Row className={classes.rowProperties}>
             
             <Col xs={12} lg={4} xl={4} className={classes.firstColumn}>

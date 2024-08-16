@@ -150,6 +150,20 @@ namespace Event_API.Controllers
                 return StatusCode(500, new { message = "An error occurred while processing your request.", error = ex.Message });
             }
         }
+        [HttpGet("GetTransactionsPerEvent")]
+        public async Task<ActionResult<int>> GetTransactionsPerEvent([FromQuery] int eventid)
+        {
+            try
+            {
+                var count = await _event_User_Service.GetTransactionsPerEvent(eventid);
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (e.g., using a logging framework)
+                return StatusCode(500, new { message = "An error occurred while processing your request.", error = ex.Message });
+            }
+        }
 
         [HttpPost("GetEventMaxTicketsPerUser")]
         public async Task<int> GetEventMaxTicketsPerUser([FromQuery]int eventid)

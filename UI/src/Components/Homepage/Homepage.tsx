@@ -1,15 +1,15 @@
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import React, { useCallback, useEffect, useState } from "react";
 import { Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import { key } from "../../App";
 import RedBlacK from "../../assets/Night-Sky.jpg";
 import EventDetailsModal from "../Event Details/EventDetailsModal";
 import classes from "./Homepage.module.css";
-import secureLocalStorage from "react-secure-storage";
-import { jwtDecode } from "jwt-decode";
-import { key } from "../../App";
 
 type eventData = {
   eventId: number;
@@ -21,6 +21,7 @@ type eventData = {
   organiserName: string;
   organiser_Id: number;
   eventAttendeesLimit: number;
+  totalTicketsBought: number;
 };
 
 const Homepage: React.FC = () => {
@@ -32,6 +33,8 @@ const Homepage: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [isAdmin, setIsAdmin] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [selectedEventOrganizer, setSelectedEventOrganizer] = useState<number>()
+  const [totalTicketsBought, setTotalTicketsBought] = useState<number>();
   const navigate = useNavigate();
 
   
@@ -65,7 +68,6 @@ const Homepage: React.FC = () => {
   };
   
   useEffect(() => {
-    const token = getToken();
     const userId = decodeToken(); // Decodes the token and checks expiration
   
     if (userId !== null) {
@@ -88,17 +90,21 @@ const Homepage: React.FC = () => {
             const organiserResponse = await axios.get(
               `https://localhost:7083/api/Event/GetUsernameFromId?userid=${event.organiser_Id}`
             );
+            const transactionResponse = await axios.get(
+              `https://localhost:7083/api/Event/GetTransactionsPerEvent?eventid=${event.eventId}`
+            );
             return {
               ...event,
               organiserName: organiserResponse.data,
+              totalTicketsBought: transactionResponse.data
             };
           })
         );
-
+    
         setEvents(eventsWithUsernames);
         setFeaturedEvents(eventsWithUsernames.slice(0, 3));
       } catch (error: any) {
-        toast.error(`Failed to create event. Status code: ${error.response?.status}: ${error.message}`);
+        toast.error(`Failed to fetch events. Status code: ${error.response?.status}: ${error.message}`);
       } finally {
         setLoading(false);
       }
@@ -127,7 +133,6 @@ const Homepage: React.FC = () => {
 
   return (
     <div>
-      <ToastContainer />
       {loading ? (
         <div className={classes.loader}>
           <PuffLoader color="var(--registration-blue)" size={130} />
@@ -179,7 +184,7 @@ const Homepage: React.FC = () => {
                             Organiser: {event.organiserName}
                           </ListGroup.Item>
                           <ListGroup.Item className={classes.eventInfo}>
-                            Attendees: {event.eventAttendeesLimit}
+                          Attendees: {event.totalTicketsBought} / {event.eventAttendeesLimit}
                           </ListGroup.Item>
                         </ListGroup>
                       </Card>
@@ -211,12 +216,12 @@ const Homepage: React.FC = () => {
           <Row>
             {events.map((event) => (
               <Col key={event.eventId} xs={12} sm={6} lg={4}>
-                <Card className={classes.eventCard}>
-                  <Card.Img
-                    onClick={() => {
+                <Card className={classes.eventCard} onClick={() => {
                       setModalShow(true);
                       setSelectedEventId(event.eventId);
-                    }}
+                    }}>
+                  <Card.Img
+                    
                     variant="top"
                     src={event.eventImage}
                     className={classes.imageElement}
@@ -231,7 +236,7 @@ const Homepage: React.FC = () => {
                     <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Organiser: {event.organiserName}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>
-                      Attendees: {event.eventAttendeesLimit}
+                    Attendees: {event.totalTicketsBought} / {event.eventAttendeesLimit}
                     </ListGroup.Item>
                   </ListGroup>
                 </Card>

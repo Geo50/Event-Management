@@ -138,7 +138,6 @@ const Registration: React.FC = () => {
     <div>
       
       <Container fluid className={classes.componentContainer}>
-        <ToastContainer />
         {loading && (
         <div className={classes.loader}>
           <PuffLoader color="var(--registration-blue)" size={130} />

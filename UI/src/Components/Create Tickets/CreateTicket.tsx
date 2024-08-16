@@ -53,7 +53,6 @@ const CreateTicket: React.FC = () => {
       })
       .then((response) => {
         setAttendeesLimit(Number(response.data)); // Convert to number
-        console.log(response.data);
       })
       .catch((error: any) => {
         toast.error(`There has been a problem fetching the event attendees limit: ${error.status} : ${error.message}`);
@@ -193,7 +192,6 @@ const CreateTicket: React.FC = () => {
           </Modal.Footer>
         </Modal>
       )}
-      <ToastContainer />
       <Container className={classes.container} fluid>
         <Row>
           <h1>Manage tickets for your event</h1>

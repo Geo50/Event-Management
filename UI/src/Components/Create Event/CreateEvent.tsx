@@ -266,7 +266,6 @@ const CreateEvent: React.FC = () => {
         errorDisplayProp=""
         eventIdProp={eventId}
       />
-      <ToastContainer />
       {loading && (
         <div className={classes.loader}>
           <PuffLoader color="var(--registration-blue)" size={130} />

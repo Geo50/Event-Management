@@ -1,7 +1,7 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
-import { Button, Card, Container, ListGroup, Modal, ToastContainer } from "react-bootstrap";
+import { Button, Card, Container, ListGroup, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
@@ -13,7 +13,7 @@ type inputProps = {
   visibility: boolean;
   handleClose: () => void;
   eventId: number;
-  isLoggedin:boolean
+  isLoggedin: boolean;
 };
 
 type eventData = {
@@ -25,9 +25,9 @@ type eventData = {
   eventType: string;
   organiser_id: number;
   organiserName: string;
-  eventAttendeesLimit: number
+  eventAttendeesLimit: number;
   eventDescription: string;
-}
+};
 
 const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, eventId, isLoggedin }) => {
   const [events, setEvents] = useState<eventData | null>(null);
@@ -49,7 +49,6 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         ...eventData,
         organiserName: organiserResponse.data,
       });
-      console.log(eventId)
     } catch (error: any) {
       toast.error(`Failed to generate events. Status code: ${error.response?.status}: ${error.message}`);
     } finally {
@@ -69,11 +68,13 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         const decodedToken: any = jwtDecode(token);
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
-        // if (decodedToken.exp < currentTime) {
-        //   toast.error("Your session has expired. Please log in again.");
-        //   navigate("/homepage");
-        //   return null;
-        // }
+        if (decodedToken.exp < currentTime) {
+          toast.error("Your session has expired. Please log in again.");
+          setTimeout(() => {
+            navigate("/homepage");
+          }, 1000);
+          return null;
+        }
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
@@ -140,11 +141,11 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
   const handleViewTickets = () => {
     navigate("/view-tickets", {
       state: {
-        eventId: eventId, 
+        eventId: eventId,
       },
     });
   };
-  
+
   return (
     <div>
       {loading && (
@@ -155,7 +156,6 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
       <Container fluid className={classes.modalContainer}>
         <Modal show={visibility} onHide={handleClose} className={`${classes.eventModal}`}>
           <Modal.Body className={`bg-dark ${classes.modalBody}`}>
-            <ToastContainer />
             <Card className={`bg-dark ${classes.eventCard}`}>
               <div className={classes.parentContainer}>
                 <Card.Img variant="top" src={events?.eventImage} className={classes.imageElement} />
@@ -179,26 +179,31 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Date: {events?.eventDate}</ListGroup.Item>
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Type: {events?.eventType}</ListGroup.Item>
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Place: {events?.eventPlace}</ListGroup.Item>
-                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Organizer: {events?.organiserName}</ListGroup.Item>
-                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Attendees: {events?.eventAttendeesLimit}</ListGroup.Item>
+                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>
+                  Organizer: {events?.organiserName}
+                </ListGroup.Item>
+                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>
+                  Attendees: {events?.eventAttendeesLimit}
+                </ListGroup.Item>
               </ListGroup>
               <Card.Body>
-                {isLoggedin && (
-                  <Button variant="danger w-100" onClick={handleViewTickets}>View Tickets</Button>
+                {isLoggedin ? (
+                  <Button variant="danger w-100" onClick={handleViewTickets}>
+                    View Tickets
+                  </Button>
+                ) : (
+                  <Button variant="secondary w-100" disabled>
+                    Login to View Tickets
+                  </Button>
                 )}
-                
-                  
-                
-                
               </Card.Body>
-            </Card> 
+            </Card>
           </Modal.Body>
         </Modal>
       </Container>
     </div>
   );
 };
-
 
 export default EventDetailsModal;
 function InvalidOperationException(reason: any): PromiseLike<never> {

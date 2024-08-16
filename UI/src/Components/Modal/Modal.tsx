@@ -31,7 +31,6 @@ const ModalComponent: React.FC<ModalProps> = ({
 
   const multipleFunctions = () => {
     handleNavigation();
-    console.log("Event ID in Modal:", eventIdProp);
   };
 
   return (

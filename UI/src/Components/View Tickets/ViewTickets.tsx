@@ -93,10 +93,10 @@ const ViewTickets: React.FC = () => {
   };
 
   const handlePaymentSuccess = async (SessionId: string) => {
-    console.log("Received sessionId:", SessionId);
+   
     try {
       const response = await axios.post(`https://localhost:7083/api/Stripe/payment-success?SessionId=${SessionId}`);
-      console.log(`response of payment success:`, response.data);
+     
       toast.success("Payment successful! Your ticket has been purchased.");
     } catch (error: any) {
       console.error("Error confirming payment:", error.response ? error.response.data : error.message);
@@ -113,12 +113,11 @@ const ViewTickets: React.FC = () => {
           UserId: userId,
         }
       );
-      console.log(`result of transaction number: ${transactionNumberResponse.data}`);
+     
 
       const maxTicketsResponse = await axios.post(
         `https://localhost:7083/api/Event/GetEventMaxTicketsPerUser?eventid=${eventId}`
       );
-      console.log(`Maximum number: ${maxTicketsResponse.data}`);
 
       return {
         ticketsBought: transactionNumberResponse.data,
@@ -164,6 +163,8 @@ const ViewTickets: React.FC = () => {
   return (
     <div>
       <Container fluid className={classes.ticketsContainer}>
+      <h1>Please keep in mind that you can buy a maximum of {maximumTicketsPerUser} tickets for this event, as per the limit set by the organiser of the event.</h1><br />
+
         {ticketsData.length > 0 ? (
           <table className={classes.ticketTable}>
             <thead>
@@ -192,17 +193,17 @@ const ViewTickets: React.FC = () => {
                         Sold out!
                       </Button>
                     ) : (
-                      <>
+                      <div>
                         {overMaximum ? (
                           <Button variant="danger" disabled>
-                            Sorry, you cannot buy more tickets for this event.
+                            Sorry, you cannot buy any more tickets for this event!
                           </Button>
                         ) : (
                           <Button variant="danger" onClick={() => handleBuyTicket(ticket)}>
                             Buy Ticket!
                           </Button>
                         )}
-                      </>
+                      </div>
                     )}
                   </td>
                 </tr>
