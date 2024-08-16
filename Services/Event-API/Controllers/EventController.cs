@@ -136,6 +136,14 @@ namespace Event_API.Controllers
             return Ok();
         }
 
+        [HttpPut("IncrementTicketStatus")]
+
+        public async Task<ActionResult> IncrementTicketStatus(UpdateTicketStatusDTO updateTicketStatusDTO)
+        {
+            await _event_User_Service.IncrementTicketStatus(updateTicketStatusDTO);
+            return Ok();
+        }
+
         [HttpPost("GetTransactionsPerUserEvent")]
         public async Task<ActionResult<int>> GetTransactionsPerUserEvent([FromBody] TransactionCountDTO transactionCountDTO)
         {

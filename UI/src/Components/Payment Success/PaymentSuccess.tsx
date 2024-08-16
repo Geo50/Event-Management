@@ -26,7 +26,9 @@ const PaymentSuccess: React.FC = () => {
       const response = await axios.post(`https://localhost:7083/api/Stripe/payment-success?SessionId=${sessionId}`);
       const { ticketId, eventId } = response.data;
 
-      toast.success('Payment successful! Your ticket has been purchased.');
+      toast.success('Payment successful! Your ticket has been purchased.', {
+        autoClose: 2000
+      });
       await axios.put(`https://localhost:7083/api/Event/UpdateTicketStatus`, {
         ticketId: ticketId,
         eventId: eventId
@@ -43,7 +45,7 @@ const PaymentSuccess: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className='d-flex justify-content-center'>
       <h2>Processing your payment...</h2>
     </div>
   );

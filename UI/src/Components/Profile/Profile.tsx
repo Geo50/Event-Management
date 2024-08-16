@@ -5,7 +5,7 @@ import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { key } from "../../App";
 import EventDetailsModal from "../Event Details/EventDetailsModal";
 import classes from "./Profile.module.css";
@@ -23,6 +23,7 @@ type eventData = {
 };
 
 type boughtTicketsType = {
+  eventId: number;
   eventName: string;
   eventDate: string;
   eventPlace: string;
@@ -86,6 +87,7 @@ const Profile: React.FC = () => {
     await axios
       .get(`https://localhost:7083/api/Event/GetBoughtTickets?UserId=${userId}`)
       .then((response) => {
+        console.log("Bought tickets data:", response.data);
         setBoughtTicketsData(response.data);
       })
       .catch((error: any) => {
@@ -93,9 +95,27 @@ const Profile: React.FC = () => {
       });
   };
 
+  const handleRefund = async (ticketId: number, eventId: number) => {
+    if (window.confirm("Are you sure you want to refund this ticket?")) {
+      try {
+        await axios.put(`https://localhost:7083/api/Event/IncrementTicketStatus`, {
+          ticketId: ticketId,
+          eventId: eventId
+        });
+        console.log(`Ticket id:${ticketId}`)
+        console.log(`eventId :${eventId}`)
+        toast.success("Ticket refunded successfully!");
+        await handleBoughtTickets();
+      } catch (error) {
+        console.error("Error refunding ticket:", error);
+        toast.error("Failed to refund ticket. Please try again.");
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const userId = decodeToken();
+      const userId = decodeToken(); 
       if (userId) {
         try {
           const result = await axios.post(`https://localhost:7273/api/User/GetUserById?userId=${userId}`, {
@@ -367,6 +387,7 @@ const Profile: React.FC = () => {
                   <th>Event Name</th>
                   <th>Event Date</th>
                   <th>Event Place</th>
+                  <th>Refund your ticket</th>
                 </tr>
               </thead>
               <tbody>
@@ -379,6 +400,8 @@ const Profile: React.FC = () => {
                     <td>{ticket.eventName}</td>
                     <td>{ticket.eventDate}</td>
                     <td>{ticket.eventPlace}</td>
+                    <td><Button variant="success"         onClick={() => handleRefund(ticket.ticketId, ticket.eventId)}
+                    >Refund Ticket</Button></td>
                   </tr>
                 ))}
               </tbody>

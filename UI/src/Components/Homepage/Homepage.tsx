@@ -34,7 +34,6 @@ const Homepage: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [selectedEventOrganizer, setSelectedEventOrganizer] = useState<number>()
-  const [totalTicketsBought, setTotalTicketsBought] = useState<number>();
   const navigate = useNavigate();
 
   

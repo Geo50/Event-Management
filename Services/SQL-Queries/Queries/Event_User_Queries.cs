@@ -20,15 +20,17 @@ namespace SQL_Queries.Queries
 
         public static string GetTransaction => "SELECT ticketid, eventid, userid FROM public.transaction WHERE userid = @userid";
 
-        public static string GetBoughtTickets => @"SELECT t.ticketid, t.ticketname, t.category, t.benefits, e.eventname, e.eventdate, e.eventplace 
+        public static string GetBoughtTickets => @"SELECT t.ticketid, t.ticketname, t.category, t.benefits, e.eventname, e.eventdate, e.eventplace, e.eventid
                                                    FROM public.tickets t 
                                                    JOIN public.transaction tr ON t.ticketid = tr.ticketid 
                                                    JOIN public.event e ON tr.eventid = e.eventid 
                                                    WHERE tr.userid = @userid;";
 
         public static string UpdateTicketStatus => "UPDATE public.tickets SET ticket_limit = ticket_limit - 1 WHERE eventid = @eventid AND ticketid= @ticketid AND ticket_limit > 0";
+        public static string IncrementTicketStatus => "UPDATE public.tickets SET  ticket_limit = ticket_limit + 1 WHERE eventid = @eventid AND ticketid= @ticketid ";
         public static string GetTransactionsPerEvent => "SELECT COUNT(*) FROM public.transaction WHERE eventid = @eventid";
 
         public static string GetTransactionsPerUserEvent => "SELECT COUNT(*) FROM public.transaction WHERE eventid = @eventid AND userid = @userid";
+
     }
 }

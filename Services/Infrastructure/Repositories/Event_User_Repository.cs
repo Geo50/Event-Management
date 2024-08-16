@@ -21,6 +21,7 @@ namespace Infrastructure.Repositories
         public Task CreateTransaction(Transaction transaction);
         public Task<IEnumerable<CombinedProperties>> GetBoughtTickets(int UserId);
         public Task UpdateTicketStatus(Tickets tickets);
+        public Task IncrementTicketStatus(Tickets tickets);
         public Task<int> GetTransactionsPerUserEvent (Transaction transaction);
         public Task<int> GetTransactionsPerEvent (int eventid);
     }
@@ -38,6 +39,18 @@ namespace Infrastructure.Repositories
         public async Task UpdateTicketStatus(Tickets tickets)
         {
             var query = Event_User_Queries.UpdateTicketStatus;
+            using (var connection = Connection)
+            {
+                await connection.ExecuteAsync(query, new
+                {
+                    eventid = tickets.EventId,
+                    ticketid = tickets.TicketId,
+                });
+            }
+        }
+        public async Task IncrementTicketStatus(Tickets tickets)
+        {
+            var query = Event_User_Queries.IncrementTicketStatus;
             using (var connection = Connection)
             {
                 await connection.ExecuteAsync(query, new

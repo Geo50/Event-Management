@@ -8,6 +8,7 @@ namespace Application.DTO.EventDTOs
 {
     public class ViewBoughtTicketsDTO
     {
+        public int EventId {  get; set; }
         public required string EventName { get; set; }
         public DateTime EventDate { get; set; }
         public required string EventPlace { get; set; }

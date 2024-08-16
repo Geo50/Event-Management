@@ -27,6 +27,7 @@ type eventData = {
   organiserName: string;
   eventAttendeesLimit: number;
   eventDescription: string;
+  totalTicketsBought: number;
 };
 
 const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, eventId, isLoggedin }) => {
@@ -44,10 +45,14 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
       const organiserResponse = await axios.get(
         `https://localhost:7083/api/Event/GetUsernameFromId?userid=${eventData.organiser_id}`
       );
+      const transactionResponse = await axios.get(
+        `https://localhost:7083/api/Event/GetTransactionsPerEvent?eventid=${eventId}`
+      );
 
       setEvents({
         ...eventData,
         organiserName: organiserResponse.data,
+        totalTicketsBought: transactionResponse.data
       });
     } catch (error: any) {
       toast.error(`Failed to generate events. Status code: ${error.response?.status}: ${error.message}`);
@@ -117,7 +122,9 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
           })
           .catch((error: any) => {
             if (error.response && error.response.data.includes("Bookmark already exists")) {
-              toast.error("Bookmark already exists");
+              toast.error("Bookmark already exists", {
+                autoClose: 1700
+              });
             } else {
               toast.error(
                 `Something went wrong while bookmarking the event. Status Code: ${error.response?.status}, ${error.message}`
@@ -183,7 +190,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
                   Organizer: {events?.organiserName}
                 </ListGroup.Item>
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>
-                  Attendees: {events?.eventAttendeesLimit}
+                Attendees: {events?.totalTicketsBought} / {events?.eventAttendeesLimit}
                 </ListGroup.Item>
               </ListGroup>
               <Card.Body>
