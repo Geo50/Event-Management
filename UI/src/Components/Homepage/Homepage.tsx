@@ -10,6 +10,7 @@ import { key } from "../../App";
 import RedBlacK from "../../assets/Night-Sky.jpg";
 import EventDetailsModal from "../Event Details/EventDetailsModal";
 import classes from "./Homepage.module.css";
+import { format } from "date-fns";
 
 type eventData = {
   eventId: number;
@@ -174,7 +175,10 @@ const Homepage: React.FC = () => {
                         </Card.Body>
 
                         <ListGroup className="list-group-flush">
-                          <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
+                          <ListGroup.Item className={classes.eventInfo}>
+                            {" "}
+                            Date: {format(new Date(event.eventDate), "MMMM dd, yyyy, h:mm a")}
+                          </ListGroup.Item>
                           <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
                           <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
                           <ListGroup.Item className={classes.eventInfo}>
@@ -225,7 +229,10 @@ const Homepage: React.FC = () => {
                     <Card.Title className={classes.title}> {event.eventName}</Card.Title>
                   </Card.Body>
                   <ListGroup className="list-group-flush">
-                    <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
+                    <ListGroup.Item className={classes.eventInfo}>
+                      {" "}
+                      Date: {format(new Date(event.eventDate), "MMMM dd, yyyy, h:mm a")}
+                    </ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Organiser: {event.organiserName}</ListGroup.Item>
@@ -243,7 +250,6 @@ const Homepage: React.FC = () => {
               handleClose={handleCloseDetails}
               eventId={selectedEventId || 0}
               isLoggedin={isLoggedIn}
-              
             />
           </div>
           {isAdmin === "Admin" ? (
