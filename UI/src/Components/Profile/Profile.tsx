@@ -95,15 +95,21 @@ const Profile: React.FC = () => {
       });
   };
 
-  const handleRefund = async (ticketId: number, eventId: number) => {
+  const handleRefund = async (ticketid: number, eventId: number) => {
     if (window.confirm("Are you sure you want to refund this ticket?")) {
       try {
         await axios.put(`https://localhost:7083/api/Event/IncrementTicketStatus`, {
-          ticketId: ticketId,
+          ticketId: ticketid,
           eventId: eventId
         });
-        console.log(`Ticket id:${ticketId}`)
-        console.log(`eventId :${eventId}`)
+          await axios.delete(`https://localhost:7083/api/Event/DeleteBoughtTicket`, {
+            data: {
+          ticketId: ticketid,
+          eventid: eventId,
+          userId: userId
+        }
+        })
+       
         toast.success("Ticket refunded successfully!");
         await handleBoughtTickets();
       } catch (error) {
