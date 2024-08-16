@@ -154,7 +154,6 @@ namespace Event_API.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (e.g., using a logging framework)
                 return StatusCode(500, new { message = "An error occurred while processing your request.", error = ex.Message });
             }
         }
@@ -168,7 +167,6 @@ namespace Event_API.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (e.g., using a logging framework)
                 return StatusCode(500, new { message = "An error occurred while processing your request.", error = ex.Message });
             }
         }
@@ -178,6 +176,14 @@ namespace Event_API.Controllers
         {
             var maxTickets = await _eventService.GetEventMaxTicketsPerUser(eventid);
             return maxTickets;
+        }
+
+        [HttpDelete("DeleteBoughtTicket")]
+
+        public async Task<ActionResult> DeleteBoughtTicket(TransactionDTO transactionDTO)
+        {
+             await _event_User_Service.DeleteBoughtTicket(transactionDTO);
+            return Ok();
         }
 
     }

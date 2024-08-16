@@ -24,6 +24,7 @@ namespace Infrastructure.Repositories
         public Task IncrementTicketStatus(Tickets tickets);
         public Task<int> GetTransactionsPerUserEvent (Transaction transaction);
         public Task<int> GetTransactionsPerEvent (int eventid);
+        public Task DeleteBoughtTicket(Transaction transaction);
     }
 
     public class Event_User_Repository : IEvent_User_Repository 
@@ -35,6 +36,21 @@ namespace Infrastructure.Repositories
         }
 
         private IDbConnection Connection => new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+        public async Task DeleteBoughtTicket(Transaction transaction)
+        {
+            var query = Event_User_Queries.DeleteBoughtTicket;
+            using (var connection = Connection)
+            {
+                 await connection.QuerySingleOrDefaultAsync(query, new
+                {
+                    eventid = transaction.eventid,
+                    ticketid = transaction.TicketId,
+                    userid = transaction.UserId
+                });
+                
+
+            }
+        }
 
         public async Task UpdateTicketStatus(Tickets tickets)
         {

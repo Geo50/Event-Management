@@ -25,7 +25,7 @@ namespace SQL_Queries.Queries
                                                    JOIN public.transaction tr ON t.ticketid = tr.ticketid 
                                                    JOIN public.event e ON tr.eventid = e.eventid 
                                                    WHERE tr.userid = @userid;";
-
+        public static string DeleteBoughtTicket => "DELETE FROM public.transaction WHERE eventid = @eventid AND ticketid = @ticketid AND userid = @userid";
         public static string UpdateTicketStatus => "UPDATE public.tickets SET ticket_limit = ticket_limit - 1 WHERE eventid = @eventid AND ticketid= @ticketid AND ticket_limit > 0";
         public static string IncrementTicketStatus => "UPDATE public.tickets SET  ticket_limit = ticket_limit + 1 WHERE eventid = @eventid AND ticketid= @ticketid ";
         public static string GetTransactionsPerEvent => "SELECT COUNT(*) FROM public.transaction WHERE eventid = @eventid";

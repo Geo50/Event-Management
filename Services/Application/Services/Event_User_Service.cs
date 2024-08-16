@@ -22,6 +22,8 @@ namespace Application.Services
         public Task IncrementTicketStatus(UpdateTicketStatusDTO updateTicketStatusDTO);
         public Task<int> GetTransactionsPerUserEvent(TransactionCountDTO transactionCountDTO);
         public Task<int> GetTransactionsPerEvent(int eventid);
+        public Task DeleteBoughtTicket(TransactionDTO transactionDTO);
+
 
     }
     public class Event_User_Service : IEvent_User_Service
@@ -33,6 +35,11 @@ namespace Application.Services
         {
             _repository = repository;
             _mapper = mapper;
+        }
+        public async Task DeleteBoughtTicket(TransactionDTO transactionDTO)
+        {
+            var deleteTransactionDTO = _mapper.Map<Transaction>(transactionDTO);
+             await _repository.DeleteBoughtTicket(deleteTransactionDTO);        
         }
 
         public async Task<int> GetTransactionsPerUserEvent(TransactionCountDTO transactionCountDTO)

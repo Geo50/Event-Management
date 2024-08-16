@@ -8,7 +8,7 @@ namespace Application.DTO.EventDTOs
 {
     public class TransactionDTO
     {
-        public int TicketId { get; set; }
+        public int TicketId { get; set; }   
         public int eventid { get; set; }
         public int UserId { get; set; }
     }
