@@ -53,9 +53,6 @@ const NavbarComponent: React.FC = () => {
     setUsername("");
     
     // Show toast only once
-    toast.error("You have just logged out.", {
-      toastId: 'logout-toast', // Unique ID to prevent duplicate toasts
-    });
   
     // Navigate after a short delay
     setTimeout(() => {

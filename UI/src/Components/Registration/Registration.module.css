@@ -42,6 +42,11 @@
   color: rgb(250, 250, 250);
 }
 
+.errorMessage {
+  color: red;
+  margin: 0;
+}
+
 .inputElements {
   width: 100%;
   background-color: transparent;

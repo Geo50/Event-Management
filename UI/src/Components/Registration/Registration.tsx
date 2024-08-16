@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
 import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
 import "react-toastify/dist/ReactToastify.css";
 
 import ModalComponent from "../Modal/Modal";
@@ -15,20 +16,21 @@ const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 
 type userCredentials = {
   userName: string;
-  emailValue: string;
   userPassword: string;
+  emailValue: string;
+  confirmPassword: string;
   adminValue: boolean;
   PassVerificationAnswer: string;
 };
 
 const Registration: React.FC = () => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  const nameRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const adminRef = useRef<HTMLInputElement>(null);
-  const verifyRef = useRef<HTMLInputElement>(null);
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    reset,
+    getValues,
+  } = useForm<userCredentials>();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
@@ -36,86 +38,19 @@ const Registration: React.FC = () => {
   const [errorDisplay, setErrorDisplay] = useState<string>("");
   const navigate = useNavigate();
 
-  const validationUserInfo = useCallback((event: React.FormEvent) => {
-    event.preventDefault();
-
-    const userName = nameRef.current?.value || "";
-    const emailValue = emailRef.current?.value || "";
-    const userPassword = passwordRef.current?.value || "";
-    const adminValue = adminRef.current?.checked || false;
-    const PassVerificationAnswer = verifyRef.current?.value || "";
-
-    let isValid = true;
-
-    if (userName === "") {
-      nameRef.current?.classList.add(classes.inputError);
-      toast.error("Please enter a valid username ");
-      isValid = false;
-    } else {
-      nameRef.current?.classList.remove(classes.inputError);
-    }
-
-    if (!emailRegex.test(emailValue)) {
-      emailRef.current?.classList.add(classes.inputError);
-      toast.error("Please enter a valid email address");
-      isValid = false;
-    } else if (emailValue === "") {
-      toast.error("Please enter an email address");
-      isValid = false;
-    } else {
-      emailRef.current?.classList.remove(classes.inputError);
-    }
-
-    if (userPassword === "") {
-      passwordRef.current?.classList.add(classes.inputError);
-      toast.error("Please enter a password");
-      isValid = false;
-    } else if (userPassword.length < 10) {
-      passwordRef.current?.classList.add(classes.inputError);
-      toast.error("Please enter a password with more than 10 characters");
-      isValid = false;
-    } else {
-      passwordRef.current?.classList.remove(classes.inputError);
-    }
-
-    if (PassVerificationAnswer === "") {
-      verifyRef.current?.classList.add(classes.inputError);
-      toast.error("Please enter a verification answer");
-      isValid = false;
-    } else {
-      verifyRef.current?.classList.remove(classes.inputError);
-    }
-
-    const userValues: userCredentials = {
-      userName,
-      emailValue,
-      userPassword,
-      adminValue,
-      PassVerificationAnswer,
-    };
-
-    if (isValid) {
-      handleDatabaseInjection(userValues);
-    }
-  }, []);
-
-  const handleCloseDetails = useCallback(() => {
-    setModalShow(false);
-  }, []);
-
-  const handleDatabaseInjection = useCallback(
-    async (userValues: userCredentials) => {
+  const onSubmit = useCallback(
+    async (data: userCredentials) => {
       setLoading(true);
       axios
         .post("https://localhost:7273/api/User/CreateNewUser", {
-          UserName: userValues.userName,
-          UserEmail: userValues.emailValue,
-          UserPassword: userValues.userPassword,
-          IsAdmin: userValues.adminValue,
-          PassVerificationAnswer: userValues.PassVerificationAnswer,
+          UserName: data.userName,
+          UserEmail: data.confirmPassword,
+          UserPassword: data.userPassword,
+          IsAdmin: data.adminValue,
+          PassVerificationAnswer: data.PassVerificationAnswer,
         })
         .then((response) => {
-          secureLocalStorage.setItem(key, response.data.token);
+          secureLocalStorage.setItem(key, response.data.token); // Ensure "key" is replaced with the actual key name
           navigate("/homepage");
         })
         .catch((error) => {
@@ -134,15 +69,18 @@ const Registration: React.FC = () => {
     [navigate]
   );
 
+  const handleCloseDetails = useCallback(() => {
+    setModalShow(false);
+  }, []);
+
   return (
     <div>
-      
       <Container fluid className={classes.componentContainer}>
         {loading && (
-        <div className={classes.loader}>
-          <PuffLoader color="var(--registration-blue)" size={130} />
-        </div>
-      )}
+          <div className={classes.loader}>
+            <PuffLoader color="var(--registration-blue)" size={130} />
+          </div>
+        )}
         <Row className={classes.rowProperties}>
           <Col xs={12} lg={4} xl={4} className={classes.firstColumn}>
             {modalShow && (
@@ -154,35 +92,90 @@ const Registration: React.FC = () => {
                 eventIdProp={0}
               />
             )}
-            <form className={classes.formContainer} onSubmit={validationUserInfo}>
+            <form className={classes.formContainer} onSubmit={handleSubmit(onSubmit)}>
               <h1 className={`display-4 ${classes.title}`}>Jump into the action</h1>
               <br />
               <h1 className={`display-6 ${classes.subTitle}`}>Sign up!</h1>
               <br />
               <div className={classes.logoContainer}>
                 <i className={`bi bi-person-circle ${classes.iconClass}`}></i>
-                <input type="text" ref={nameRef} placeholder="Username" className={classes.inputElements} />
+                <input
+                  type="text"
+                  placeholder="Username"
+                  className={classes.inputElements}
+                  {...register("userName", {
+                    required: "Please enter your username",
+                  })}
+                />
               </div>
+              {errors.userName && <p className={classes.errorMessage}>{errors.userName.message}</p>}
               <div className={classes.logoContainer}>
                 <i className={`bi bi-envelope-at-fill ${classes.iconClass}`}></i>
-                <input type="text" ref={emailRef} placeholder="Email" className={classes.inputElements} />
+                <input
+                  type="text"
+                  placeholder="Email"
+                  className={classes.inputElements}
+                  {...register("emailValue", {
+                    required: "Please enter your email address",
+                    pattern: {
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                      message: "Invalid email",
+                    },
+                  })}
+                />
               </div>
+              {errors.emailValue && <p className={classes.errorMessage}>{errors.emailValue.message}</p>}
               <div className={classes.logoContainer}>
                 <i className={`bi bi-key-fill ${classes.iconClass}`}></i>
-                <input type="password" ref={passwordRef} placeholder="Password" className={classes.inputElements} />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  className={classes.inputElements}
+                  {...register("userPassword", {
+                    required: "Please enter your password",
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+                      message:
+                        "Password must be at least 6 characters long and include at least one lowercase letter, one uppercase letter, one number, and one special character",
+                    },
+                  })}
+                />
               </div>
+              {errors.userPassword && <p className={classes.errorMessage}>{errors.userPassword.message}</p>}
+              <div className={classes.logoContainer}>
+                <i className={`bi bi-key-fill ${classes.iconClass}`}></i>
+                <input
+                  type="password"
+                  placeholder="Confirm Password"
+                  className={classes.inputElements}
+                  {...register("confirmPassword", {
+                    required: "Please reenter your password",
+                    validate: (value) => value === getValues("userPassword") || "Password must match",
+                  })}
+                />
+              </div>
+              {errors.confirmPassword && <p className={classes.errorMessage}>{errors.confirmPassword.message}</p>}
               <div className={classes.logoContainer}>
                 <i className={`${classes.iconClass} bi bi-incognito`}></i>
                 <input
                   type="text"
-                  ref={verifyRef}
                   placeholder="What is your best friend's name?"
                   className={classes.inputElements}
+                  {...register("PassVerificationAnswer", {
+                    required: "Please enter your verification answer",
+                  })}
                 />
               </div>
+              {errors.PassVerificationAnswer && (
+                <p className={classes.errorMessage}>{errors.PassVerificationAnswer.message}</p>
+              )}
               <div className={classes.flexedElements}>
                 <p className={classes.linkText}>Are you an administrator? </p>
-                <Form.Check type="switch" ref={adminRef} className={classes.switch} />
+                <Form.Check
+                  type="switch"
+                  className={classes.switch}
+                  {...register("adminValue")}
+                />
               </div>
               <Button variant="outline-primary" type="submit" className={classes.submitButton}>
                 Register

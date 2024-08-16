@@ -39,7 +39,6 @@ const Login: React.FC = () => {
         UserName: data.userName,
         UserPassword: data.userPassword,
       });
-      toast.success("You have been logged in successfully");
       navigate("/homepage");
       secureLocalStorage.setItem(key, response.data.token);
     } catch (error: any) {
