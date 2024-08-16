@@ -76,12 +76,11 @@ const Profile: React.FC = () => {
 
   const checkLoggedin = () => {
     if (userId != null) {
-      setIsLoggedIn(true)
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
     }
-    else {
-      setIsLoggedIn(false)
-    }
-  }
+  };
 
   const handleBoughtTickets = async () => {
     await axios
@@ -100,16 +99,16 @@ const Profile: React.FC = () => {
       try {
         await axios.put(`https://localhost:7083/api/Event/IncrementTicketStatus`, {
           ticketId: ticketid,
-          eventId: eventId
+          eventId: eventId,
         });
-          await axios.delete(`https://localhost:7083/api/Event/DeleteBoughtTicket`, {
-            data: {
-          ticketId: ticketid,
-          eventid: eventId,
-          userId: userId
-        }
-        })
-       
+        await axios.delete(`https://localhost:7083/api/Event/DeleteBoughtTicket`, {
+          data: {
+            ticketId: ticketid,
+            eventid: eventId,
+            userId: userId,
+          },
+        });
+
         toast.success("Ticket refunded successfully!");
         await handleBoughtTickets();
       } catch (error) {
@@ -121,7 +120,7 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const userId = decodeToken(); 
+      const userId = decodeToken();
       if (userId) {
         try {
           const result = await axios.post(`https://localhost:7273/api/User/GetUserById?userId=${userId}`, {
@@ -130,8 +129,7 @@ const Profile: React.FC = () => {
           setUsername(result.data.userName);
           setEmail(result.data.userEmail);
           setUserValue(result.data.userName);
-        } catch (error: any) {
-        }
+        } catch (error: any) {}
       }
     };
     const token: any = getToken();
@@ -197,7 +195,7 @@ const Profile: React.FC = () => {
   useEffect(() => {
     const token = getToken();
     const userId = decodeToken(); // Decodes the token and checks expiration
-  
+
     if (userId !== null) {
       setIsLoggedIn(true); // User is logged in
     } else {
@@ -321,7 +319,7 @@ const Profile: React.FC = () => {
                         <Col key={event.eventid} xs={12} sm={6} lg={4}>
                           <Card className={classes.eventCard} onClick={() => handleImageClick(event.eventid)}>
                             <Card.Img
-                               // Use the handler function
+                              // Use the handler function
                               variant="top"
                               src={event.eventimage}
                               className={classes.imageElement}
@@ -371,6 +369,7 @@ const Profile: React.FC = () => {
                     handleClose={handleCloseDetails}
                     eventId={selectedEventId || 0}
                     isLoggedin={isLoggedIn}
+                    
                   />
                 </Container>
               )}
@@ -406,8 +405,11 @@ const Profile: React.FC = () => {
                     <td>{ticket.eventName}</td>
                     <td>{ticket.eventDate}</td>
                     <td>{ticket.eventPlace}</td>
-                    <td><Button variant="success"         onClick={() => handleRefund(ticket.ticketId, ticket.eventId)}
-                    >Refund Ticket</Button></td>
+                    <td>
+                      <Button variant="success" onClick={() => handleRefund(ticket.ticketId, ticket.eventId)}>
+                        Refund Ticket
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

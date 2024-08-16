@@ -33,10 +33,8 @@ const Homepage: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [isAdmin, setIsAdmin] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [selectedEventOrganizer, setSelectedEventOrganizer] = useState<number>()
+  const [selectedEventOrganizer, setSelectedEventOrganizer] = useState<number>();
   const navigate = useNavigate();
-
-  
 
   const getToken = () => {
     const token = secureLocalStorage.getItem(key);
@@ -58,17 +56,17 @@ const Homepage: React.FC = () => {
           return null;
         }
         setIsAdmin(isAdmin);
-        return userId
+        return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
       }
     }
     return null;
   };
-  
+
   useEffect(() => {
     const userId = decodeToken(); // Decodes the token and checks expiration
-  
+
     if (userId !== null) {
       setIsLoggedIn(true); // User is logged in
     } else {
@@ -95,11 +93,11 @@ const Homepage: React.FC = () => {
             return {
               ...event,
               organiserName: organiserResponse.data,
-              totalTicketsBought: transactionResponse.data
+              totalTicketsBought: transactionResponse.data,
             };
           })
         );
-    
+
         setEvents(eventsWithUsernames);
         setFeaturedEvents(eventsWithUsernames.slice(0, 3));
       } catch (error: any) {
@@ -183,7 +181,7 @@ const Homepage: React.FC = () => {
                             Organiser: {event.organiserName}
                           </ListGroup.Item>
                           <ListGroup.Item className={classes.eventInfo}>
-                          Attendees: {event.totalTicketsBought} / {event.eventAttendeesLimit}
+                            Attendees: {event.totalTicketsBought} / {event.eventAttendeesLimit}
                           </ListGroup.Item>
                         </ListGroup>
                       </Card>
@@ -215,27 +213,24 @@ const Homepage: React.FC = () => {
           <Row>
             {events.map((event) => (
               <Col key={event.eventId} xs={12} sm={6} lg={4}>
-                <Card className={classes.eventCard} onClick={() => {
-                      setModalShow(true);
-                      setSelectedEventId(event.eventId);
-                    }}>
-                  <Card.Img
-                    
-                    variant="top"
-                    src={event.eventImage}
-                    className={classes.imageElement}
-                    loading="lazy"
-                  />
+                <Card
+                  className={classes.eventCard}
+                  onClick={() => {
+                    setModalShow(true);
+                    setSelectedEventId(event.eventId);
+                  }}
+                >
+                  <Card.Img variant="top" src={event.eventImage} className={classes.imageElement} loading="lazy" />
                   <Card.Body>
                     <Card.Title className={classes.title}> {event.eventName}</Card.Title>
                   </Card.Body>
-                  <ListGroup className="list-group-flush">  
+                  <ListGroup className="list-group-flush">
                     <ListGroup.Item className={classes.eventInfo}>Date: {event.eventDate}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Organiser: {event.organiserName}</ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>
-                    Attendees: {event.totalTicketsBought} / {event.eventAttendeesLimit}
+                      Attendees: {event.totalTicketsBought} / {event.eventAttendeesLimit}
                     </ListGroup.Item>
                   </ListGroup>
                 </Card>
@@ -243,7 +238,13 @@ const Homepage: React.FC = () => {
             ))}
           </Row>
           <div className={classes.detailsParent}>
-            <EventDetailsModal visibility={modalShow} handleClose={handleCloseDetails} eventId={selectedEventId || 0} isLoggedin={isLoggedIn} />
+            <EventDetailsModal
+              visibility={modalShow}
+              handleClose={handleCloseDetails}
+              eventId={selectedEventId || 0}
+              isLoggedin={isLoggedIn}
+              
+            />
           </div>
           {isAdmin === "Admin" ? (
             <div className={classes.createEventButton}>

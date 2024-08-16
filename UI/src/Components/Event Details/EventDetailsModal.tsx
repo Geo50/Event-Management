@@ -13,7 +13,7 @@ type inputProps = {
   visibility: boolean;
   handleClose: () => void;
   eventId: number;
-  isLoggedin: boolean;
+  isLoggedin: boolean;  
 };
 
 type eventData = {
@@ -33,6 +33,7 @@ type eventData = {
 const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, eventId, isLoggedin }) => {
   const [events, setEvents] = useState<eventData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isBookmarked, setIsBookmarked] = useState<boolean>();
 
   const navigate = useNavigate();
 
@@ -52,7 +53,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
       setEvents({
         ...eventData,
         organiserName: organiserResponse.data,
-        totalTicketsBought: transactionResponse.data
+        totalTicketsBought: transactionResponse.data,
       });
     } catch (error: any) {
       toast.error(`Failed to generate events. Status code: ${error.response?.status}: ${error.message}`);
@@ -103,6 +104,19 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
     }
   };
 
+  const handleDeleteBookmark = async () => {
+    await axios.delete(`https://localhost:7083/api/Event/DeleteBookmark`, {
+      data: {
+        userId: userId,
+        eventId: eventId,
+      },
+    });
+    setIsBookmarked(false);
+    toast.error(`Event removed from bookmarks`, {
+      autoClose: 2000,
+    });
+  };
+
   const handleAddBookmark = async () => {
     setLoading(true);
     const userId = decodeToken(); // Extract userId from token
@@ -116,15 +130,14 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
             EventName: events?.eventName, // EventName from the event data in map
           })
           .then(() => {
+            setIsBookmarked(true);
             toast.success("Successfully added to bookmarks", {
-              autoClose: 3000,
+              autoClose: 2000,
             });
-          })
+          })  
           .catch((error: any) => {
             if (error.response && error.response.data.includes("Bookmark already exists")) {
-              toast.error("Bookmark already exists", {
-                autoClose: 1700
-              });
+              handleDeleteBookmark();
             } else {
               toast.error(
                 `Something went wrong while bookmarking the event. Status Code: ${error.response?.status}, ${error.message}`
@@ -166,12 +179,19 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
             <Card className={`bg-dark ${classes.eventCard}`}>
               <div className={classes.parentContainer}>
                 <Card.Img variant="top" src={events?.eventImage} className={classes.imageElement} />
-                <div className={classes.bookmarkPosition}>
-                  <Button variant="outline-danger" onClick={() => handleAddBookmark()}>
-                    <i className="bi bi-bookmarks-fill"></i>
-                  </Button>
+                <div className={classes.bookmarkPosition}>                  
+                  {isBookmarked ? (
+                    <Button variant="outline-danger" onClick={handleDeleteBookmark}>
+                      <i className="bi bi-bookmark-x-fill"></i>
+                    </Button>
+                  ) : (
+                    <Button variant="outline-warning" onClick={handleAddBookmark}>
+                      <i className="bi bi-bookmarks-fill"></i>
+                    </Button>
+                  )}
                 </div>
               </div>
+
               <Modal.Header closeButton>
                 <Modal.Title>
                   <p className={classes.title}>{events?.eventName}</p>
@@ -190,7 +210,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
                   Organizer: {events?.organiserName}
                 </ListGroup.Item>
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>
-                Attendees: {events?.totalTicketsBought} / {events?.eventAttendeesLimit}
+                  Attendees: {events?.totalTicketsBought} / {events?.eventAttendeesLimit}
                 </ListGroup.Item>
               </ListGroup>
               <Card.Body>

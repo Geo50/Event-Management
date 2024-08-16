@@ -67,7 +67,7 @@ namespace Event_API.Controllers
 
         [HttpPost("GetEventInDetails")]
 
-        public async Task<ActionResult<IEnumerable<CombinedProperties>>> GetEventInDetails( [FromQuery] int eventId)
+        public async Task<ActionResult<IEnumerable<CombinedProperties>>> GetEventInDetails([FromQuery] int eventId)
         {
             var eventDetails = await _eventService.GetEventInDetails(eventId);
             return Ok(eventDetails);
@@ -75,7 +75,7 @@ namespace Event_API.Controllers
 
         [HttpPost("CreateNewBookmark")]
 
-        public async Task<IActionResult> CreateNewBookmark( Bookmarks bookmark)
+        public async Task<IActionResult> CreateNewBookmark(Bookmarks bookmark)
         {
             await _event_User_Service.CreateNewBookmark(bookmark);
             return Ok();
@@ -172,7 +172,7 @@ namespace Event_API.Controllers
         }
 
         [HttpPost("GetEventMaxTicketsPerUser")]
-        public async Task<int> GetEventMaxTicketsPerUser([FromQuery]int eventid)
+        public async Task<int> GetEventMaxTicketsPerUser([FromQuery] int eventid)
         {
             var maxTickets = await _eventService.GetEventMaxTicketsPerUser(eventid);
             return maxTickets;
@@ -182,7 +182,15 @@ namespace Event_API.Controllers
 
         public async Task<ActionResult> DeleteBoughtTicket(TransactionDTO transactionDTO)
         {
-             await _event_User_Service.DeleteBoughtTicket(transactionDTO);
+            await _event_User_Service.DeleteBoughtTicket(transactionDTO);
+            return Ok();
+        }
+
+        [HttpDelete("DeleteBookmark")]
+
+        public async Task<ActionResult> DeleteBookmark(DeleteBookmarkDTO deleteBookmarkDTO)
+        {
+            await _event_User_Service.DeleteBookmark(deleteBookmarkDTO);
             return Ok();
         }
 

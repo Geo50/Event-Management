@@ -23,6 +23,7 @@ namespace Application.Services
         public Task<int> GetTransactionsPerUserEvent(TransactionCountDTO transactionCountDTO);
         public Task<int> GetTransactionsPerEvent(int eventid);
         public Task DeleteBoughtTicket(TransactionDTO transactionDTO);
+        public Task DeleteBookmark(DeleteBookmarkDTO deleteBookmarkDTO);
 
 
     }
@@ -36,6 +37,13 @@ namespace Application.Services
             _repository = repository;
             _mapper = mapper;
         }
+
+        public async Task DeleteBookmark(DeleteBookmarkDTO deleteBookmarkDTO)
+        {
+            var deletedEventDTO = _mapper.Map<Bookmarks>(deleteBookmarkDTO);
+            await _repository.DeleteBookmark(deletedEventDTO);
+        }
+
         public async Task DeleteBoughtTicket(TransactionDTO transactionDTO)
         {
             var deleteTransactionDTO = _mapper.Map<Transaction>(transactionDTO);

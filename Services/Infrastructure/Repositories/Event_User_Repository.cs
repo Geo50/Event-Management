@@ -25,6 +25,7 @@ namespace Infrastructure.Repositories
         public Task<int> GetTransactionsPerUserEvent (Transaction transaction);
         public Task<int> GetTransactionsPerEvent (int eventid);
         public Task DeleteBoughtTicket(Transaction transaction);
+        public Task DeleteBookmark (Bookmarks bookmark);
     }
 
     public class Event_User_Repository : IEvent_User_Repository 
@@ -36,6 +37,19 @@ namespace Infrastructure.Repositories
         }
 
         private IDbConnection Connection => new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+        public async Task DeleteBookmark(Bookmarks bookmark)
+        {
+            var query = Event_User_Queries.DeleteBookmark;
+            using (var connection = Connection)
+            {
+                await connection.QuerySingleOrDefaultAsync(query, new
+                {
+                    eventid = bookmark.EventId,
+                    userid = bookmark.UserId
+                });
+            }
+        }
         public async Task DeleteBoughtTicket(Transaction transaction)
         {
             var query = Event_User_Queries.DeleteBoughtTicket;

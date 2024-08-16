@@ -38,6 +38,7 @@ namespace Application
             CreateMap<Transaction, TransactionCountDTO>().ReverseMap();
 
             CreateMap<Transaction, TransactionCountAllDTO>().ReverseMap();
+            CreateMap<Bookmarks, DeleteBookmarkDTO>().ReverseMap();
         }
     }
 }

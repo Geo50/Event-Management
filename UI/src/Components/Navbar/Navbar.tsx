@@ -102,7 +102,7 @@ const NavbarComponent: React.FC = () => {
     <div>
       <Navbar collapseOnSelect expand="md" id={classes.navContainer}>
         <Container fluid>
-          <Navbar.Brand className={`user-select-none ${classes.navbarBrand}`}>Organiser Events</Navbar.Brand>
+          <Navbar.Brand className={`user-select-none ${classes.navbarBrand}`}>Connexus</Navbar.Brand>
           <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-md`} />
           <Navbar.Offcanvas
             id={`offcanvasNavbar-expand-md`}
@@ -111,10 +111,10 @@ const NavbarComponent: React.FC = () => {
             className={classes.navbarBurger}
             >
             <Offcanvas.Header closeButton>
-              <Offcanvas.Title id={`offcanvasNavbarLabel-expand-md`}>Organiser Events</Offcanvas.Title>
+              <Offcanvas.Title id={`offcanvasNavbarLabel-expand-md`}>Connexus</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              <Nav className="justify-content-end gap-5 flex-grow-1 pe-3">               
+              <Nav className="justify-content-end gap-5 flex-grow-1 pe-3 align-items-center">               
                 <Link to="/homepage" className={classes.navbarLink}>
                   Homepage
                 </Link>
@@ -122,8 +122,8 @@ const NavbarComponent: React.FC = () => {
                   <Fragment>
                     <div>
                     <Link to="/profile" className={classes.navbarLink}>
-                      Hello, <p className={classes.highlight}> {username}</p>
-                    </Link>{" "}
+                      Hello, <p className={classes.highlight}>{username}</p>
+                    </Link>
                     </div>
                     <div>
                     <Link to="/homepage" className={classes.navbarLink}>
