@@ -96,24 +96,26 @@ const CreateEvent: React.FC = () => {
     };
   }, []);
 
-  const handleAddBookmark = async (eventName: string) => {
+  const handleAddBookmark = async (eventName: string, newEventId: number) => {
     setLoading(true);
     try {
       const userId = decodeToken();
       if (userId) {
         await axios.post("https://localhost:7083/api/Event/CreateNewBookmark", {
           UserId: userId,
-          EventId: eventId,
+          EventId: newEventId,
           EventName: eventName,
         });
+        toast.success("Successfully added to profile bookmarks.");
+      } else {
+        toast.error("User ID not found. Please log in again.");
       }
     } catch (error: any) {
-      toast.error(`An error occurred: ${error.response?.status}: ${error.message}`);
+      toast.error(`Failed to add bookmark: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
   };
-
   const onSubmit: SubmitHandler<EventCredentials> = async (data) => {
     if (!imageURL) {
       toast.error("Please upload an event image");
@@ -140,14 +142,13 @@ const CreateEvent: React.FC = () => {
       setModalShow(true);
       setModalType("Create Event");
 
-      if (newEventId !== 0) {
-        await handleAddBookmark(data.eventName);
-        toast.success("Successfully added to profile bookmarks.");
+      if (newEventId) {
+        await handleAddBookmark(data.eventName, newEventId);
       } else {
-        toast.error("Couldn't add to bookmark.");
+        toast.error("Couldn't add to bookmark: Event ID not received from server.");
       }
     } catch (error: any) {
-      toast.error(`Failed to create event. Status code: ${error.response?.status}: ${error.message}`);
+      toast.error(`Failed to create event: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
