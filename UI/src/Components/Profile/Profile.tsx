@@ -172,7 +172,6 @@ const Profile: React.FC = () => {
     handleEventsGeneration();
     handleBoughtTickets();
     checkLoggedin();
-    
   }, []);
 
   useEffect(() => {
@@ -282,12 +281,14 @@ const Profile: React.FC = () => {
             />
           </Col>
           <Col>
-            <Button className={classes.editButton} onClick={handleButtonClick}>
-              {isEditing ? "Save" : "Edit"}
-            </Button>
+            <div className={classes.editContainer}>
+              <Button className={classes.editButton} onClick={handleButtonClick}>
+                {isEditing ? "Save" : "Edit"}
+              </Button>
+            </div>
           </Col>
         </Row>
-        <Row className={classes.rowClass}>
+        {/* <Row className={classes.rowClass}>
           <Col md={9} lg={9}>
             <input type="email" placeholder={email} disabled className={classes.inputElement} />
           </Col>
@@ -298,7 +299,7 @@ const Profile: React.FC = () => {
             <input type="password" placeholder="*********" disabled className={classes.inputElement} />
           </Col>
           
-        </Row>
+        </Row> */}
         {events.length > 0 ? (
           <div>
             <Row className={classes.eventContainer}>
@@ -321,32 +322,41 @@ const Profile: React.FC = () => {
                       return (
                         <Col key={event.eventid} xs={12} sm={6} lg={4}>
                           <Card className={classes.eventCard} onClick={() => handleImageClick(event.eventid)}>
-                            <Card.Img
-                              // Use the handler function
-                              variant="top"
-                              src={event.eventimage}
-                              className={classes.imageElement}
-                            />
+                            <div className={classes.cardImgWrapper}>
+                              <Card.Img variant="top" src={event.eventimage} className={classes.imageElement} />
+                            </div>
+
                             <Card.Body>
-                              <Card.Title className={classes.title}>Name: {event.eventname}</Card.Title>
+                              <Card.Title className={classes.title}>
+                                <h3>{event.eventname}</h3>
+                              </Card.Title>
                             </Card.Body>
                             <ListGroup className="list-group-flush">
-                              <ListGroup.Item className={classes.eventInfo}>
-                                {" "}
-                                Date: {format(new Date(event.eventdate), "MMMM dd, yyyy, h:mm a")}
+                              <ListGroup.Item className={`${classes.eventInfo} ${classes.eventType}`}>
+                                {event.eventtype}
                               </ListGroup.Item>
-                              <ListGroup.Item className={classes.eventInfo}>Type: {event.eventtype}</ListGroup.Item>
-                              <ListGroup.Item className={classes.eventInfo}>Place: {event.eventplace}</ListGroup.Item>
-                              <ListGroup.Item className={classes.eventInfo}>
-                                Attendees: {event.eventAttendeesLimit}
+                              <ListGroup.Item className={`${classes.eventInfo} ${classes.eventType}`}>
+                                {event.organiserName}
                               </ListGroup.Item>
-                              <ListGroup.Item className={classes.eventInfo}>
-                                Organiser: {event.organiserName}
-                              </ListGroup.Item>
+                              <div className={`${classes.infoRow} ${classes.dateLocationBlock}`}>
+                                <ListGroup.Item className={classes.eventInfo}>
+                                  {" "}
+                                  {format(new Date(event.eventdate), "MMMM dd, yyyy, h:mm a")}
+                                </ListGroup.Item>
+
+                                <ListGroup.Item className={classes.eventInfo}>{event.eventplace}</ListGroup.Item>
+                              </div>
+                              <div className={`${classes.infoRow} ${classes.attendingEvent}`}>
+                                <ListGroup.Item className={classes.eventInfo}>
+                                  {event.eventAttendeesLimit}
+                                  <span> Attending </span>
+                                </ListGroup.Item>
+                              </div>
                               <ListGroup.Item className={classes.eventInfo}>
                                 {isUserOrganizer ? (
                                   <Button
                                     variant="danger"
+                                    className={classes.eventCTA}
                                     onClick={() => {
                                       handleCreateTicketNavigation(event);
                                     }}
@@ -356,6 +366,7 @@ const Profile: React.FC = () => {
                                 ) : (
                                   <Button
                                     variant="danger"
+                                    className={classes.eventCTA}
                                     onClick={() => {
                                       handleViewTicketsNavigation(event);
                                     }}
@@ -381,50 +392,54 @@ const Profile: React.FC = () => {
             </div>
           </div>
         ) : (
-          <h1 className={classes.header}>You haven't bookmarked any events yet...</h1>
+          <h1 className={classes.header}>You haven't bookmarked any events.</h1>
         )}
         {boughtTicketsData.length > 0 ? (
           <Row>
-            {" "}
             <h1 className={classes.header}>Here are your bought tickets!</h1>
-            <table className={classes.ticketTable}>
-              <thead>
-                <tr>
-                  <th>Ticket Id</th>
-                  <th>Ticket Name</th>
-                  <th>Ticket Category</th>
-                  <th>Ticket Benefits</th>
-                  <th>Event Name</th>
-                  <th>Event Date</th>
-                  <th>Event Place</th>
-                  <th>Refund your ticket</th>
-                </tr>
-              </thead>
-              <tbody>
-                {boughtTicketsData.map((ticket) => (
-                  <tr key={ticket.ticketId}>
-                    <td>{ticket.ticketId}</td>
-                    <td>{ticket.ticketName}</td>
-                    <td>{ticket.category}</td>
-                    <td>{ticket.benefits}</td>
-                    <td>{ticket.eventName}</td>
-                    <td>{ticket.eventDate}</td>
-                    <td>{ticket.eventPlace}</td>
-                    <td>
-                      <Button variant="success" onClick={() => handleRefund(ticket.ticketId, ticket.eventId)}>
-                        Refund Ticket
-                      </Button>
-                      <br />
-                    </td>
+            <Col className={classes.columnClass}>
+              {" "}
+              <table className={classes.ticketTable}>
+                <thead>
+                  <tr>
+                    <th>Ticket Id</th>
+                    <th>Ticket Name</th>
+                    <th>Ticket Category</th>
+                    <th>Ticket Benefits</th>
+                    <th>Event Name</th>
+                    <th>Event Date</th>
+                    <th>Event Place</th>
+                    <th>Refund your ticket</th>
                   </tr>
-                  
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {boughtTicketsData.map((ticket) => (
+                    <tr key={ticket.ticketId}>
+                      <td>{ticket.ticketId}</td>
+                      <td>{ticket.ticketName}</td>
+                      <td>{ticket.category}</td>
+                      <td>{ticket.benefits}</td>
+                      <td>{ticket.eventName}</td>
+                      <td>{format(new Date(ticket.eventDate), "MMMM dd, yyyy, h:mm a")}</td>
+                      <td>{ticket.eventPlace}</td>
+                      <td>
+                        <Button
+                          variant="success"
+                          onClick={() => handleRefund(ticket.ticketId, ticket.eventId)}
+                          className={classes.refundTicket}
+                        >
+                          Refund Ticket
+                        </Button>
+                        <br />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Col>
           </Row>
-          
-        ) : (          
-          <h1>It seems like you haven't bought any ticket yet..</h1>
+        ) : (
+          <h1 className={classes.header}>It seems like you haven't bought any ticket.</h1>
         )}
       </Container>
     </div>

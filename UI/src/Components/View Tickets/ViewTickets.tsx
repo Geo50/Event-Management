@@ -93,10 +93,9 @@ const ViewTickets: React.FC = () => {
   };
 
   const handlePaymentSuccess = async (SessionId: string) => {
-   
     try {
       const response = await axios.post(`https://localhost:7083/api/Stripe/payment-success?SessionId=${SessionId}`);
-     
+
       toast.success("Payment successful! Your ticket has been purchased.");
     } catch (error: any) {
       console.error("Error confirming payment:", error.response ? error.response.data : error.message);
@@ -113,7 +112,6 @@ const ViewTickets: React.FC = () => {
           UserId: userId,
         }
       );
-     
 
       const maxTicketsResponse = await axios.post(
         `https://localhost:7083/api/Event/GetEventMaxTicketsPerUser?eventid=${eventId}`
@@ -163,7 +161,11 @@ const ViewTickets: React.FC = () => {
   return (
     <div>
       <Container fluid className={classes.ticketsContainer}>
-      <h1>Please keep in mind that you can buy a maximum of {maximumTicketsPerUser} tickets for this event, as per the limit set by the organiser of the event.</h1><br />
+        <h1>
+          Please keep in mind that you can buy a maximum of {maximumTicketsPerUser} tickets for this event, as per the
+          limit set by the organiser of the event.
+        </h1>
+        <br />
 
         {ticketsData.length > 0 ? (
           <table className={classes.ticketTable}>
@@ -188,23 +190,25 @@ const ViewTickets: React.FC = () => {
                   <td>{ticket.benefits}</td>
                   <td>{ticket.ticket_Limit}</td>
                   <td>
-                    {ticket.ticket_Limit === 0 ? (
-                      <Button variant="danger" disabled>
-                        Sold out!
-                      </Button>
-                    ) : (
-                      <div>
-                        {overMaximum ? (
-                          <Button variant="danger" disabled>
-                            Sorry, you cannot buy any more tickets for this event!
-                          </Button>
-                        ) : (
-                          <Button variant="danger" onClick={() => handleBuyTicket(ticket)}>
-                            Buy Ticket!
-                          </Button>
-                        )}
-                      </div>
-                    )}
+                    <div className={classes.buttonContainer}>
+                      {ticket.ticket_Limit === 0 ? (
+                        <Button variant="danger" disabled>
+                          Sold out!
+                        </Button>
+                      ) : (
+                        <div>
+                          {overMaximum ? (
+                            <Button variant="danger" disabled className={classes.buyButton}>
+                              Sorry, you cannot buy any more tickets for this event!
+                            </Button>
+                          ) : (
+                            <Button variant="danger" onClick={() => handleBuyTicket(ticket)}>
+                              Buy Ticket!
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

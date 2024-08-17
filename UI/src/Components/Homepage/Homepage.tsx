@@ -73,40 +73,40 @@ const Homepage: React.FC = () => {
       setIsLoggedIn(false); // User is not logged in
     }
   }, []);
+  
+  const handleEventsGeneration = useCallback(async () => {
+    setLoading(true);
+    try {
+      const result = await axios.get("https://localhost:7083/api/Event/GetEventsInHomepage");
+      const eventsWithUsernames = await Promise.all(
+        result.data.map(async (event: eventData) => {
+          const organiserResponse = await axios.get(
+            `https://localhost:7083/api/Event/GetUsernameFromId?userid=${event.organiser_Id}`
+          );
+          const transactionResponse = await axios.get(
+            `https://localhost:7083/api/Event/GetTransactionsPerEvent?eventid=${event.eventId}`
+          );
+          return {
+            ...event,
+            organiserName: organiserResponse.data,
+            totalTicketsBought: transactionResponse.data,
+          };
+        })
+      );
+
+      setEvents(eventsWithUsernames);
+      setFeaturedEvents(eventsWithUsernames.slice(0, 3));
+    } catch (error: any) {
+      toast.error(`Failed to fetch events. Status code: ${error.response?.status}: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
 
   useEffect(() => {
     document.body.style.backgroundImage = `url(${RedBlacK})`;
     document.body.style.height = `100vh`;
-
-    const handleEventsGeneration = async () => {
-      setLoading(true);
-      try {
-        const result = await axios.get("https://localhost:7083/api/Event/GetEventsInHomepage");
-        const eventsWithUsernames = await Promise.all(
-          result.data.map(async (event: eventData) => {
-            const organiserResponse = await axios.get(
-              `https://localhost:7083/api/Event/GetUsernameFromId?userid=${event.organiser_Id}`
-            );
-            const transactionResponse = await axios.get(
-              `https://localhost:7083/api/Event/GetTransactionsPerEvent?eventid=${event.eventId}`
-            );
-            return {
-              ...event,
-              organiserName: organiserResponse.data,
-              totalTicketsBought: transactionResponse.data,
-            };
-          })
-        );
-
-        setEvents(eventsWithUsernames);
-        setFeaturedEvents(eventsWithUsernames.slice(0, 3));
-      } catch (error: any) {
-        toast.error(`Failed to fetch events. Status code: ${error.response?.status}: ${error.message}`);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     handleEventsGeneration();
     decodeToken();
 
@@ -114,8 +114,8 @@ const Homepage: React.FC = () => {
       document.body.style.backgroundImage = "";
       document.body.style.height = "";
     };
-  }, []);
-
+  }, [handleEventsGeneration]);
+  
   const handleCloseDetails = useCallback((): void => {
     setModalShow(false);
   }, []);
@@ -159,15 +159,16 @@ const Homepage: React.FC = () => {
                       key={event.eventId}
                       className={`carousel-item ${index === activeIndex ? "active" : ""} ${classes.carouselContainer}`}
                     >
-                      <Card className={`${classes.eventCard} w-100`}>
+                      <Card className={`${classes.eventCard} w-100`}
+                      onClick={() => {
+                        setModalShow(true);
+                        setSelectedEventId(event.eventId);
+                      }}>
                         <Card.Img
                           variant="top"
                           src={event.eventImage}
                           className={classes.imageElement}
-                          onClick={() => {
-                            setModalShow(true);
-                            setSelectedEventId(event.eventId);
-                          }}
+                          
                         />
                         <Card.Body>
                           <Card.Title className={classes.title}>{event.eventName}</Card.Title>

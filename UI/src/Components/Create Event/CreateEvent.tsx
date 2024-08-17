@@ -258,6 +258,7 @@ const CreateEvent: React.FC = () => {
               register={register("ticket_limit_per_user", {
                 required: "Ticket limit per user is required",
                 min: { value: 1, message: "Ticket limit must be at least 1" },
+                
               })}
               error={errors.ticket_limit_per_user}
             />

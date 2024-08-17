@@ -10,4 +10,28 @@
     --event-wine: #dd3611f7;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap')
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100..1000&display=swap');
+
+/* Card classes overwrite */
+.card-title {
+    margin:0 !important;
+}
+h3 {
+    margin: 0;
+}
+
+.card-body {
+    /* padding: 0; */
+    padding-top: 1rem;
+    padding-bottom: 0;
+    border: none;
+}
+.card>.list-group {
+    border: none;
+}
+body {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+}
+
+

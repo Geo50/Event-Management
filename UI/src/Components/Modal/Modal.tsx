@@ -67,11 +67,11 @@ const ModalComponent: React.FC<ModalProps> = ({
       ) : modalType === "Create Event" ? (
         <div>
           <p className={classes.lightText}>
-            You have successfully created your new event. Would you like to create tickets for it?
+            You have successfully created your new event. Would you like to create tickets for it now?
           </p>
           <Modal.Footer>
             <Button variant="success" onClick={multipleFunctions}>
-              Yes
+              Create Tickets
             </Button>
             <Link to="/homepage">
               <Button variant="primary">Go to homepage</Button>

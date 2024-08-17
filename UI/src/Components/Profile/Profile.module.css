@@ -39,7 +39,7 @@
   margin-top: 5%;
 }
 
-.header{
+.header {
   color: white;
 }
 
@@ -52,23 +52,63 @@ th {
   background-color: rgb(34, 34, 34);
 }
 
-
 .eventCard {
-  background-color: rgb(34, 34, 34);
+  background-color: rgb(0, 0, 0);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* border: 1px solid rgba(255, 255, 255, 0.2); */
   color: white;
-  transition: 0.6s;
+  transition: 0.25s;
   margin-top: 1rem;
+  padding-bottom: 1rem;
+  overflow: hidden;
 }
-
 
 .eventInfo {
   background-color: transparent;
-  border-color: rgba(255, 255, 255, 0.2);
+  border: none;
   color: #d0d0d0;
-  font-weight: 500;
   font-size: 1rem;
+  padding-block: 0;
+}
+/* 
+.eventCTA {
+  display: block;
+  margin: auto;
+} */
+
+.infoRow {
+  padding-bottom: 0.8rem;
+}
+
+.dateLocationBlock {
+  padding-top: 0.6rem;
+}
+
+.dateLocationBlock div {
+  font-weight: 400;
+}
+
+.columnClass {
+  width: 90vw;
+  overflow: hidden;
+}
+
+.attendingEvent {
+  padding-bottom: 0.7rem;
+}
+
+.attendingEvent div {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.attendingEvent span {
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.eventOrganiser {
+  font-size: 0.9rem;
 }
 
 .eventImage {
@@ -84,14 +124,20 @@ th {
 }
 
 .eventCard {
-  transition: 0.6s;
+  transition: all ease 0.25s;
   margin-bottom: 10%;
+  cursor: pointer;
+  border: none;
 }
 
 .eventCard:hover {
-  box-shadow: rgba(0, 0, 0, 0.568) 0px 54px 55px, rgba(0, 0, 0, 0.568) 0px -12px 30px, rgba(0, 0, 0, 0.568) 0px 4px 6px,
-    rgba(0, 0, 0, 0.568) 0px 12px 13px, rgba(0, 0, 0, 0.568) 0px -3px 5px;
-  transform: scale(1.05);
+  /* box-shadow: rgba(0, 0, 0, 0.568) 0px 54px 55px, rgba(0, 0, 0, 0.568) 0px -12px 30px, rgba(0, 0, 0, 0.568) 0px 4px 6px,
+    rgba(0, 0, 0, 0.568) 0px 12px 13px, rgba(0, 0, 0, 0.568) 0px -3px 5px; */
+  /* transform: scale(1.01); */
+}
+
+.eventCard:hover .imageElement {
+  transform: scale(1.025);
 }
 
 .bookmarkPosition {
@@ -101,26 +147,64 @@ th {
 }
 
 .imageElement {
-  width: 100%;
+  /* width: 100%;
   height: 20rem;
   max-width: 100%;
   object-fit: cover;
-  cursor: pointer;
+  cursor: pointer; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
+  transition: transform ease 0.25s;
 }
 
-.ticketTable {
+/* .ticketTable {
+  word-break: break-all;
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
-}
+} */
 
-.ticketTable th, .ticketTable td {
+.ticketTable th,
+.ticketTable td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
-
+  min-width: 5rem;
 }
 
 .ticketTable th {
   background-color: #f2f2f2;
+}
+
+.cardImgWrapper {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16/14;
+  max-height: 250px;
+}
+
+.eventType {
+  padding-top: 0;
+  font-size: 0.75em;
+  color: rgb(190, 190, 190);
+  text-transform: uppercase;
+}
+
+@media (width < 770px) {
+  .editContainer {
+    margin-top: 1rem;
+  }
+  .ticketTable th,
+  .ticketTable td {
+    font-size: 0.8rem;
+  }
+  .refundTicket {
+    font-size: 0.8rem;
+    padding: 5px;
+  }
 }

@@ -99,8 +99,9 @@ const NavbarComponent: React.FC = () => {
     <div>
       <Navbar collapseOnSelect expand="md" id={classes.navContainer}>
         <Container fluid>
-          <Navbar.Brand className={`user-select-none ${classes.navbarBrand}`}>Connexus</Navbar.Brand>
-          <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-md`} />
+          <Navbar.Brand className={`user-select-none ${classes.navbarBrand}`}>
+            <Link to="/homepage" className={classes.navbarBrand}>Connexus</Link>  </Navbar.Brand>
+          <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-md`} className="bg-light"/>
           <Navbar.Offcanvas
             id={`offcanvasNavbar-expand-md`}
             aria-labelledby={`offcanvasNavbarLabel-expand-md`}
@@ -123,11 +124,9 @@ const NavbarComponent: React.FC = () => {
                     </Link>
                     </div>
                     <div>
-                    <Link to="/homepage" className={classes.navbarLink}>
                       <Button onClick={destroyToken} className={classes.logoutButton}>
                         Logout
                       </Button>
-                    </Link>
                     </div>
                     </Fragment>                  
                 ) : (
