@@ -1,5 +1,5 @@
 import axios from "axios";
-import { differenceInDays, isBefore } from 'date-fns';
+import { differenceInDays, isBefore } from "date-fns";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { jwtDecode } from "jwt-decode";
 import { useCallback, useEffect, useState } from "react";
@@ -15,7 +15,6 @@ import ModalComponent from "../Modal/Modal";
 import classes from "./CreateEvent.module.css";
 import InputComponent from "./InputComponent";
 
-
 type EventCredentials = {
   eventName: string;
   eventDate: string;
@@ -27,7 +26,11 @@ type EventCredentials = {
 };
 
 const CreateEvent: React.FC = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<EventCredentials>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<EventCredentials>();
 
   const [imageURL, setImageURL] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -129,7 +132,7 @@ const CreateEvent: React.FC = () => {
         EventDescription: data.eventDescription,
         organiser_id: organiserID,
         eventAttendeesLimit: data.eventAttendeesLimit,
-        ticket_limit_per_user: data.ticket_limit_per_user
+        ticket_limit_per_user: data.ticket_limit_per_user,
       });
 
       const newEventId = response.data.eventId;
@@ -205,25 +208,28 @@ const CreateEvent: React.FC = () => {
               error={errors.eventDescription}
             />
             <InputComponent
-  inputType="datetime-local"
-  inputPlaceholder="Enter your event date"
-  register={register("eventDate", {
-    required: "Event date is required",
-    validate: {
-      notPastDate: value => {
-        const selectedDate = new Date(value);
-        const currentDate = new Date();
-        return !isBefore(selectedDate, currentDate) || "Event date cannot be in the past";
-      },
-      withinOneMonth: value => {
-        const selectedDate = new Date(value);
-        const currentDate = new Date();
-        return differenceInDays(selectedDate, currentDate) <= 30 || "Event date cannot be more than one month in the future";
-      }
-    }
-  })}
-  error={errors.eventDate}
-/>
+              inputType="datetime-local"
+              inputPlaceholder="Enter your event date"
+              register={register("eventDate", {
+                required: "Event date is required",
+                validate: {
+                  notPastDate: (value) => {
+                    const selectedDate = new Date(value);
+                    const currentDate = new Date();
+                    return !isBefore(selectedDate, currentDate) || "Event date cannot be in the past";
+                  },
+                  withinOneMonth: (value) => {
+                    const selectedDate = new Date(value);
+                    const currentDate = new Date();
+                    return (
+                      differenceInDays(selectedDate, currentDate) <= 30 ||
+                      "Event date cannot be more than one month in the future"
+                    );
+                  },
+                },
+              })}
+              error={errors.eventDate}
+            />
             <InputComponent
               inputType="text"
               inputPlaceholder="Event Place"
@@ -239,18 +245,18 @@ const CreateEvent: React.FC = () => {
             <InputComponent
               inputType="number"
               inputPlaceholder="How many people can your event have?"
-              register={register("eventAttendeesLimit", { 
+              register={register("eventAttendeesLimit", {
                 required: "Attendees limit is required",
-                min: { value: 1, message: "Attendees limit must be at least 1" }
+                min: { value: 1, message: "Attendees limit must be at least 1" },
               })}
               error={errors.eventAttendeesLimit}
             />
             <InputComponent
               inputType="number"
               inputPlaceholder="What is the maximum amount of tickets a single user can buy?"
-              register={register("ticket_limit_per_user", { 
+              register={register("ticket_limit_per_user", {
                 required: "Ticket limit per user is required",
-                min: { value: 1, message: "Ticket limit must be at least 1" }
+                min: { value: 1, message: "Ticket limit must be at least 1" },
               })}
               error={errors.ticket_limit_per_user}
             />

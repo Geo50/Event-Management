@@ -1,4 +1,5 @@
 import axios from "axios";
+import { format } from "date-fns";
 import { jwtDecode } from "jwt-decode";
 import React, { useCallback, useEffect, useState } from "react";
 import { Card, Col, Container, ListGroup, Row } from "react-bootstrap";
@@ -10,7 +11,6 @@ import { key } from "../../App";
 import RedBlacK from "../../assets/Night-Sky.jpg";
 import EventDetailsModal from "../Event Details/EventDetailsModal";
 import classes from "./Homepage.module.css";
-import { format } from "date-fns";
 
 type eventData = {
   eventId: number;
@@ -34,7 +34,6 @@ const Homepage: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [isAdmin, setIsAdmin] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [selectedEventOrganizer, setSelectedEventOrganizer] = useState<number>();
   const navigate = useNavigate();
 
   const getToken = () => {

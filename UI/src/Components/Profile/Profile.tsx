@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { key } from "../../App";
 import EventDetailsModal from "../Event Details/EventDetailsModal";
 import classes from "./Profile.module.css";
+import { format } from "date-fns";
 
 type eventData = {
   eventid: number;
@@ -328,7 +329,10 @@ const Profile: React.FC = () => {
                               <Card.Title className={classes.title}>Name: {event.eventname}</Card.Title>
                             </Card.Body>
                             <ListGroup className="list-group-flush">
-                              <ListGroup.Item className={classes.eventInfo}>Date: {event.eventdate}</ListGroup.Item>
+                              <ListGroup.Item className={classes.eventInfo}>
+                                {" "}
+                                Date: {format(new Date(event.eventdate), "MMMM dd, yyyy, h:mm a")}
+                              </ListGroup.Item>
                               <ListGroup.Item className={classes.eventInfo}>Type: {event.eventtype}</ListGroup.Item>
                               <ListGroup.Item className={classes.eventInfo}>Place: {event.eventplace}</ListGroup.Item>
                               <ListGroup.Item className={classes.eventInfo}>
@@ -369,7 +373,6 @@ const Profile: React.FC = () => {
                     handleClose={handleCloseDetails}
                     eventId={selectedEventId || 0}
                     isLoggedin={isLoggedIn}
-                    
                   />
                 </Container>
               )}

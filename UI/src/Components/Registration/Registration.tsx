@@ -44,7 +44,7 @@ const Registration: React.FC = () => {
       axios
         .post("https://localhost:7273/api/User/CreateNewUser", {
           UserName: data.userName,
-          UserEmail: data.confirmPassword,
+          UserEmail: data.emailValue,
           UserPassword: data.userPassword,
           IsAdmin: data.adminValue,
           PassVerificationAnswer: data.PassVerificationAnswer,

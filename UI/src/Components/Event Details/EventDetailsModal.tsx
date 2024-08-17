@@ -8,12 +8,13 @@ import { PuffLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { key } from "../../App";
 import classes from "./EventDetailsModal.module.css";
+import { format } from "date-fns";
 
 type inputProps = {
   visibility: boolean;
   handleClose: () => void;
   eventId: number;
-  isLoggedin: boolean;  
+  isLoggedin: boolean;
 };
 
 type eventData = {
@@ -34,6 +35,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
   const [events, setEvents] = useState<eventData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [isBookmarked, setIsBookmarked] = useState<boolean>();
+  const [isOrganizer, setIsOrganizer] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -55,6 +57,8 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         organiserName: organiserResponse.data,
         totalTicketsBought: transactionResponse.data,
       });
+      const currentUserId = decodeToken();
+      setIsOrganizer(currentUserId === eventData.organiser_id);
     } catch (error: any) {
       toast.error(`Failed to generate events. Status code: ${error.response?.status}: ${error.message}`);
     } finally {
@@ -134,7 +138,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
             toast.success("Successfully added to bookmarks", {
               autoClose: 2000,
             });
-          })  
+          })
           .catch((error: any) => {
             if (error.response && error.response.data.includes("Bookmark already exists")) {
               handleDeleteBookmark();
@@ -166,6 +170,14 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
     });
   };
 
+  const handleCreateTickets = () => {
+    navigate("/create-ticket", {
+      state: {
+        eventId: eventId,
+      },
+    });
+  };
+
   return (
     <div>
       {loading && (
@@ -179,7 +191,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
             <Card className={`bg-dark ${classes.eventCard}`}>
               <div className={classes.parentContainer}>
                 <Card.Img variant="top" src={events?.eventImage} className={classes.imageElement} />
-                <div className={classes.bookmarkPosition}>                  
+                <div className={classes.bookmarkPosition}>
                   {isBookmarked ? (
                     <Button variant="outline-danger" onClick={handleDeleteBookmark}>
                       <i className="bi bi-bookmark-x-fill"></i>
@@ -203,7 +215,12 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
                 </Card.Title>
               </Card.Body>
               <ListGroup className=" list-group-flush">
-                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Date: {events?.eventDate}</ListGroup.Item>
+                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>
+                  Date:{" "}
+                  {events?.eventDate
+                    ? format(new Date(events.eventDate), "MMMM dd, yyyy, h:mm a")
+                    : "Date not available"}
+                </ListGroup.Item>
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Type: {events?.eventType}</ListGroup.Item>
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Place: {events?.eventPlace}</ListGroup.Item>
                 <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>
@@ -215,9 +232,15 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
               </ListGroup>
               <Card.Body>
                 {isLoggedin ? (
-                  <Button variant="danger w-100" onClick={handleViewTickets}>
-                    View Tickets
-                  </Button>
+                  isOrganizer ? (
+                    <Button variant="danger w-100" onClick={handleCreateTickets}>
+                      Create Tickets
+                    </Button>
+                  ) : (
+                    <Button variant="danger w-100" onClick={handleViewTickets}>
+                      View Tickets
+                    </Button>
+                  )
                 ) : (
                   <Button variant="secondary w-100" disabled>
                     Login to View Tickets
