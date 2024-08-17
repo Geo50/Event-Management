@@ -8,7 +8,7 @@ import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { key } from "../../App";
-import RedBlacK from "../../assets/Night-Sky.jpg";
+import RedBlacK from "../../assets/vector-NOV-2020-53_generated.jpg";
 import EventDetailsModal from "../Event Details/EventDetailsModal";
 import classes from "./Homepage.module.css";
 

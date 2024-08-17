@@ -2,6 +2,8 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
+import { useForm } from "react-hook-form";
+
 import { useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
@@ -10,6 +12,7 @@ import { key } from "../../App";
 import EventDetailsModal from "../Event Details/EventDetailsModal";
 import classes from "./Profile.module.css";
 import { format } from "date-fns";
+import RedBlacK from "../../assets/vector-NOV-2020-53_generated.jpg";
 
 type eventData = {
   eventid: number;
@@ -120,6 +123,8 @@ const Profile: React.FC = () => {
   };
 
   useEffect(() => {
+    document.body.style.backgroundImage = `url(${RedBlacK})`;
+
     const fetchUserDetails = async () => {
       const userId = decodeToken();
       if (userId) {
@@ -167,6 +172,7 @@ const Profile: React.FC = () => {
     handleEventsGeneration();
     handleBoughtTickets();
     checkLoggedin();
+    
   }, []);
 
   useEffect(() => {
@@ -283,19 +289,15 @@ const Profile: React.FC = () => {
         </Row>
         <Row className={classes.rowClass}>
           <Col md={9} lg={9}>
-            <input type="email" placeholder={email} disabled={disabled} className={classes.inputElement} />
+            <input type="email" placeholder={email} disabled className={classes.inputElement} />
           </Col>
-          <Col>
-            <Button className={classes.editButton}>Edit</Button>
-          </Col>
+          
         </Row>
         <Row className={classes.rowClass}>
           <Col md={9} lg={9}>
-            <input type="password" placeholder="*********" disabled={disabled} className={classes.inputElement} />
+            <input type="password" placeholder="*********" disabled className={classes.inputElement} />
           </Col>
-          <Col>
-            <Button className={classes.editButton}>Edit</Button>
-          </Col>
+          
         </Row>
         {events.length > 0 ? (
           <div>
@@ -341,10 +343,10 @@ const Profile: React.FC = () => {
                               <ListGroup.Item className={classes.eventInfo}>
                                 Organiser: {event.organiserName}
                               </ListGroup.Item>
-                              <ListGroup.Item>
+                              <ListGroup.Item className={classes.eventInfo}>
                                 {isUserOrganizer ? (
                                   <Button
-                                    variant="outline-danger"
+                                    variant="danger"
                                     onClick={() => {
                                       handleCreateTicketNavigation(event);
                                     }}
@@ -353,7 +355,7 @@ const Profile: React.FC = () => {
                                   </Button>
                                 ) : (
                                   <Button
-                                    variant="outline-danger"
+                                    variant="danger"
                                     onClick={() => {
                                       handleViewTicketsNavigation(event);
                                     }}
@@ -379,12 +381,12 @@ const Profile: React.FC = () => {
             </div>
           </div>
         ) : (
-          <h1 className={classes.header}>Oops, you haven't bookmarked any events yet...</h1>
+          <h1 className={classes.header}>You haven't bookmarked any events yet...</h1>
         )}
         {boughtTicketsData.length > 0 ? (
           <Row>
             {" "}
-            <h1 className={classes.header}>And here are your bought tickets!</h1>
+            <h1 className={classes.header}>Here are your bought tickets!</h1>
             <table className={classes.ticketTable}>
               <thead>
                 <tr>
@@ -412,13 +414,16 @@ const Profile: React.FC = () => {
                       <Button variant="success" onClick={() => handleRefund(ticket.ticketId, ticket.eventId)}>
                         Refund Ticket
                       </Button>
+                      <br />
                     </td>
                   </tr>
+                  
                 ))}
               </tbody>
             </table>
           </Row>
-        ) : (
+          
+        ) : (          
           <h1>It seems like you haven't bought any ticket yet..</h1>
         )}
       </Container>
