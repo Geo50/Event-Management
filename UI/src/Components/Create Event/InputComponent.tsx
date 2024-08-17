@@ -1,5 +1,5 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { UseFormRegisterReturn, FieldError } from "react-hook-form";
+import React from "react";
+import { FieldError, UseFormRegisterReturn } from "react-hook-form";
 import classes from "./CreateEvent.module.css";
 
 type InputProps = {

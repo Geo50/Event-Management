@@ -2,17 +2,16 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "react-toastify/dist/ReactToastify.css";
 
 import axios from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
-import { toast } from "react-toastify";
+import { key } from "../../App";
 import EventLogin from "../../assets/event-login.png.jpg";
 import ModalComponent from "../Modal/Modal";
 import classes from "./Login.module.css";
-import { useForm } from "react-hook-form";
-import { key } from "../../App";
 
 type UserCredentials = {
   userName: string;

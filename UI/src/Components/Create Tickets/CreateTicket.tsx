@@ -2,33 +2,34 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Button, Col, Container, Modal, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import { useForm, SubmitHandler } from "react-hook-form";
 import classes from "./CreateTicket.module.css";
 
 type TicketValues = {
-  ticketId: number;
   ticketName: string;
   ticketPrice: number;
   category: string;
   benefits: string;
   ticket_Limit: number;
 };
-
 const CreateTicket: React.FC = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<TicketValues>();
   const location = useLocation();
   const { eventid } = location.state || {};
 
   const [visible, setVisible] = useState<boolean>(false);
-  const [ticketName, setTicketName] = useState<string>("");
-  const [ticketPrice, setTicketPrice] = useState<string>("");
-  const [ticketLimit, setTicketLimit] = useState<string>("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [benefits, setBenefits] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
-  const [isValid, setIsValid] = useState<boolean>(true);
   const [ticketsData, setTicketsData] = useState<TicketValues[]>([]);
   const [attendeesLimit, setAttendeesLimit] = useState<number | null>(null);
   const [modalShow, setModalShow] = useState<boolean>(false);
+  const [remainingTickets, setRemainingTickets] = useState<number>(0);
+  const [isLimitReached, setIsLimitReached] = useState<boolean>(false);
 
   useEffect(() => {
     if (eventid) {
@@ -36,6 +37,14 @@ const CreateTicket: React.FC = () => {
     }
   }, [eventid]);
 
+  useEffect(() => {
+    if (attendeesLimit !== null) {
+      const currentTicketLimitSum = ticketsData.reduce((sum, ticket) => sum + ticket.ticket_Limit, 0);
+      const remaining = attendeesLimit - currentTicketLimitSum;
+      setRemainingTickets(remaining);
+      setIsLimitReached(remaining <= 0);
+    }
+  }, [ticketsData, attendeesLimit]);
   const fetchTickets = async () => {
     try {
       const response = await axios.get(`https://localhost:7083/api/Event/GetEventTickets?eventId=${eventid}`);
@@ -47,95 +56,31 @@ const CreateTicket: React.FC = () => {
   };
 
   const getEventAttendees = async () => {
-    await axios
-      .post(`https://localhost:7083/api/Event/GetEventAttendees?eventId=${eventid}`, {
+    try {
+      const response = await axios.post(`https://localhost:7083/api/Event/GetEventAttendees?eventId=${eventid}`, {
         eventId: eventid,
-      })
-      .then((response) => {
-        setAttendeesLimit(Number(response.data)); // Convert to number
-      })
-      .catch((error: any) => {
-        toast.error(`There has been a problem fetching the event attendees limit: ${error.status} : ${error.message}`);
       });
+      setAttendeesLimit(Number(response.data));
+    } catch (error: any) {
+      toast.error(`There has been a problem fetching the event attendees limit: ${error.status} : ${error.message}`);
+    }
   };
 
-  const inputValidation = () => {
-    let valid = true;
-
-    const handleTicketLimits = (eventAttendeesLimit: number) => {
-      const ticketLimitNumber = Number(ticketLimit);
-      const currentTicketLimitSum = ticketsData.reduce((sum, ticket) => sum + ticket.ticket_Limit, 0);
-      const newTotalLimit = currentTicketLimitSum + ticketLimitNumber;
-
-      if (ticketLimitNumber <= 0) {
-        toast.error("Ticket limit must be greater than 0.");
-        valid = false;
-        return;
-      }
-
-      if (newTotalLimit > eventAttendeesLimit) {
-        toast.error(
-          `Sorry, the total ticket limit (${newTotalLimit}) would surpass your attendees limit (${eventAttendeesLimit}).`
-        );
-        valid = false;
-        return;
-      }
-    };
-
-    if (ticketName === "") {
-      toast.error("Please fill the ticket name field.");
-      valid = false;
-    }
-
-    if (ticketPrice === "") {
-      toast.error("Please fill the ticket price field.");
-      valid = false;
-    }
-
-    if (ticketLimit === "") {
-      toast.error("Please fill the ticket limit field.");
-      valid = false;
-    }
-    if (benefits === "") {
-      toast.error("Please fill the ticket benefits field.");
-      valid = false;
-    }
-
-    if (selectedCategory === "") {
-      toast.error("Please select a ticket category.");
-      valid = false;
-    }
-
-    const eventAttendeesLimit = attendeesLimit || 0;
-    handleTicketLimits(eventAttendeesLimit);
-
-    setIsValid(valid);
-    return valid;
-  };
-
-  const handleValues = async () => {
+  const onSubmit: SubmitHandler<TicketValues> = async (data) => {
     try {
       await axios.post("https://localhost:7083/api/Event/CreateNewTicket", {
         eventId: eventid,
-        ticketName: ticketName,
-        ticketPrice: parseInt(ticketPrice),
-        category: selectedCategory,
-        benefits: benefits,
-        ticket_limit: parseInt(ticketLimit),
+        ...data,
       });
       toast.success("Ticket created successfully!");
       fetchTickets();
-      setTicketName("");
-      setTicketPrice("");
-      setTicketLimit("");
-      setSelectedCategory("");
-      setBenefits("");
+      reset();
       setVisible(false);
       setIsEditing(false);
-      setModalShow(false)
+      setModalShow(false);
     } catch (error: any) {
       toast.error(`Failed to create the ticket: ${error.message}`);
-      setModalShow(false)
+      setModalShow(false);
     }
   };
 
@@ -144,22 +89,14 @@ const CreateTicket: React.FC = () => {
       setVisible(true);
       setIsEditing(true);
     } else {
-      const valid = inputValidation();
-      if (valid) {
-        setModalShow(true)
-      }
+      setModalShow(true);
     }
   };
-
- 
 
   const handleCancelClick = () => {
     setVisible(false);
     setIsEditing(false);
-    setTicketName("");
-    setTicketPrice("");
-    setTicketLimit("");
-    setBenefits("");
+    reset();
   };
 
   const handleCloseDetails = useCallback((): void => {
@@ -183,7 +120,7 @@ const CreateTicket: React.FC = () => {
             </div>
           </Modal.Body>
           <Modal.Footer className="bg-dark">
-            <Button variant="outline-success" onClick={handleValues}>
+            <Button variant="outline-success" onClick={handleSubmit(onSubmit)}>
               Confirm
             </Button>
             <Button variant="outline-danger" onClick={handleCloseDetails}>
@@ -194,72 +131,107 @@ const CreateTicket: React.FC = () => {
       )}
       <Container className={classes.container} fluid>
         <Row>
-          <h1>Manage tickets for your event</h1>
+          <h2>Manage tickets for your event</h2>
         </Row>
         <Row className={classes.rowClass}>
-          <Button className={classes.createButton} variant="primary" onClick={handleButtonClick} disabled={isEditing}>
+          <Button
+            className={classes.createButton}
+            variant="primary"
+            onClick={handleButtonClick}
+            disabled={isEditing || isLimitReached}
+          >
             Create Ticket
           </Button>
+          {isLimitReached && (
+            <h2 className={classes.warningText}>Ticket limit reached. No more tickets can be created.</h2>
+          )}
         </Row>
         {visible && (
-          <div>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="input-group mb-3">
               <div className="input-group-prepend">
-                <label className="input-group-text" htmlFor="inputGroupSelect01">
+                <label className="input-group-text" htmlFor="category">
                   Ticket Category
                 </label>
               </div>
               <select
-                className="custom-select"
-                id="inputGroupSelect01"
-                value={selectedCategory}
-                onChange={(event) => setSelectedCategory(event.target.value)} // Update selected category on change
+                id="category"
+                className={errors.category ? classes.inputError : ""}
+                {...register("category", { required: "Category is required" })}
               >
-                <option value="">Choose your new ticket category</option> {/* Default empty value */}
+                <option value="">Choose your new ticket category</option>
                 <option value="Regular">Regular</option>
                 <option value="VIP">VIP</option>
                 <option value="VVIP">VVIP</option>
               </select>
             </div>
+            {errors.category && <span className={classes.error}>{errors.category.message}</span>}
+
             <Row className={classes.rowClass}>
               <Col>
                 <input
                   type="text"
                   placeholder="Ticket Name"
-                  value={ticketName}
-                  onChange={(event) => setTicketName(event.target.value)}
+                  className={errors.ticketName ? classes.inputError : ""}
+                  {...register("ticketName", { required: "Ticket name is required" })}
                 />
+                {errors.ticketName && <p className={classes.error}>{errors.ticketName.message}</p>}
               </Col>
               <Col>
                 <input
                   type="number"
                   placeholder="Ticket Price"
-                  value={ticketPrice}
-                  onChange={(event) => setTicketPrice(event.target.value)}
+                  className={errors.ticketPrice ? classes.inputError : ""}
+                  {...register("ticketPrice", {
+                    required: "Ticket price is required",
+                    min: {
+                      value: 10,
+                      message: "Ticket price must range between $10 and $500 ",
+                    },
+                    max: {
+                      value: 500,
+                      message: "Ticket price must range between $10 and $500 ",
+                    },
+                  })}
                 />
+                {errors.ticketPrice && <p className={classes.error}>{errors.ticketPrice.message}</p>}
               </Col>
               <Col>
                 <input
                   type="number"
-                  placeholder="How many tickets can you sell of this ticket?"
-                  value={ticketLimit}
-                  onChange={(event) => setTicketLimit(event.target.value)}
+                  placeholder="Tickets Available"
+                  className={errors.ticket_Limit ? classes.inputError : ""}
+                  {...register("ticket_Limit", {
+                    required: "Ticket limit is required",
+                    min: {
+                      value: 1,
+                      message: `Ticket limit must range between 1 and ${attendeesLimit}`,
+                    },
+                    max: {
+                      value: `${attendeesLimit}`,
+                      message: `Ticket limit must range between 1 and ${attendeesLimit}`,
+                    },
+                    validate: (value) =>
+                      value <= remainingTickets ||
+                      `Ticket limit (${value}) would surpass the remaining tickets (${remainingTickets})`,
+                  })}
                 />
+                {errors.ticket_Limit && <p className={classes.error}>{errors.ticket_Limit.message}</p>}
               </Col>
               <Row>
                 <Col>
-                  {" "}
                   <input
                     type="text"
                     placeholder="Ticket Benefits"
-                    value={benefits}
-                    onChange={(event) => setBenefits(event.target.value)}
+                    className={errors.benefits ? classes.inputError : ""}
+                    {...register("benefits", { required: "Benefits are required" })}
                   />
+                  {errors.benefits && <p className={classes.error}>{errors.benefits.message}</p>}
                 </Col>
               </Row>
               {isEditing && (
                 <div className="d-flex justify-content-around">
-                  <Button className={classes.ticketsButton} variant="success" onClick={handleButtonClick}>
+                  <Button className={classes.ticketsButton} variant="success" type="submit">
                     Submit Ticket
                   </Button>
                   <Button className={classes.ticketsButton} variant="danger" onClick={handleCancelClick}>
@@ -268,11 +240,11 @@ const CreateTicket: React.FC = () => {
                 </div>
               )}
             </Row>
-          </div>
+          </form>
         )}
         <Row>
           <div>
-            <h1>Here are your tickets for this event.</h1>
+            <h2>Here are your tickets for this event.</h2>
             <Container fluid className={classes.ticketsContainer}>
               <table className={classes.ticketTable}>
                 <thead>
@@ -286,9 +258,9 @@ const CreateTicket: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {ticketsData.map((ticket) => (
-                    <tr key={ticket.ticketId}>
-                      <td>{ticket.ticketId}</td>
+                  {ticketsData.map((ticket, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
                       <td>{ticket.ticketName}</td>
                       <td>{ticket.category}</td>
                       <td>${ticket.ticketPrice}</td>

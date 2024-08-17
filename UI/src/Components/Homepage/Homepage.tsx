@@ -230,7 +230,6 @@ const Homepage: React.FC = () => {
                   </Card.Body>
                   <ListGroup className="list-group-flush">
                     <ListGroup.Item className={classes.eventInfo}>
-                      {" "}
                       Date: {format(new Date(event.eventDate), "MMMM dd, yyyy, h:mm a")}
                     </ListGroup.Item>
                     <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>

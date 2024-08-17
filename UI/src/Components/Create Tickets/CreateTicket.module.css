@@ -86,8 +86,9 @@
 
 .inputError {
   border: 1px solid red !important;
-  background-color: #faf6f6; /* Use a lighter color for the background */
+  background-color: #faf6f6; 
 }
+
 
 .imageElement {
   width: 100%;
