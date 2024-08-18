@@ -78,7 +78,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         const decodedToken: any = jwtDecode(token);
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
-        
+
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
@@ -184,7 +184,9 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
           <Modal.Body className={`bg-dark ${classes.modalBody}`}>
             <Card className={`bg-dark ${classes.eventCard}`}>
               <div className={classes.parentContainer}>
-                <Card.Img variant="top" src={events?.eventImage} className={classes.imageElement} />
+                <div className={classes.cardImgWrapper}>
+                  <Card.Img variant="top" src={events?.eventImage} className={classes.imageElement} />
+                </div>
                 <div className={classes.bookmarkPosition}>
                   {isBookmarked ? (
                     <Button variant="outline-danger" onClick={handleDeleteBookmark}>
@@ -200,43 +202,47 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
 
               <Modal.Header closeButton>
                 <Modal.Title>
-                  <p className={classes.title}>{events?.eventName}</p>
+                  <h3 className={classes.title}>{events?.eventName}</h3>
                 </Modal.Title>
               </Modal.Header>
               <Card.Body>
-                <Card.Title>
-                  <p className={classes.eventDescription}>{events?.eventDescription}</p>
-                </Card.Title>
+                <p className={classes.eventDescription}>{events?.eventDescription}</p>
               </Card.Body>
-              <ListGroup className=" list-group-flush">
-                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>
-                  Date:{" "}
-                  {events?.eventDate
-                    ? format(new Date(events.eventDate), "MMMM dd, yyyy, h:mm a")
-                    : "Date not available"}
+              <ListGroup className="list-group-flush">
+                <ListGroup.Item className={`${classes.eventInfo} ${classes.eventType}`}>
+                  {events?.eventType}
                 </ListGroup.Item>
-                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Type: {events?.eventType}</ListGroup.Item>
-                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>Place: {events?.eventPlace}</ListGroup.Item>
-                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>
-                  Organizer: {events?.organiserName}
+                <ListGroup.Item className={`${classes.eventInfo} ${classes.eventType}`}>
+                  {events?.organiserName}
                 </ListGroup.Item>
-                <ListGroup.Item className={`bg-dark ${classes.eventInfo}`}>
-                  Attendees: {events?.totalTicketsBought} / {events?.eventAttendeesLimit}
-                </ListGroup.Item>
+                <div className={`${classes.infoRow} ${classes.dateLocationBlock}`}>
+                  <ListGroup.Item className={classes.eventInfo}>
+                    {events?.eventDate
+                      ? format(new Date(events.eventDate), "MMMM dd, yyyy, h:mm a")
+                      : "Date not available"}
+                  </ListGroup.Item>
+                  <ListGroup.Item className={classes.eventInfo}>{events?.eventPlace}</ListGroup.Item>
+                </div>
+                <div className={`${classes.infoRow} ${classes.attendingEvent}`}>
+                  <ListGroup.Item className={classes.eventInfo}>
+                    {events?.totalTicketsBought} / {events?.eventAttendeesLimit}
+                    <span> Attending </span>
+                  </ListGroup.Item>
+                </div>
               </ListGroup>
               <Card.Body>
                 {isLoggedin ? (
                   isOrganizer ? (
-                    <Button variant="danger w-100" onClick={handleCreateTickets}>
+                    <Button variant="danger" className={`w-100 ${classes.eventCTA}`} onClick={handleCreateTickets}>
                       Create Tickets
                     </Button>
                   ) : (
-                    <Button variant="danger w-100" onClick={handleViewTickets}>
+                    <Button variant="danger" className={`w-100 ${classes.eventCTA}`} onClick={handleViewTickets}>
                       View Tickets
                     </Button>
                   )
                 ) : (
-                  <Button variant="secondary w-100" disabled>
+                  <Button variant="secondary" className={`w-100 ${classes.eventCTA}`} disabled>
                     Login to View Tickets
                   </Button>
                 )}

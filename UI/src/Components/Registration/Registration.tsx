@@ -50,7 +50,7 @@ const Registration: React.FC = () => {
           PassVerificationAnswer: data.PassVerificationAnswer,
         })
         .then((response) => {
-          secureLocalStorage.setItem(key, response.data.token); // Ensure "key" is replaced with the actual key name
+          secureLocalStorage.setItem(key, response.data.token); 
           navigate("/homepage");
         })
         .catch((error) => {

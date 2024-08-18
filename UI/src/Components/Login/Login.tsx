@@ -129,7 +129,7 @@ const Login: React.FC = () => {
               </div>{" "}
               <br />
               <div>
-                <p className={classes.linkElement}>
+                <p className={classes.linkText}>
                   {" "}
                   Don't have an account?
                   <Link to="/registration" className={classes.linkElement}>

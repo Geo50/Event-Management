@@ -136,7 +136,6 @@ const CreateTicket: React.FC = () => {
         <Row className={classes.rowClass}>
           <Button
             className={classes.createButton}
-            variant="primary"
             onClick={handleButtonClick}
             disabled={isEditing || isLimitReached}
           >
@@ -231,10 +230,10 @@ const CreateTicket: React.FC = () => {
               </Row>
               {isEditing && (
                 <div className="d-flex justify-content-around">
-                  <Button className={classes.ticketsButton} variant="success" type="submit">
+                  <Button className={`${classes.ticketsButton} ${classes.submitButton}`} type="submit">
                     Submit Ticket
                   </Button>
-                  <Button className={classes.ticketsButton} variant="danger" onClick={handleCancelClick}>
+                  <Button className={`${classes.ticketsButton} ${classes.cancelButton}`} onClick={handleCancelClick}>
                     Cancel
                   </Button>
                 </div>

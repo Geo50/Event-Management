@@ -55,9 +55,7 @@ const NavbarComponent: React.FC = () => {
     // Show toast only once
   
     // Navigate after a short delay
-    setTimeout(() => {
       navigate("/homepage");
-    }, 1000);
   }, [navigate, isLoggedIn]);
   
   useEffect(() => {

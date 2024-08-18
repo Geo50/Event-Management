@@ -137,6 +137,21 @@
   margin-left: 0.5;
 }
 
+.createButton, .createButton:active, .createButton:focus{
+  background-color: black;
+}
+
+.submitButton {
+  background-color: black;
+  outline: white;
+  border: none;
+}
+
+.cancelButton {
+  background-color: black;
+  border: none;
+}
+
 
 @media (max-width: 768px) {
   .container {

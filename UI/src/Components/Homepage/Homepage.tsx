@@ -135,80 +135,7 @@ const Homepage: React.FC = () => {
           <PuffLoader color="var(--registration-blue)" size={130} />
         </div>
       ) : (
-        <Container fluid className={classes.eventsContainer}>
-          <Row>
-            <div className={classes.headerContainer}>
-              <h1 className={`${classes.header}`}>Our Featured Events!</h1>
-            </div>
-          </Row>
-          <Row>
-            <div className={`${classes.carouselAllContainer}`}>
-              <div id="carouselExampleIndicators" className="carousel slide">
-                <ol className="carousel-indicators">
-                  {featuredEvents.map((_, index) => (
-                    <li
-                      key={index}
-                      onClick={() => setActiveIndex(index)}
-                      className={index === activeIndex ? "active" : ""}
-                    ></li>
-                  ))}
-                </ol>
-                <div className="carousel-inner">
-                  {featuredEvents.map((event, index) => (
-                    <div
-                      key={event.eventId}
-                      className={`carousel-item ${index === activeIndex ? "active" : ""} ${classes.carouselContainer}`}
-                    >
-                      <Card className={`${classes.eventCard} w-100`}
-                      onClick={() => {
-                        setModalShow(true);
-                        setSelectedEventId(event.eventId);
-                      }}>
-                        <Card.Img
-                          variant="top"
-                          src={event.eventImage}
-                          className={classes.imageElement}
-                          
-                        />
-                        <Card.Body>
-                          <Card.Title className={classes.title}>{event.eventName}</Card.Title>
-                        </Card.Body>
-
-                        <ListGroup className="list-group-flush">
-                          <ListGroup.Item className={classes.eventInfo}>
-                            {" "}
-                            Date: {format(new Date(event.eventDate), "MMMM dd, yyyy, h:mm a")}
-                          </ListGroup.Item>
-                          <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
-                          <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
-                          <ListGroup.Item className={classes.eventInfo}>
-                            Organiser: {event.organiserName}
-                          </ListGroup.Item>
-                          <ListGroup.Item className={classes.eventInfo}>
-                            Attendees: {event.totalTicketsBought} / {event.eventAttendeesLimit}
-                          </ListGroup.Item>
-                        </ListGroup>
-                      </Card>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <button
-                className={`carousel-control-prev ${classes.navigationButton}`}
-                type="button"
-                onClick={handlePrevious}
-              >
-                <span className={`carousel-control-prev-icon ${classes.navigationIcon}`} aria-hidden="true"></span>
-              </button>
-              <button
-                className={`carousel-control-prev ${classes.navigationButton}`}
-                type="button"
-                onClick={handleNext}
-              >
-                <span className={`carousel-control-next-icon ${classes.navigationIcon}`} aria-hidden="true"></span>
-              </button>
-            </div>
-          </Row>
+        <Container fluid className={classes.eventsContainer}>                    
           <Row>
             <div className={classes.headerContainer}>
               <h1 className={`${classes.header}`}>Have Fun!</h1>
@@ -216,31 +143,47 @@ const Homepage: React.FC = () => {
           </Row>
           <Row>
             {events.map((event) => (
-              <Col key={event.eventId} xs={12} sm={6} lg={4}>
-                <Card
-                  className={classes.eventCard}
-                  onClick={() => {
-                    setModalShow(true);
-                    setSelectedEventId(event.eventId);
-                  }}
-                >
-                  <Card.Img variant="top" src={event.eventImage} className={classes.imageElement} loading="lazy" />
-                  <Card.Body>
-                    <Card.Title className={classes.title}> {event.eventName}</Card.Title>
-                  </Card.Body>
-                  <ListGroup className="list-group-flush">
-                    <ListGroup.Item className={classes.eventInfo}>
-                      Date: {format(new Date(event.eventDate), "MMMM dd, yyyy, h:mm a")}
-                    </ListGroup.Item>
-                    <ListGroup.Item className={classes.eventInfo}>Place: {event.eventPlace}</ListGroup.Item>
-                    <ListGroup.Item className={classes.eventInfo}>Type: {event.eventType}</ListGroup.Item>
-                    <ListGroup.Item className={classes.eventInfo}>Organiser: {event.organiserName}</ListGroup.Item>
-                    <ListGroup.Item className={classes.eventInfo}>
-                      Attendees: {event.totalTicketsBought} / {event.eventAttendeesLimit}
-                    </ListGroup.Item>
-                  </ListGroup>
-                </Card>
-              </Col>
+             <Col key={event.eventId} xs={12} sm={6} lg={4}>
+             <Card 
+               className={classes.eventCard} 
+               onClick={() => {
+                 setModalShow(true);
+                 setSelectedEventId(event.eventId);
+               }}
+             >
+               <div className={classes.cardImgWrapper}>
+                 <Card.Img variant="top" src={event.eventImage} className={classes.imageElement} loading="lazy" />
+               </div>
+           
+               <Card.Body>
+                 <Card.Title className={classes.title}>
+                   <h3>{event.eventName}</h3>
+                 </Card.Title>
+               </Card.Body>
+               <ListGroup className="list-group-flush">
+                 <ListGroup.Item className={`${classes.eventInfo} ${classes.eventType}`}>
+                   {event.eventType}
+                 </ListGroup.Item>
+                 <ListGroup.Item className={`${classes.eventInfo} ${classes.eventType}`}>
+                   {event.organiserName}
+                 </ListGroup.Item>
+                 <div className={`${classes.infoRow} ${classes.dateLocationBlock}`}>
+                   <ListGroup.Item className={classes.eventInfo}>
+                     {format(new Date(event.eventDate), "MMMM dd, yyyy, h:mm a")}
+                   </ListGroup.Item>
+                   <ListGroup.Item className={classes.eventInfo}>{event.eventPlace}</ListGroup.Item>
+                 </div>
+                 <div className={`${classes.infoRow} ${classes.attendingEvent}`}>
+                   <ListGroup.Item className={classes.eventInfo}>
+                     {event.totalTicketsBought} / {event.eventAttendeesLimit}
+                     <span> Attending </span>
+                   </ListGroup.Item>
+                 </div>
+                 <ListGroup.Item className={classes.eventInfo}>                  
+                 </ListGroup.Item>
+               </ListGroup>
+             </Card>
+           </Col>
             ))}
           </Row>
           <div className={classes.detailsParent}>

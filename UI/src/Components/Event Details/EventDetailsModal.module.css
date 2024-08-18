@@ -26,6 +26,7 @@
   color: white;
   border: 0;
   border-bottom: 1px solid white;
+  background-color: rgba(255, 255, 255, 0);
 }
 
 .eventDescription {
@@ -40,6 +41,8 @@
   object-fit: cover;
   cursor: pointer;
 }
+
+
 /* .eventModal :global(.modal-content) {
   background-color: rgb(30, 27, 27);
   color: white;

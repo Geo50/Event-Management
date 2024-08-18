@@ -100,7 +100,10 @@
 .inputError {
   border-bottom: 2px solid red;
 }
-
+.linkText {
+  font-size: 1.1rem;
+  color:#ffc107;
+}
 .inputElements:focus {
   outline: 0;
   border-bottom-color: #ffc107;

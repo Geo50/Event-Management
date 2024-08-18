@@ -26,6 +26,7 @@ type eventData = {
   eventAttendeesLimit: number;
 };
 
+
 type boughtTicketsType = {
   eventId: number;
   eventName: string;
@@ -148,6 +149,7 @@ const Profile: React.FC = () => {
         const result = await axios.post(`https://localhost:7083/api/Event/GetEventsInProfile?UserId=${userId}`, {
           UserId: userId,
         });
+        
 
         const eventsWithUsernames = await Promise.all(
           result.data.map(async (event: eventData) => {
@@ -155,6 +157,7 @@ const Profile: React.FC = () => {
             const organiserResponse = await axios.get(
               `https://localhost:7083/api/Event/GetUsernameFromId?userid=${event.organiser_Id}`
             );
+           
             return {
               ...event,
               organiserName: organiserResponse.data,
@@ -325,7 +328,6 @@ const Profile: React.FC = () => {
                             <div className={classes.cardImgWrapper}>
                               <Card.Img variant="top" src={event.eventimage} className={classes.imageElement} />
                             </div>
-
                             <Card.Body>
                               <Card.Title className={classes.title}>
                                 <h3>{event.eventname}</h3>
@@ -348,7 +350,7 @@ const Profile: React.FC = () => {
                               </div>
                               <div className={`${classes.infoRow} ${classes.attendingEvent}`}>
                                 <ListGroup.Item className={classes.eventInfo}>
-                                  {event.eventAttendeesLimit}
+                                   {event.eventAttendeesLimit}
                                   <span> Attending </span>
                                 </ListGroup.Item>
                               </div>
