@@ -27,11 +27,9 @@ type eventData = {
 
 const Homepage: React.FC = () => {
   const [events, setEvents] = useState<eventData[]>([]);
-  const [featuredEvents, setFeaturedEvents] = useState<eventData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
-  const [activeIndex, setActiveIndex] = useState<number>(0);
   const [isAdmin, setIsAdmin] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -73,7 +71,7 @@ const Homepage: React.FC = () => {
       setIsLoggedIn(false); // User is not logged in
     }
   }, []);
-  
+
   const handleEventsGeneration = useCallback(async () => {
     setLoading(true);
     try {
@@ -85,7 +83,7 @@ const Homepage: React.FC = () => {
           );
           const transactionResponse = await axios.get(
             `https://localhost:7083/api/Event/GetTransactionsPerEvent?eventid=${event.eventId}`
-          );
+          );         
           return {
             ...event,
             organiserName: organiserResponse.data,
@@ -95,14 +93,12 @@ const Homepage: React.FC = () => {
       );
 
       setEvents(eventsWithUsernames);
-      setFeaturedEvents(eventsWithUsernames.slice(0, 3));
     } catch (error: any) {
       toast.error(`Failed to fetch events. Status code: ${error.response?.status}: ${error.message}`);
     } finally {
       setLoading(false);
     }
   }, []);
-
 
   useEffect(() => {
     document.body.style.backgroundImage = `url(${RedBlacK})`;
@@ -115,18 +111,10 @@ const Homepage: React.FC = () => {
       document.body.style.height = "";
     };
   }, [handleEventsGeneration]);
-  
+
   const handleCloseDetails = useCallback((): void => {
     setModalShow(false);
   }, []);
-
-  const handleNext = useCallback(() => {
-    setActiveIndex((prevIndex) => (prevIndex === featuredEvents.length - 1 ? 0 : prevIndex + 1));
-  }, [featuredEvents.length]);
-
-  const handlePrevious = useCallback(() => {
-    setActiveIndex((prevIndex) => (prevIndex === 0 ? featuredEvents.length - 1 : prevIndex - 1));
-  }, [featuredEvents.length]);
 
   return (
     <div>
@@ -135,7 +123,7 @@ const Homepage: React.FC = () => {
           <PuffLoader color="var(--registration-blue)" size={130} />
         </div>
       ) : (
-        <Container fluid className={classes.eventsContainer}>                    
+        <Container fluid className={classes.eventsContainer}>
           <Row>
             <div className={classes.headerContainer}>
               <h1 className={`${classes.header}`}>Have Fun!</h1>
@@ -143,47 +131,52 @@ const Homepage: React.FC = () => {
           </Row>
           <Row>
             {events.map((event) => (
-             <Col key={event.eventId} xs={12} sm={6} lg={4}>
-             <Card 
-               className={classes.eventCard} 
-               onClick={() => {
-                 setModalShow(true);
-                 setSelectedEventId(event.eventId);
-               }}
-             >
-               <div className={classes.cardImgWrapper}>
-                 <Card.Img variant="top" src={event.eventImage} className={classes.imageElement} loading="lazy" />
-               </div>
-           
-               <Card.Body>
-                 <Card.Title className={classes.title}>
-                   <h3>{event.eventName}</h3>
-                 </Card.Title>
-               </Card.Body>
-               <ListGroup className="list-group-flush">
-                 <ListGroup.Item className={`${classes.eventInfo} ${classes.eventType}`}>
-                   {event.eventType}
-                 </ListGroup.Item>
-                 <ListGroup.Item className={`${classes.eventInfo} ${classes.eventType}`}>
-                   {event.organiserName}
-                 </ListGroup.Item>
-                 <div className={`${classes.infoRow} ${classes.dateLocationBlock}`}>
-                   <ListGroup.Item className={classes.eventInfo}>
-                     {format(new Date(event.eventDate), "MMMM dd, yyyy, h:mm a")}
-                   </ListGroup.Item>
-                   <ListGroup.Item className={classes.eventInfo}>{event.eventPlace}</ListGroup.Item>
-                 </div>
-                 <div className={`${classes.infoRow} ${classes.attendingEvent}`}>
-                   <ListGroup.Item className={classes.eventInfo}>
-                     {event.totalTicketsBought} / {event.eventAttendeesLimit}
-                     <span> Attending </span>
-                   </ListGroup.Item>
-                 </div>
-                 <ListGroup.Item className={classes.eventInfo}>                  
-                 </ListGroup.Item>
-               </ListGroup>
-             </Card>
-           </Col>
+              <Col key={event.eventId} xs={12} sm={6} lg={4}>
+                <Card
+                  className={classes.eventCard}
+                  onClick={() => {
+                    setModalShow(true);
+                    setSelectedEventId(event.eventId);
+                  }}
+                >
+                  <div className={classes.cardImgWrapper}>
+                    <Card.Img variant="top" src={event.eventImage} className={classes.imageElement} loading="lazy" />
+                  </div>
+
+                  <Card.Body>
+                    <Card.Title className={classes.title}>
+                      <h3>{event.eventName}</h3>
+                    </Card.Title>
+                  </Card.Body>
+                  <ListGroup className="list-group-flush">
+                    <ListGroup.Item className={`${classes.eventInfo} ${classes.eventType}`}>
+                      {event.eventType}
+                    </ListGroup.Item>
+                    <ListGroup.Item className={`${classes.eventInfo} ${classes.eventType}`}>
+                      {event.organiserName}
+                    </ListGroup.Item>
+                    <div className={`${classes.infoRow} ${classes.dateLocationBlock}`}>
+                      <ListGroup.Item className={classes.eventInfo}>
+                        {format(new Date(event.eventDate), "MMMM dd, yyyy, h:mm a")}
+                      </ListGroup.Item>
+                      <ListGroup.Item className={classes.eventInfo}>{event.eventPlace}</ListGroup.Item>
+                    </div>
+                    <div className={`${classes.infoRow} ${classes.attendingEvent}`}>
+                      {event.eventAttendeesLimit === event.totalTicketsBought ? (
+                        <ListGroup.Item className={classes.eventInfo}>
+                          <h3 className={classes.fullyBooked}>EVENT FULLY BOOKED</h3>
+                        </ListGroup.Item>
+                      ) : (
+                        <ListGroup.Item className={classes.eventInfo}>
+                          {event.totalTicketsBought} / {event.eventAttendeesLimit}
+                          <span> Attending </span>
+                        </ListGroup.Item>
+                      )}
+                    </div>
+                    <ListGroup.Item className={classes.eventInfo}></ListGroup.Item>
+                  </ListGroup>
+                </Card>
+              </Col>
             ))}
           </Row>
           <div className={classes.detailsParent}>

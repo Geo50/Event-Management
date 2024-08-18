@@ -199,13 +199,19 @@ const CreateEvent: React.FC = () => {
             <InputComponent
               inputType="text"
               inputPlaceholder="Enter your event name"
-              register={register("eventName", { required: "Event name is required" })}
+              register={register("eventName", { required: "Event name is required", maxLength: {
+                value: 30,
+                message: "Event name cannot exceed 30 characters"
+              } })}
               error={errors.eventName}
             />
             <InputComponent
               inputType="text"
               inputPlaceholder="Describe your event"
-              register={register("eventDescription", { required: "Event description is required" })}
+              register={register("eventDescription", { required: "Event description is required", maxLength: {
+                value: 500,
+                message: 'Description cannot exceed 500 characters',
+              }, })}
               error={errors.eventDescription}
             />
             <InputComponent

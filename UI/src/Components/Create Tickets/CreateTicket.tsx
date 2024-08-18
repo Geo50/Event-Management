@@ -188,8 +188,8 @@ const CreateTicket: React.FC = () => {
                       message: "Ticket price must range between $10 and $500 ",
                     },
                     max: {
-                      value: 500,
-                      message: "Ticket price must range between $10 and $500 ",
+                      value: 5000,
+                      message: "Ticket price must range between $10 and $5000 ",
                     },
                   })}
                 />
@@ -223,7 +223,10 @@ const CreateTicket: React.FC = () => {
                     type="text"
                     placeholder="Ticket Benefits"
                     className={errors.benefits ? classes.inputError : ""}
-                    {...register("benefits", { required: "Benefits are required" })}
+                    {...register("benefits", { required: "Benefits are required" , maxLength: {
+                      value: 200,
+                      message: 'Benefits cannot exceed 200 characters',
+                    },})}
                   />
                   {errors.benefits && <p className={classes.error}>{errors.benefits.message}</p>}
                 </Col>

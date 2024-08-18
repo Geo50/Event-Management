@@ -20,6 +20,11 @@
   justify-content: center;
 }
 
+.fullyBooked {
+  font-weight: 600;
+  font-size: 2.5rem;
+}
+
 .eventCard {
   background-color: #4a4646d1;
   backdrop-filter: blur(10px);

@@ -24,8 +24,8 @@ type eventData = {
   organiserName: string;
   organiser_Id: number;
   eventAttendeesLimit: number;
+  totalTicketsBought: number;
 };
-
 
 type boughtTicketsType = {
   eventId: number;
@@ -94,7 +94,7 @@ const Profile: React.FC = () => {
         console.log("Bought tickets data:", response.data);
         setBoughtTicketsData(response.data);
       })
-      .catch( () => {
+      .catch(() => {
         toast.error("Error while fetching tickets data");
       });
   };
@@ -149,7 +149,6 @@ const Profile: React.FC = () => {
         const result = await axios.post(`https://localhost:7083/api/Event/GetEventsInProfile?UserId=${userId}`, {
           UserId: userId,
         });
-        
 
         const eventsWithUsernames = await Promise.all(
           result.data.map(async (event: eventData) => {
@@ -157,10 +156,13 @@ const Profile: React.FC = () => {
             const organiserResponse = await axios.get(
               `https://localhost:7083/api/Event/GetUsernameFromId?userid=${event.organiser_Id}`
             );
-           
+            const transactionResponse = await axios.get(
+              `https://localhost:7083/api/Event/GetTransactionsPerEvent?eventid=${event.eventid}`
+            );         
             return {
               ...event,
               organiserName: organiserResponse.data,
+              totalTicketsBought: transactionResponse.data
             };
           })
         );
@@ -267,9 +269,9 @@ const Profile: React.FC = () => {
     <div className={`${classes.allContainer}`}>
       <Container className={classes.container}>
         <Row>
-          <h1 className={classes.header}>Welcome, {username}!</h1>
-          <br />
-          <h1 className={classes.header}>Here are your account details</h1>
+          {/* <h1 className={classes.header}>Welcome, {username}!</h1>
+          <br /> */}
+          <h1 className={classes.header}>ACCOUNT DETAILS</h1>
         </Row>
         <Row className={classes.rowClass}>
           <Col md={9} lg={9}>
@@ -306,7 +308,7 @@ const Profile: React.FC = () => {
         {events.length > 0 ? (
           <div>
             <Row className={classes.eventContainer}>
-              <h1 className={classes.header}>View your bookmarked events</h1>
+              <h1 className={classes.header}>BOOKMARKED EVENTS</h1>
             </Row>
             <div>
               {loading ? (
@@ -349,10 +351,17 @@ const Profile: React.FC = () => {
                                 <ListGroup.Item className={classes.eventInfo}>{event.eventplace}</ListGroup.Item>
                               </div>
                               <div className={`${classes.infoRow} ${classes.attendingEvent}`}>
-                                <ListGroup.Item className={classes.eventInfo}>
-                                   {event.eventAttendeesLimit}
-                                  <span> Attending </span>
-                                </ListGroup.Item>
+                                {event.eventAttendeesLimit === event.totalTicketsBought ? (
+                                  <ListGroup.Item className={classes.eventInfo}>
+                                    <h3 className={classes.fullyBooked}>EVENT FULLY BOOKED</h3>
+                                  </ListGroup.Item>
+                                ) : (
+                                  <ListGroup.Item className={classes.eventInfo}>
+                                    {event.totalTicketsBought} / {event.eventAttendeesLimit}
+                                    <span> Attending </span>
+                                  </ListGroup.Item>
+                                )}
+                                
                               </div>
                               <ListGroup.Item className={classes.eventInfo}>
                                 {isUserOrganizer ? (
@@ -441,7 +450,7 @@ const Profile: React.FC = () => {
             </Col>
           </Row>
         ) : (
-          <h1 className={classes.header}>It seems like you haven't bought any ticket.</h1>
+          <h1 className={classes.header}>Looks like you haven't bought any tickets yet.</h1>
         )}
       </Container>
     </div>
