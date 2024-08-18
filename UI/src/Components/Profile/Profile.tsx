@@ -406,7 +406,7 @@ const Profile: React.FC = () => {
           <h1 className={classes.header}>You haven't bookmarked any events.</h1>
         )}
         {boughtTicketsData.length > 0 ? (
-          <Row>
+          <Row >
             <h1 className={classes.header}>Here are your bought tickets!</h1>
             <Col className={classes.columnClass}>
               {" "}

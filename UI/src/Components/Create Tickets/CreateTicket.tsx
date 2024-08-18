@@ -5,6 +5,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import classes from "./CreateTicket.module.css";
+import RedBlacK from "../../assets/vector-NOV-2020-53_generated.jpg";
+
 
 type TicketValues = {
   ticketName: string;
@@ -13,6 +15,7 @@ type TicketValues = {
   benefits: string;
   ticket_Limit: number;
 };
+
 const CreateTicket: React.FC = () => {
   const {
     register,
@@ -32,6 +35,8 @@ const CreateTicket: React.FC = () => {
   const [isLimitReached, setIsLimitReached] = useState<boolean>(false);
 
   useEffect(() => {
+    document.body.style.backgroundImage = `url(${RedBlacK})`;
+    document.body.style.height = `100vh`;
     if (eventid) {
       fetchTickets();
     }
@@ -223,10 +228,13 @@ const CreateTicket: React.FC = () => {
                     type="text"
                     placeholder="Ticket Benefits"
                     className={errors.benefits ? classes.inputError : ""}
-                    {...register("benefits", { required: "Benefits are required" , maxLength: {
-                      value: 200,
-                      message: 'Benefits cannot exceed 200 characters',
-                    },})}
+                    {...register("benefits", {
+                      required: "Benefits are required",
+                      maxLength: {
+                        value: 200,
+                        message: "Benefits cannot exceed 200 characters",
+                      },
+                    })}
                   />
                   {errors.benefits && <p className={classes.error}>{errors.benefits.message}</p>}
                 </Col>
@@ -245,36 +253,34 @@ const CreateTicket: React.FC = () => {
           </form>
         )}
         {ticketsData.length > 0 && (
-          <Row>
-            <div>
-              <h2>Here are your tickets for this event.</h2>
-              <Container fluid className={classes.ticketsContainer}>
-                <table className={classes.ticketTable}>
-                  <thead>
-                    <tr>
-                      <th>Ticket Id</th>
-                      <th>Ticket Name</th>
-                      <th>Ticket Category</th>
-                      <th>Ticket Price</th>
-                      <th>Ticket Benefits</th>
-                      <th>Ticket Limit</th>
+          <Row >
+            <h2 className={classes.ticketsHeader}>Here are your tickets for this event.</h2>
+            <Col className={classes.columnClass}>
+              <table className={classes.ticketTable}>
+                <thead>
+                  <tr>
+                    <th>Ticket Id</th>
+                    <th>Ticket Name</th>
+                    <th>Ticket Category</th>
+                    <th>Ticket Price</th>
+                    <th>Ticket Benefits</th>
+                    <th>Ticket Limit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ticketsData.map((ticket, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{ticket.ticketName}</td>
+                      <td>{ticket.category}</td>
+                      <td>${ticket.ticketPrice}</td>
+                      <td>{ticket.benefits}</td>
+                      <td>{ticket.ticket_Limit}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {ticketsData.map((ticket, index) => (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{ticket.ticketName}</td>
-                        <td>{ticket.category}</td>
-                        <td>${ticket.ticketPrice}</td>
-                        <td>{ticket.benefits}</td>
-                        <td>{ticket.ticket_Limit}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Container>
-            </div>
+                  ))}
+                </tbody>
+              </table>
+            </Col>
           </Row>
         )}
       </Container>

@@ -9,7 +9,7 @@ import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { key } from "../../App";
-import WhiteTable from "../../assets/Table-Background.jpg";
+import WhiteTable from "../../assets/Monotone.jpg";
 import { storage } from "../../Firebase/Firebase";
 import ModalComponent from "../Modal/Modal";
 import classes from "./CreateEvent.module.css";
@@ -82,17 +82,11 @@ const CreateEvent: React.FC = () => {
   useEffect(() => {
     document.body.style.backgroundImage = `url(${WhiteTable})`;
     document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-    document.body.style.height = "100vh";
-    document.body.style.backdropFilter = "blur(3px)";
     decodeToken();
 
     return () => {
       document.body.style.backgroundImage = "";
       document.body.style.backgroundSize = "";
-      document.body.style.backgroundRepeat = "";
-      document.body.style.height = "";
-      document.body.style.backdropFilter = "";
     };
   }, []);
 

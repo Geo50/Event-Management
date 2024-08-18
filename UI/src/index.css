@@ -16,6 +16,7 @@
 .card-title {
     margin:0 !important;
 }
+
 h3 {
     margin: 0;
 }
@@ -32,6 +33,7 @@ h3 {
 body {
     font-family: 'DM Sans', sans-serif;
     font-weight: 400;
+    padding-bottom: 3rem;
 }
 
 

@@ -87,7 +87,9 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
     }
     return null;
   };
+
   const userId = decodeToken();
+  
   const fetchUserDetails = async () => {
     const userId = decodeToken();
     if (userId) {
@@ -95,6 +97,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         const result = await axios.post(`https://localhost:7273/api/User/GetUserById?userId=${userId}`, {
           userId: userId,
         });
+        
         return result.data;
       } catch (error: any) {
         toast.error(`Failed to get user details. Status code: ${error.response?.status}: ${error.message}`);
@@ -152,6 +155,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
       });
     }
   };
+
   useEffect(() => {
     if (visibility && eventId) {
       handleEventsGeneration();
@@ -169,7 +173,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
   const handleCreateTickets = () => {
     navigate("/create-ticket", {
       state: {
-        eventId: eventId,
+        eventid: eventId,
       },
     });
   };

@@ -124,12 +124,8 @@ const Homepage: React.FC = () => {
         </div>
       ) : (
         <Container fluid className={classes.eventsContainer}>
-          <Row>
-            <div className={classes.headerContainer}>
-              <h1 className={`${classes.header}`}>Have Fun!</h1>
-            </div>
-          </Row>
-          <Row>
+          
+          <Row >
             {events.map((event) => (
               <Col key={event.eventId} xs={12} sm={6} lg={4}>
                 <Card

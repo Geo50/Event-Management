@@ -2,7 +2,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
-import { Button, Container } from "react-bootstrap";
+import { Button, Col, Container } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { toast } from "react-toastify";
@@ -161,12 +161,12 @@ const ViewTickets: React.FC = () => {
   return (
     <div>
       <Container fluid className={classes.ticketsContainer}>
-        <h1>
-          Please keep in mind that you can buy a maximum of {maximumTicketsPerUser} tickets for this event, as per the
-          limit set by the organiser of the event.
+        <h1 className={classes.headerTitle}>
+          Please keep in mind that you can buy up to {maximumTicketsPerUser} tickets for this event, as per the
+          limit set by the organiser.
         </h1>
         <br />
-
+        <Col className={classes.columnClass}> 
         {ticketsData.length > 0 ? (
           <table className={classes.ticketTable}>
             <thead>
@@ -218,7 +218,8 @@ const ViewTickets: React.FC = () => {
           <div className="d-flex justify-content-center">
             <p className={classes.noTicketsFound}>There are no tickets for this event..</p>
           </div>
-        )}
+        )}</Col>
+       
       </Container>
     </div>
   );
