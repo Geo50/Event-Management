@@ -89,7 +89,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
   };
 
   const userId = decodeToken();
-  
+
   const fetchUserDetails = async () => {
     const userId = decodeToken();
     if (userId) {
@@ -97,7 +97,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
         const result = await axios.post(`https://localhost:7273/api/User/GetUserById?userId=${userId}`, {
           userId: userId,
         });
-        
+
         return result.data;
       } catch (error: any) {
         toast.error(`Failed to get user details. Status code: ${error.response?.status}: ${error.message}`);
@@ -150,8 +150,8 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
           });
       }
     } else {
-      toast.error("You need to be logged in to bookmark events" , {
-        autoClose: 2000
+      toast.error("You need to be logged in to bookmark events", {
+        autoClose: 2000,
       });
     }
   };
@@ -216,10 +216,10 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
               </Card.Body>
               <ListGroup className="list-group-flush">
                 <ListGroup.Item className={`${classes.eventInfo} ${classes.eventType}`}>
-                  {events?.eventType}
+                  Type : {events?.eventType}
                 </ListGroup.Item>
                 <ListGroup.Item className={`${classes.eventInfo} ${classes.eventType}`}>
-                  {events?.organiserName}
+                  By {events?.organiserName}
                 </ListGroup.Item>
                 <div className={`${classes.infoRow} ${classes.dateLocationBlock}`}>
                   <ListGroup.Item className={classes.eventInfo}>
@@ -227,7 +227,7 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
                       ? format(new Date(events.eventDate), "MMMM dd, yyyy, h:mm a")
                       : "Date not available"}
                   </ListGroup.Item>
-                  <ListGroup.Item className={classes.eventInfo}>{events?.eventPlace}</ListGroup.Item>
+                  <ListGroup.Item className={classes.eventInfo}>Location : {events?.eventPlace}</ListGroup.Item>
                 </div>
                 <div className={`${classes.infoRow} ${classes.attendingEvent}`}>
                   <ListGroup.Item className={classes.eventInfo}>
@@ -237,21 +237,22 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
                 </div>
               </ListGroup>
               <Card.Body>
-                {isLoggedin ? (
-                  isOrganizer ? (
-                    <Button variant="danger" className={`w-100 ${classes.eventCTA}`} onClick={handleCreateTickets}>
-                      Create Tickets
-                    </Button>
+                {events?.totalTicketsBought !== events?.eventAttendeesLimit &&
+                  (isLoggedin ? (
+                    isOrganizer ? (
+                      <Button variant="danger" className={`w-100 ${classes.eventCTA}`} onClick={handleCreateTickets}>
+                        Create Tickets
+                      </Button>
+                    ) : (
+                      <Button variant="danger" className={`w-100 ${classes.eventCTA}`} onClick={handleViewTickets}>
+                        View Tickets
+                      </Button>
+                    )
                   ) : (
-                    <Button variant="danger" className={`w-100 ${classes.eventCTA}`} onClick={handleViewTickets}>
-                      View Tickets
+                    <Button variant="secondary" className={`w-100 ${classes.eventCTA}`} disabled>
+                      Login to View Tickets
                     </Button>
-                  )
-                ) : (
-                  <Button variant="secondary" className={`w-100 ${classes.eventCTA}`} disabled>
-                    Login to View Tickets
-                  </Button>
-                )}
+                  ))}
               </Card.Body>
             </Card>
           </Modal.Body>

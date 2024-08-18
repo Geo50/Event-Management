@@ -23,7 +23,7 @@
 
 .fullyBooked {
   font-weight: 600;
-  font-size: 2.5rem;
+  font-size: 2.2rem;
 }
 
 .eventCard {
@@ -75,6 +75,7 @@
   bottom: 0;
   right: 0;
   z-index: 1;
+  margin-bottom: -3.5rem;
 }
 
 .plusIcon {
@@ -91,16 +92,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-#navigationIcon {
-  width: 3rem; 
-  height: 3rem; 
-  color: black;
-}
-
-.navigationButton {
-  height: 50%;
 }
 
 .eventCard {

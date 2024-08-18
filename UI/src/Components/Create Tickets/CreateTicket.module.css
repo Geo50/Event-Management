@@ -1,6 +1,7 @@
 .container {
   width: 60%;
   max-width: 100%;
+  background-color: rgba(0, 0, 0, 0.09);
 }
 
 .allContainer {
@@ -120,10 +121,11 @@
   margin-left: 0.5;
 }
 
-.createButton, .createButton:active, .createButton:focus, .createButton:disabled, .createButton:enabled{ 
+.createButton,  .createButton:disabled { 
   background-color: black;
   outline: none;
   border: none;
+  margin-left: 0;
 }
 
 .createButton:hover {

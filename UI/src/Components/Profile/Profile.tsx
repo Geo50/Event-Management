@@ -100,26 +100,24 @@ const Profile: React.FC = () => {
   };
 
   const handleRefund = async (ticketid: number, eventId: number) => {
-    if (window.confirm("Are you sure you want to refund this ticket?")) {
-      try {
-        await axios.put(`https://localhost:7083/api/Event/IncrementTicketStatus`, {
+    try {
+      await axios.put(`https://localhost:7083/api/Event/IncrementTicketStatus`, {
+        ticketId: ticketid,
+        eventId: eventId,
+      });
+      await axios.delete(`https://localhost:7083/api/Event/DeleteBoughtTicket`, {
+        data: {
           ticketId: ticketid,
-          eventId: eventId,
-        });
-        await axios.delete(`https://localhost:7083/api/Event/DeleteBoughtTicket`, {
-          data: {
-            ticketId: ticketid,
-            eventid: eventId,
-            userId: userId,
-          },
-        });
+          eventid: eventId,
+          userId: userId,
+        },
+      });
 
-        toast.success("Ticket refunded successfully!");
-        await handleBoughtTickets();
-      } catch (error) {
-        console.error("Error refunding ticket:", error);
-        toast.error("Failed to refund ticket. Please try again.");
-      }
+      toast.success("Ticket refunded successfully!");
+      await handleBoughtTickets();
+    } catch (error) {
+      console.error("Error refunding ticket:", error);
+      toast.error("Failed to refund ticket. Please try again.");
     }
   };
 
@@ -158,11 +156,11 @@ const Profile: React.FC = () => {
             );
             const transactionResponse = await axios.get(
               `https://localhost:7083/api/Event/GetTransactionsPerEvent?eventid=${event.eventid}`
-            );         
+            );
             return {
               ...event,
               organiserName: organiserResponse.data,
-              totalTicketsBought: transactionResponse.data
+              totalTicketsBought: transactionResponse.data,
             };
           })
         );
@@ -361,31 +359,32 @@ const Profile: React.FC = () => {
                                     <span> Attending </span>
                                   </ListGroup.Item>
                                 )}
-                                
                               </div>
-                              <ListGroup.Item className={classes.eventInfo}>
-                                {isUserOrganizer ? (
-                                  <Button
-                                    variant="danger"
-                                    className={classes.eventCTA}
-                                    onClick={() => {
-                                      handleCreateTicketNavigation(event);
-                                    }}
-                                  >
-                                    Create Event Ticket
-                                  </Button>
-                                ) : (
-                                  <Button
-                                    variant="danger"
-                                    className={classes.eventCTA}
-                                    onClick={() => {
-                                      handleViewTicketsNavigation(event);
-                                    }}
-                                  >
-                                    View Event Tickets
-                                  </Button>
-                                )}
-                              </ListGroup.Item>
+                              {event.eventAttendeesLimit !== event.totalTicketsBought && (
+                                <ListGroup.Item className={classes.eventInfo}>
+                                  {isUserOrganizer ? (
+                                    <Button
+                                      variant="danger"
+                                      className={classes.eventCTA}
+                                      onClick={() => {
+                                        handleCreateTicketNavigation(event);
+                                      }}
+                                    >
+                                      Create Event Ticket
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      variant="danger"
+                                      className={classes.eventCTA}
+                                      onClick={() => {
+                                        handleViewTicketsNavigation(event);
+                                      }}
+                                    >
+                                      View Event Tickets
+                                    </Button>
+                                  )}
+                                </ListGroup.Item>
+                              )}
                             </ListGroup>
                           </Card>
                         </Col>
@@ -406,7 +405,7 @@ const Profile: React.FC = () => {
           <h1 className={classes.header}>You haven't bookmarked any events.</h1>
         )}
         {boughtTicketsData.length > 0 ? (
-          <Row >
+          <Row>
             <h1 className={classes.header}>Here are your bought tickets!</h1>
             <Col className={classes.columnClass}>
               {" "}
@@ -450,7 +449,7 @@ const Profile: React.FC = () => {
             </Col>
           </Row>
         ) : (
-          <h1 className={classes.header}>Looks like you haven't bought any tickets yet.</h1>
+          <h1 className={classes.ticketsEmpty}>Looks like you haven't bought any tickets yet.</h1>
         )}
       </Container>
     </div>

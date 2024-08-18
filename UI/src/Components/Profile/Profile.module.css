@@ -54,6 +54,11 @@
   color: black;
 }
 
+.ticketsEmpty {
+  color: black;
+  margin: 3rem;
+}
+
 td {
   color: white;
   background-color: rgb(58, 57, 57);
@@ -80,6 +85,12 @@ th {
   color: #d0d0d0;
   font-size: 1rem;
   padding-block: 0;
+}
+
+
+.fullyBooked {
+  font-weight: 600;
+  font-size: 2.2rem;
 }
 /* 
 .eventCTA {
