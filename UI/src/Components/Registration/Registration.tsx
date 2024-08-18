@@ -50,7 +50,7 @@ const Registration: React.FC = () => {
           PassVerificationAnswer: data.PassVerificationAnswer,
         })
         .then((response) => {
-          secureLocalStorage.setItem(key, response.data.token); 
+          secureLocalStorage.setItem(key, response.data.token);
           navigate("/homepage");
         })
         .catch((error) => {
@@ -102,7 +102,7 @@ const Registration: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Username"
-                  className={classes.inputElements}
+                  className={`${classes.inputElements} ${errors.userName ? "inputError" : ""}`}
                   {...register("userName", {
                     required: "Please enter your username",
                   })}
@@ -114,7 +114,7 @@ const Registration: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Email"
-                  className={classes.inputElements}
+                  className={`${classes.inputElements} ${errors.userName ? "inputError" : ""}`}
                   {...register("emailValue", {
                     required: "Please enter your email address",
                     pattern: {
@@ -156,7 +156,7 @@ const Registration: React.FC = () => {
               </div>
               {errors.confirmPassword && <p className={classes.errorMessage}>{errors.confirmPassword.message}</p>}
               <div className={classes.logoContainer}>
-                <i className={`${classes.iconClass} bi bi-incognito`}></i>
+                <i className="bi bi-question-circle-fill" style={{ color: "#ffc107", fontSize: "26px" }}></i>
                 <input
                   type="text"
                   placeholder="What is your best friend's name?"
@@ -171,13 +171,9 @@ const Registration: React.FC = () => {
               )}
               <div className={classes.flexedElements}>
                 <p className={classes.linkText}>Are you an administrator? </p>
-                <Form.Check
-                  type="switch"
-                  className={classes.switch}
-                  {...register("adminValue")}
-                />
+                <Form.Check type="switch" className={classes.switch} {...register("adminValue")} />
               </div>
-              <Button variant="outline-primary" type="submit" className={classes.submitButton}>
+              <Button variant="outline-warning" type="submit" className={classes.submitButton}>
                 Register
               </Button>
               <div>

@@ -1,8 +1,8 @@
 // PaymentSuccess.tsx
+import axios from 'axios';
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const PaymentSuccess: React.FC = () => {
   const location = useLocation();

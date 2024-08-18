@@ -92,7 +92,7 @@ const ModalComponent: React.FC<ModalProps> = ({
         </div>
       ) : (
         <div className="bg-dark">
-          <p className={classes.lightText}>An unexpected error occurred: {errorDisplayProp}</p>
+          <p className={classes.lightText}>{errorDisplayProp}</p>
           <Modal.Footer>
             <Button variant="outline-danger" onClick={handleClose}>
               Try Again

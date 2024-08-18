@@ -65,7 +65,7 @@
 
 .inputElements:focus {
   outline: 0;
-  border-bottom-color: var(--registration-blue);
+  border-bottom-color: #ffc107;
 }
 
 .submitButton {
@@ -75,12 +75,12 @@
 }
 
 .linkText {
-  color: var(--registration-blue);
+  color: #ffc107;
   font-size: 1.1rem;
 }
 
 .linkElement {
-  color: var(--registration-blue);
+  color: #ffc107;
   font-size: 1.1rem;
   font-weight: 500;
   text-decoration: none;
@@ -107,7 +107,7 @@
 
 .iconClass {
   font-size: 1.8rem;
-  color: var(--registration-blue);
+  color: #ffc107;
 }
 
 .loader {

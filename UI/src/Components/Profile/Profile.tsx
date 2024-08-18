@@ -94,7 +94,7 @@ const Profile: React.FC = () => {
         console.log("Bought tickets data:", response.data);
         setBoughtTicketsData(response.data);
       })
-      .catch((error: any) => {
+      .catch( () => {
         toast.error("Error while fetching tickets data");
       });
   };

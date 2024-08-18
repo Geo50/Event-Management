@@ -147,7 +147,9 @@ const EventDetailsModal: React.FC<inputProps> = ({ visibility, handleClose, even
           });
       }
     } else {
-      toast.error("You need to be logged in to bookmark events");
+      toast.error("You need to be logged in to bookmark events" , {
+        autoClose: 2000
+      });
     }
   };
   useEffect(() => {
