@@ -80,7 +80,7 @@ const ModalComponent: React.FC<ModalProps> = ({
         </div>
       ) : modalType === "Confirmation" ? (
         <div className="bg-dark">
-          <p className={classes.lightText}>This is an irreversible action, you cannot edit your tickets after creating it! {errorDisplayProp}</p>
+          <p className={classes.lightText}>This is an irreversible action, you cannot edit your tickets after creating it!</p>
           <Modal.Footer>
             <Button variant="outline-success" onClick={handleClose}>
               Confirm

@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Button, Col, Container, Modal, Row } from "react-bootstrap";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useForm, SubmitHandler } from "react-hook-form";
 import classes from "./CreateTicket.module.css";
 
 type TicketValues = {
@@ -67,6 +67,10 @@ const CreateTicket: React.FC = () => {
   };
 
   const onSubmit: SubmitHandler<TicketValues> = async (data) => {
+    setModalShow(true);
+  };
+
+  const createTicket: SubmitHandler<TicketValues> = async (data) => {
     try {
       await axios.post("https://localhost:7083/api/Event/CreateNewTicket", {
         eventId: eventid,
@@ -120,7 +124,7 @@ const CreateTicket: React.FC = () => {
             </div>
           </Modal.Body>
           <Modal.Footer className="bg-dark">
-            <Button variant="outline-success" onClick={handleSubmit(onSubmit)}>
+            <Button variant="outline-success" onClick={handleSubmit(createTicket)}>
               Confirm
             </Button>
             <Button variant="outline-danger" onClick={handleCloseDetails}>
@@ -134,11 +138,7 @@ const CreateTicket: React.FC = () => {
           <h2>Manage tickets for your event</h2>
         </Row>
         <Row className={classes.rowClass}>
-          <Button
-            className={classes.createButton}
-            onClick={handleButtonClick}
-            disabled={isEditing || isLimitReached}
-          >
+          <Button className={classes.createButton} onClick={handleButtonClick} disabled={isEditing || isLimitReached}>
             Create Ticket
           </Button>
           {isLimitReached && (
@@ -241,37 +241,39 @@ const CreateTicket: React.FC = () => {
             </Row>
           </form>
         )}
-        <Row>
-          <div>
-            <h2>Here are your tickets for this event.</h2>
-            <Container fluid className={classes.ticketsContainer}>
-              <table className={classes.ticketTable}>
-                <thead>
-                  <tr>
-                    <th>Ticket Id</th>
-                    <th>Ticket Name</th>
-                    <th>Ticket Category</th>
-                    <th>Ticket Price</th>
-                    <th>Ticket Benefits</th>
-                    <th>Ticket Limit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ticketsData.map((ticket, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{ticket.ticketName}</td>
-                      <td>{ticket.category}</td>
-                      <td>${ticket.ticketPrice}</td>
-                      <td>{ticket.benefits}</td>
-                      <td>{ticket.ticket_Limit}</td>
+        {ticketsData.length > 0 && (
+          <Row>
+            <div>
+              <h2>Here are your tickets for this event.</h2>
+              <Container fluid className={classes.ticketsContainer}>
+                <table className={classes.ticketTable}>
+                  <thead>
+                    <tr>
+                      <th>Ticket Id</th>
+                      <th>Ticket Name</th>
+                      <th>Ticket Category</th>
+                      <th>Ticket Price</th>
+                      <th>Ticket Benefits</th>
+                      <th>Ticket Limit</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </Container>
-          </div>
-        </Row>
+                  </thead>
+                  <tbody>
+                    {ticketsData.map((ticket, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{ticket.ticketName}</td>
+                        <td>{ticket.category}</td>
+                        <td>${ticket.ticketPrice}</td>
+                        <td>{ticket.benefits}</td>
+                        <td>{ticket.ticket_Limit}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Container>
+            </div>
+          </Row>
+        )}
       </Container>
     </div>
   );

@@ -254,7 +254,7 @@ const CreateEvent: React.FC = () => {
             />
             <InputComponent
               inputType="number"
-              inputPlaceholder="What is the maximum amount of tickets a single user can buy?"
+              inputPlaceholder="Maximum tickets per user."
               register={register("ticket_limit_per_user", {
                 required: "Ticket limit per user is required",
                 min: { value: 1, message: "Ticket limit must be at least 1" },
