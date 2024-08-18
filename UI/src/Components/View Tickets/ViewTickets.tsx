@@ -8,6 +8,7 @@ import secureLocalStorage from "react-secure-storage";
 import { toast } from "react-toastify";
 import { key } from "../../App";
 import classes from "./ViewTickets.module.css";
+import RedBlacK from "../../assets/vector-NOV-2020-53_generated.jpg";
 
 const stripePromise = loadStripe(
   "pk_test_51PmetxA1r4JzFYYK0XD849mE49mTyhW0lXtJSCAmd1o3MCREZmL7rZDNic0URFa4SnC86DXWgVigdFxRuZl40tbo00vYAkkny4"
@@ -137,6 +138,9 @@ const ViewTickets: React.FC = () => {
   };
 
   useEffect(() => {
+    document.body.style.backgroundImage = `url(${RedBlacK})`;
+    document.body.style.height = `100vh`;
+    
     if (eventId) {
       fetchTickets();
     }
@@ -162,7 +166,7 @@ const ViewTickets: React.FC = () => {
     <div>
       <Container fluid className={classes.ticketsContainer}>
         <h1 className={classes.headerTitle}>
-          Please keep in mind that you can buy up to {maximumTicketsPerUser} tickets for this event, as per the
+          Please keep in mind that you can buy {maximumTicketsPerUser < 2 ? (`only ${maximumTicketsPerUser} ticket`) : (` up to ${maximumTicketsPerUser} tickets`)} for this event, as per the
           limit set by the organiser.
         </h1>
         <br />

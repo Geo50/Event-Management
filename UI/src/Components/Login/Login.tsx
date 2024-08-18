@@ -12,6 +12,7 @@ import { key } from "../../App";
 import EventLogin from "../../assets/event-login.png.jpg";
 import ModalComponent from "../Modal/Modal";
 import classes from "./Login.module.css";
+import { toast } from "react-toastify";
 
 type UserCredentials = {
   userName: string;
@@ -41,13 +42,8 @@ const Login: React.FC = () => {
       navigate("/homepage");
       secureLocalStorage.setItem(key, response.data.token);
     } catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        setModalType("account-not-exist");
-      } else {
-        setErrorDisplay(error.message);
-        setModalType("error");
-      }
-      setModalShow(true);
+      toast.error("Wrong credentials, please try again.");
+      reset();
     } finally {
       setLoading(false);
     }

@@ -65,12 +65,14 @@ const ForgotPassword: React.FC = () => {
       .then((response) => {
         if (response.status === 200) {
           navigate("/homepage");
-          toast.success("You have successfully reset your password. Welcome to your account.");
+          toast.success("You have successfully reset your password. Please log in again.", {
+            autoClose: 3000
+          });
         }
         
       })
       .catch((error) => {        
-        setErrorDisplay("Wrong verification answer.");
+        setErrorDisplay("Wrong credentials.");
         setModalType("error");
         setModalShow(true);
       })

@@ -81,7 +81,9 @@ const CreateTicket: React.FC = () => {
         eventId: eventid,
         ...data,
       });
-      toast.success("Ticket created successfully!");
+      toast.success("Ticket created successfully!", {
+        autoClose: 2000
+      });
       fetchTickets();
       reset();
       setVisible(false);
