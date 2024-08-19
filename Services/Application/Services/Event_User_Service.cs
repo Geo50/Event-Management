@@ -18,8 +18,12 @@ namespace Application.Services
         public Task CreateTransaction(TransactionDTO transactionDTO);
         public Task<IEnumerable<TransactionDTO>> GetTransaction(int UserId);
         public Task<IEnumerable<ViewBoughtTicketsDTO>> GetBoughtTickets(int UserId);
-        
-
+        public Task UpdateTicketStatus(UpdateTicketStatusDTO updateTicketStatusDTO);
+        public Task IncrementTicketStatus(UpdateTicketStatusDTO updateTicketStatusDTO);
+        public Task<int> GetTransactionsPerUserEvent(TransactionCountDTO transactionCountDTO);
+        public Task<int> GetTransactionsPerEvent(int eventid);
+        public Task DeleteBoughtTicket(TransactionDTO transactionDTO);
+        public Task DeleteBookmark(DeleteBookmarkDTO deleteBookmarkDTO);
 
 
     }
@@ -33,12 +37,51 @@ namespace Application.Services
             _repository = repository;
             _mapper = mapper;
         }
+
+        public async Task DeleteBookmark(DeleteBookmarkDTO deleteBookmarkDTO)
+        {
+            var deletedEventDTO = _mapper.Map<Bookmarks>(deleteBookmarkDTO);
+            await _repository.DeleteBookmark(deletedEventDTO);
+        }
+
+        public async Task DeleteBoughtTicket(TransactionDTO transactionDTO)
+        {
+            var deleteTransactionDTO = _mapper.Map<Transaction>(transactionDTO);
+             await _repository.DeleteBoughtTicket(deleteTransactionDTO);        
+        }
+
+        public async Task<int> GetTransactionsPerUserEvent(TransactionCountDTO transactionCountDTO)
+        {
+            var transactionDTO = _mapper.Map<Transaction>(transactionCountDTO);
+            var fullTransaction = await _repository.GetTransactionsPerUserEvent(transactionDTO);
+            return fullTransaction;
+        } 
+        public async Task<int> GetTransactionsPerEvent(int eventid)
+        {
+            var count = await _repository.GetTransactionsPerEvent(eventid);
+            return count;
+        }
+        
         public async Task<IEnumerable<ViewBoughtTicketsDTO>> GetBoughtTickets(int UserId)
         {
             var fullTickets = await _repository.GetBoughtTickets(UserId);
             var ticketsDTO = _mapper.Map<IEnumerable<ViewBoughtTicketsDTO>>(fullTickets);
             return ticketsDTO;
         }
+
+        public async Task UpdateTicketStatus(UpdateTicketStatusDTO updateTicketStatusDTO)
+        {
+            var ticketsDTO =  _mapper.Map<Tickets>(updateTicketStatusDTO);
+            await _repository.UpdateTicketStatus(ticketsDTO);
+            
+        }
+        public async Task IncrementTicketStatus(UpdateTicketStatusDTO updateTicketStatusDTO)
+        {
+            var ticketsDTO =  _mapper.Map<Tickets>(updateTicketStatusDTO);
+            await _repository.IncrementTicketStatus(ticketsDTO);
+            
+        }
+
 
         public async Task CreateNewBookmark(Bookmarks bookmark)
         {

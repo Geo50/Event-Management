@@ -2,12 +2,13 @@ import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
-import { Button, Container } from "react-bootstrap";
+import { Button, Col, Container } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { toast } from "react-toastify";
 import { key } from "../../App";
 import classes from "./ViewTickets.module.css";
+import RedBlacK from "../../assets/vector-NOV-2020-53_generated.jpg";
 
 const stripePromise = loadStripe(
   "pk_test_51PmetxA1r4JzFYYK0XD849mE49mTyhW0lXtJSCAmd1o3MCREZmL7rZDNic0URFa4SnC86DXWgVigdFxRuZl40tbo00vYAkkny4"
@@ -28,7 +29,9 @@ const ViewTickets: React.FC = () => {
   const navigate = useNavigate();
 
   const [ticketsData, setTicketsData] = useState<TicketValues[]>([]);
-  const [boughtTickets, setBoughtTickets] = useState<TicketValues[]>([]);
+  const [ticketsBoughtNumber, setTicketsBoughtNumber] = useState<number>(0);
+  const [maximumTicketsPerUser, setMaximumTicketsPerUser] = useState<number>(1);
+  const [overMaximum, setOverMaximum] = useState<boolean>(false);
 
   const getToken = () => {
     const token = secureLocalStorage.getItem(key);
@@ -42,11 +45,7 @@ const ViewTickets: React.FC = () => {
         const decodedToken: any = jwtDecode(token);
         const userId: number = parseInt(decodedToken?.unique_name, 10);
         const currentTime = Math.floor(Date.now() / 1000);
-        if (decodedToken.exp < currentTime) {
-          toast.error("Your session has expired. Please log in again.");
-          navigate("/homepage");
-          return null;
-        }
+
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
@@ -55,6 +54,8 @@ const ViewTickets: React.FC = () => {
     }
     return null;
   };
+
+  const userId = decodeToken();
 
   const fetchTickets = async () => {
     try {
@@ -93,19 +94,53 @@ const ViewTickets: React.FC = () => {
   };
 
   const handlePaymentSuccess = async (SessionId: string) => {
-    console.log("Received sessionId:", SessionId);
     try {
       const response = await axios.post(`https://localhost:7083/api/Stripe/payment-success?SessionId=${SessionId}`);
-      console.log(`response of payment success:`, response.data);
+
       toast.success("Payment successful! Your ticket has been purchased.");
-      // Optionally, refresh the ticket list or navigate to a confirmation page
     } catch (error: any) {
       console.error("Error confirming payment:", error.response ? error.response.data : error.message);
       toast.error("Error confirming payment. Please contact support.");
     }
   };
 
+  const getTicketLimitPerUser = async () => {
+    try {
+      const transactionNumberResponse = await axios.post(
+        `https://localhost:7083/api/Event/GetTransactionsPerUserEvent`,
+        {
+          eventid: eventId,
+          UserId: userId,
+        }
+      );
+
+      const maxTicketsResponse = await axios.post(
+        `https://localhost:7083/api/Event/GetEventMaxTicketsPerUser?eventid=${eventId}`
+      );
+
+      return {
+        ticketsBought: transactionNumberResponse.data,
+        maxTickets: maxTicketsResponse.data,
+      };
+    } catch (error: any) {
+      toast.error(`An error occurred. Status code ${error.response?.status}: ${error.message}`);
+      return null;
+    }
+  };
+
+  const handleTicketLimitPerUser = async () => {
+    const result = await getTicketLimitPerUser();
+    if (result) {
+      setTicketsBoughtNumber(result.ticketsBought);
+      setMaximumTicketsPerUser(result.maxTickets);
+      setOverMaximum(result.ticketsBought >= result.maxTickets);
+    }
+  };
+
   useEffect(() => {
+    document.body.style.backgroundImage = `url(${RedBlacK})`;
+    document.body.style.height = `100vh`;
+    
     if (eventId) {
       fetchTickets();
     }
@@ -121,9 +156,21 @@ const ViewTickets: React.FC = () => {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (eventId && userId) {
+      handleTicketLimitPerUser();
+    }
+  }, [eventId, userId]);
+
   return (
     <div>
       <Container fluid className={classes.ticketsContainer}>
+        <h1 className={classes.headerTitle}>
+          Please keep in mind that you can buy {maximumTicketsPerUser < 2 ? (`only ${maximumTicketsPerUser} ticket`) : (` up to ${maximumTicketsPerUser} tickets`)} for this event, as per the
+          limit set by the organiser.
+        </h1>
+        <br />
+        <Col className={classes.columnClass}> 
         {ticketsData.length > 0 ? (
           <table className={classes.ticketTable}>
             <thead>
@@ -133,7 +180,7 @@ const ViewTickets: React.FC = () => {
                 <th>Ticket Category</th>
                 <th>Ticket Price</th>
                 <th>Ticket Benefits</th>
-                <th>Ticket Limit</th>
+                <th>Tickets Available</th>
                 <th>Buy Ticket</th>
               </tr>
             </thead>
@@ -147,9 +194,25 @@ const ViewTickets: React.FC = () => {
                   <td>{ticket.benefits}</td>
                   <td>{ticket.ticket_Limit}</td>
                   <td>
-                    <Button variant="danger" onClick={() => handleBuyTicket(ticket)}>
-                      Buy Ticket
-                    </Button>
+                    <div className={classes.buttonContainer}>
+                      {ticket.ticket_Limit === 0 ? (
+                        <Button variant="danger" disabled>
+                          Sold out!
+                        </Button>
+                      ) : (
+                        <div>
+                          {overMaximum ? (
+                            <Button variant="danger" disabled className={classes.buyButton}>
+                              Sorry, you cannot buy any more tickets for this event!
+                            </Button>
+                          ) : (
+                            <Button variant="danger" onClick={() => handleBuyTicket(ticket)}>
+                              Buy Ticket!
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -159,9 +222,9 @@ const ViewTickets: React.FC = () => {
           <div className="d-flex justify-content-center">
             <p className={classes.noTicketsFound}>There are no tickets for this event..</p>
           </div>
-        )}
+        )}</Col>
+       
       </Container>
-      
     </div>
   );
 };

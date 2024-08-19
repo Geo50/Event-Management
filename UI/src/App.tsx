@@ -10,7 +10,8 @@ import Profile from "./Components/Profile/Profile";
 import Registration from "./Components/Registration/Registration";
 import ViewTickets from "./Components/View Tickets/ViewTickets";
 import StripeProvider from "./Components/Stripe Payment/StripeProvider";
-import PaymentSuccess from "./Components/PaymentSuccess";
+import PaymentSuccess from "./Components/Payment Success/PaymentSuccess";
+import { ToastContainer } from "react-toastify";
 
 export const key = "abcdefgh12345678dsadasdlsamdplmasdmpasmfa";
 
@@ -18,6 +19,7 @@ function App() {
   return (
     <BrowserRouter>
       <StripeProvider>
+        <ToastContainer />
         <Navbar />
         <Routes>
           <Route path="/" element={<Navigate to="/homepage" />} />

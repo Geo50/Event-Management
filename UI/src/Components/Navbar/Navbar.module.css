@@ -2,7 +2,6 @@
   margin: 0 !important;
   border: none;
   border-bottom: 1px white solid;
-  box-shadow: 0px 10px 15px 10px rgb(0 0 0 / 15%);
   background-color: rgb(0, 0, 0);
 }
 
@@ -11,12 +10,11 @@
   color: white;
   font-size: 1.1rem;
   transition: ease 0.4s;
-  text-wrap: nowrap; 
+  text-wrap: nowrap;
 }
 
 .navbarLink:hover {
-  color: rgba(255, 255, 255, 0.404)
-  
+  color: rgba(255, 255, 255, 0.404);
 }
 
 .navbarBrand {
@@ -34,11 +32,6 @@
   border: 1px solid white;
 }
 
-.navbarBurger {
-  color: white;
-  background-color: white;
-}
-
 .highlight {
   font-weight: 500;
   color: white;
@@ -46,8 +39,8 @@
   display: inline;
 }
 
-.highlight:hover {
-  color: rgba(255, 255, 255, 0.404)
+.navbarLink:hover > * {
+  color: rgba(255, 255, 255, 0.404);
 }
 
 .logoutButton {
@@ -55,7 +48,6 @@
   color: white;
   transition: ease 0.4s;
   border: 1px solid red;
-  
 }
 
 .logoutButton:hover {
@@ -63,11 +55,32 @@
   background-color: transparent;
   border: 1px solid red;
 }
-
-.navbarBurger .navbar-toggler {
-  border-color: rgba(255, 255, 255, 0.55);
+.brandLink {
+  text-decoration: none;
+  color: white
 }
 
-.navbarBurger .navbar-toggler-icon {
-  background-color: white;
+@media (width < 770px) {
+  .highlight {
+    font-weight: 500;
+    color: black;
+    transition: ease 0.4s;
+    display: inline;
+  }
+
+  .navbarLink {
+    text-decoration: none;
+    color: black;
+    font-size: 1.5rem;
+    transition: ease 0.4s;
+    text-wrap: nowrap;
+  }
+
+  .logoutButton {
+    background-color: black;
+    color: white;
+    transition: ease 0.4s;
+    border: 1px solid red;
+    font-size: 1.3rem;
+  }
 }

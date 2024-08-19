@@ -1,6 +1,7 @@
-.container {
+/* .container {
   border: 1px solid black;
-}
+  background-color: rgba(49, 48, 48, 0.508);
+} */
 
 .allContainer {
   display: flex;
@@ -22,11 +23,22 @@
   width: 100%;
   background-color: black;
   color: white;
+  border: none;
+}
+
+.editButton:hover {
+  background-color: rgb(40, 40, 40);
+
 }
 
 .inputElement {
   width: 100%;
   height: 100%;
+  font-weight: 500;
+}
+
+.inputElement:disabled {
+  background-color: rgba(128, 128, 128, 0.568);
 }
 
 .rowClass {
@@ -38,16 +50,87 @@
   margin-top: 5%;
 }
 
+.header {
+  color: black;
+}
+
+.ticketsEmpty {
+  color: black;
+  margin: 3rem;
+}
+
+td {
+  color: white;
+  background-color: rgb(58, 57, 57);
+}
+
+th {
+  background-color: rgb(34, 34, 34);
+}
+
 .eventCard {
-  width: 100%;
-  margin-top: 3rem;
-  margin-right: 1rem;
+  background-color: rgb(0, 0, 0);
+  backdrop-filter: blur(10px);
+  /* border: 1px solid rgba(255, 255, 255, 0.2); */
+  color: white;
+  transition: 0.25s;
+  margin-top: 1rem;
+  padding-bottom: 1rem;
+  overflow: hidden;
 }
 
 .eventInfo {
-  font-weight: 500;
-  font-size: 1.1rem;
-  user-select: none;
+  background-color: transparent;
+  border: none;
+  color: #d0d0d0;
+  font-size: 1rem;
+  padding-block: 0;
+}
+
+
+.fullyBooked {
+  font-weight: 600;
+  font-size: 2.2rem;
+}
+/* 
+.eventCTA {
+  display: block;
+  margin: auto;
+} */
+
+.infoRow {
+  padding-bottom: 0.8rem;
+}
+
+.dateLocationBlock {
+  padding-top: 0.6rem;
+}
+
+.dateLocationBlock div {
+  font-weight: 400;
+}
+
+.columnClass {
+  width: 90vw;
+  overflow: auto;
+}
+
+.attendingEvent {
+  padding-bottom: 0.7rem;
+}
+
+.attendingEvent div {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.attendingEvent span {
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.eventOrganiser {
+  font-size: 0.9rem;
 }
 
 .eventImage {
@@ -63,14 +146,14 @@
 }
 
 .eventCard {
-  transition: 0.6s;
+  transition: all ease 0.25s;
   margin-bottom: 10%;
+  cursor: pointer;
+  border: none;
 }
 
-.eventCard:hover {
-  box-shadow: rgba(0, 0, 0, 0.568) 0px 54px 55px, rgba(0, 0, 0, 0.568) 0px -12px 30px, rgba(0, 0, 0, 0.568) 0px 4px 6px,
-    rgba(0, 0, 0, 0.568) 0px 12px 13px, rgba(0, 0, 0, 0.568) 0px -3px 5px;
-  transform: scale(1.05);
+.eventCard:hover .imageElement {
+  transform: scale(1.025);
 }
 
 .bookmarkPosition {
@@ -80,26 +163,65 @@
 }
 
 .imageElement {
-  width: 100%;
+  /* width: 100%;
   height: 20rem;
   max-width: 100%;
   object-fit: cover;
-  cursor: pointer;
+  cursor: pointer; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
+  transition: transform ease 0.25s;
 }
 
-.ticketTable {
+/* .ticketTable {
+  word-break: break-all;
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
-}
+} */
 
-.ticketTable th, .ticketTable td {
+.ticketTable th,
+.ticketTable td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
-
+  min-width: 5rem;
 }
 
 .ticketTable th {
   background-color: #f2f2f2;
+}
+
+.cardImgWrapper {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16/14;
+  max-height: 250px;
+}
+
+.eventType {
+  padding-top: 0;
+  font-size: 0.75em;
+  color: rgb(190, 190, 190);
+  text-transform: uppercase;
+}
+
+
+@media (width < 770px) {
+  .editContainer {
+    margin-top: 1rem;
+  }
+  .ticketTable th,
+  .ticketTable td {
+    font-size: 0.8rem;
+  }
+  .refundTicket {
+    font-size: 0.8rem;
+    padding: 5px;
+  }
 }

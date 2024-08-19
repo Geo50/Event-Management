@@ -1,10 +1,7 @@
-
 .container {
-  height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin-top: 3rem;
+  margin-top: 2rem;
 }
 
 input::-webkit-outer-spin-button,
@@ -13,10 +10,22 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+.errorMessage {
+  color: red;
+  margin: 0;
+  font-size: 1.0rem;
+  margin-top: -1rem;
+}
+
 .backgroundContainer {
   background-color: rgba(39, 38, 38, 0.644);
   padding: 2rem;
   border-radius: 10px;
+}
+
+.submitButton {
+  margin-top: 1rem;
+  width: 100%;
 }
 
 .imageContainer {
@@ -26,10 +35,10 @@ input::-webkit-inner-spin-button {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 10px;  
+  border-radius: 10px;
 }
 
-.text{ 
+.text {
   font-size: 1.1rem;
   margin: 0;
   font-weight: 500;
@@ -65,7 +74,7 @@ input::-webkit-inner-spin-button {
 
 .inputElements::placeholder {
   color: white;
-  transition: 0.5s ease ;
+  transition: 0.5s ease;
 }
 
 .title {
@@ -99,7 +108,8 @@ input::-webkit-inner-spin-button {
   border-bottom: solid 2px red;
 }
 
-.navbarItem, .navbarItem:hover {
+.navbarItem,
+.navbarItem:hover {
   color: white;
   text-decoration: none;
 }

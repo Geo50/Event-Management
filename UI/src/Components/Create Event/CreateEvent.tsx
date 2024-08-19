@@ -1,58 +1,42 @@
 import axios from "axios";
+import { differenceInDays, isBefore } from "date-fns";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { jwtDecode } from "jwt-decode";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Col, Container } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { SubmitHandler, useForm } from "react-hook-form";
 import secureLocalStorage from "react-secure-storage";
 import { PuffLoader } from "react-spinners";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { key } from "../../App";
-import WhiteTable from "../../assets/Table-Background.jpg";
+import WhiteTable from "../../assets/Monotone.jpg";
 import { storage } from "../../Firebase/Firebase";
 import ModalComponent from "../Modal/Modal";
 import classes from "./CreateEvent.module.css";
-import InputComponent, { ComponentFunctions } from "./InputComponent";
+import InputComponent from "./InputComponent";
 
-type eventCredentials = {
+type EventCredentials = {
   eventName: string;
   eventDate: string;
   eventPlace: string;
   eventType: string;
-  eventImage: string;
   eventDescription: string;
-  organiser_id: number;
   eventAttendeesLimit: number;
+  ticket_limit_per_user: number;
 };
 
 const CreateEvent: React.FC = () => {
-  const eventNameRef = useRef<ComponentFunctions>(null);
-  const eventDateRef = useRef<ComponentFunctions>(null);
-  const eventPlaceRef = useRef<ComponentFunctions>(null);
-  const eventTypeRef = useRef<ComponentFunctions>(null);
-  const eventImageRef = useRef<HTMLInputElement>(null);
-  const eventDescriptionRef = useRef<ComponentFunctions>(null);
-  const eventAttendeesLimit = useRef<ComponentFunctions>(null);
-
-  const eventDataRef = useRef<eventCredentials>({
-    eventName: "",
-    eventDate: "",
-    eventPlace: "",
-    eventImage: "",
-    eventType: "",
-    eventDescription: "",
-    organiser_id: 0,
-    eventAttendeesLimit: 1,
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<EventCredentials>();
 
   const [imageURL, setImageURL] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [modalType, setModalType] = useState<string>("");
-  const [errorDisplay, setErrorDisplay] = useState<string>("");
   const [eventId, setEventId] = useState<number>(0);
-
-  const [file, setFile] = useState<File | null>(null);
 
   const getToken = () => {
     const token = secureLocalStorage.getItem(key);
@@ -65,9 +49,6 @@ const CreateEvent: React.FC = () => {
       try {
         const decodedToken: any = jwtDecode(token);
         const userId: number = parseInt(decodedToken?.unique_name, 10);
-        const currentTime = Math.floor(Date.now() / 1000);
-
-        
         return userId;
       } catch (error) {
         toast.error("Failed to decode token.");
@@ -76,10 +57,10 @@ const CreateEvent: React.FC = () => {
     }
     return null;
   };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      setFile(e.target.files[0]);
       handleUpload(selectedFile);
     }
   };
@@ -97,152 +78,75 @@ const CreateEvent: React.FC = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     document.body.style.backgroundImage = `url(${WhiteTable})`;
     document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-    document.body.style.height = "100vh";
-    document.body.style.backdropFilter = "blur(3px)";
     decodeToken();
 
     return () => {
       document.body.style.backgroundImage = "";
       document.body.style.backgroundSize = "";
-      document.body.style.backgroundRepeat = "";
-      document.body.style.height = "";
-      document.body.style.backdropFilter = "";
     };
   }, []);
 
-  const handleAddBookmark = async (eventValues: eventCredentials) => {
+  const handleAddBookmark = async (eventName: string, newEventId: number) => {
     setLoading(true);
     try {
-      const userId = decodeToken(); // Extract userId from token
+      const userId = decodeToken();
       if (userId) {
         await axios.post("https://localhost:7083/api/Event/CreateNewBookmark", {
-          UserId: userId, // UserId from the token
-          EventId: eventId, // EventId from the event data
-          EventName: eventValues.eventName,
+          UserId: userId,
+          EventId: newEventId,
+          EventName: eventName,
         });
+        toast.success("Successfully added to profile bookmarks.");
+      } else {
+        toast.error("User ID not found. Please log in again.");
       }
     } catch (error: any) {
-      toast.error(`An error occurred: ${error.response?.status}: ${error.message}`);
+      toast.error(`Failed to add bookmark: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
   };
-
-  const handleSubmit = () => {
-    const organiserID = decodeToken();
-    let isValid: boolean = true;
-    let today = new Date();
-    const eventValues: eventCredentials = {
-      eventName: (eventNameRef.current?.value as string) || "",
-      eventDate: (eventDateRef.current?.value as string) || "",
-      eventPlace: (eventPlaceRef.current?.value as string) || "",
-      eventImage: imageURL || "",
-      eventType: (eventTypeRef.current?.value as string) || "",
-      eventDescription: (eventDescriptionRef.current?.value as string) || "",
-      organiser_id: organiserID || 0,
-      eventAttendeesLimit: parseInt(eventAttendeesLimit.current?.value as string, 10),
-    };
-    let inputDate: number = new Date(eventValues.eventDate).getTime();
-    let todayTimestamp = today.getTime();
-
-    if (eventValues.eventName === "") {
-      eventNameRef.current?.handleAddErrorClass();
-      toast.error("Please enter an event name");
-      isValid = false;
-    } else {
-      eventNameRef.current?.handleRemoveErrorClass();
-    }
-
-    if (eventValues.eventDate === "") {
-      eventDateRef.current?.handleAddErrorClass();
-      toast.error("Please enter a date");
-      isValid = false;
-    } else if (inputDate - todayTimestamp > 30 * 24 * 60 * 60 * 1000) {
-      toast.error("Please enter a date not so far in the future");
-      eventDateRef.current?.handleAddErrorClass();
-      isValid = false;
-    } else if (inputDate - todayTimestamp < 0) {
-      toast.error("Please enter a valid date");
-      eventDateRef.current?.handleAddErrorClass();
-      isValid = false;
-    } else {
-      eventDateRef.current?.handleRemoveErrorClass();
-    }
-
-    if (eventValues.eventPlace === "") {
-      eventPlaceRef.current?.handleAddErrorClass();
-      toast.error("Please enter a place for the event");
-      isValid = false;
-    } else {
-      eventPlaceRef.current?.handleRemoveErrorClass();
-    }
-
-    if (eventValues.eventImage === "") {
-      eventImageRef.current?.classList.add(classes.inputError);
+  const onSubmit: SubmitHandler<EventCredentials> = async (data) => {
+    if (!imageURL) {
       toast.error("Please upload an event image");
-      isValid = false;
-    } else {
-      eventImageRef.current?.classList.remove(classes.inputError);
+      return;
     }
 
-    if (eventValues.eventType === "") {
-      eventTypeRef.current?.handleAddErrorClass();
-      toast.error("Please enter the type of event");
-      isValid = false;
-    } else {
-      eventTypeRef.current?.handleRemoveErrorClass();
-    }
-
-    if (eventValues.eventDescription === "") {
-      eventDescriptionRef.current?.handleAddErrorClass();
-      toast.error("Please describe the event");
-      isValid = false;
-    } else {
-      eventDescriptionRef.current?.handleRemoveErrorClass();
-    }
-
-    if (isValid) {
-      handleDatabaseInjection(eventValues);
-    }
-  };
-
-  const handleDatabaseInjection = useCallback(async (eventValues: eventCredentials) => {
     const organiserID = decodeToken();
     setLoading(true);
-    await axios
-      .post("https://localhost:7083/api/Event/CreateNewEvent", {
-        EventName: eventValues.eventName,
-        EventDate: eventValues.eventDate,
-        EventPlace: eventValues.eventPlace,
-        EventType: eventValues.eventType,
-        EventImage: eventValues.eventImage,
-        EventDescription: eventValues.eventDescription,
+    try {
+      const response = await axios.post("https://localhost:7083/api/Event/CreateNewEvent", {
+        EventName: data.eventName,
+        EventDate: data.eventDate,
+        EventPlace: data.eventPlace,
+        EventType: data.eventType,
+        EventImage: imageURL,
+        EventDescription: data.eventDescription,
         organiser_id: organiserID,
-        eventAttendeesLimit: eventValues.eventAttendeesLimit,
-      })
-      .then((response) => {
-        const eventId = response.data.eventId;
-        setEventId(eventId);
-        setModalShow(true);
-        setModalType("Create Event");
-        if (eventId !== 0) {
-          handleAddBookmark(eventValues);
-          toast.success("Successfully added to profile bookmarks.");
-        } else {
-          toast.error("Couldn't add to bookmark.");
-        }
-      })
-      .catch((error) => {
-        toast.error(`Failed to create event. Status code: ${error.status}: ${error.message}`);
-      })
-      .finally(() => {
-        setLoading(false);
+        eventAttendeesLimit: data.eventAttendeesLimit,
+        ticket_limit_per_user: data.ticket_limit_per_user,
       });
-  }, []);
+
+      const newEventId = response.data.eventId;
+      setEventId(newEventId);
+      setModalShow(true);
+      setModalType("Create Event");
+
+      if (newEventId) {
+        await handleAddBookmark(data.eventName, newEventId);
+      } else {
+        toast.error("Couldn't add to bookmark: Event ID not received from server.");
+      }
+    } catch (error: any) {
+      toast.error(`Failed to create event: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCloseDetails = useCallback((): void => {
     setModalShow(false);
@@ -257,7 +161,6 @@ const CreateEvent: React.FC = () => {
         errorDisplayProp=""
         eventIdProp={eventId}
       />
-      <ToastContainer />
       {loading && (
         <div className={classes.loader}>
           <PuffLoader color="var(--registration-blue)" size={130} />
@@ -273,7 +176,6 @@ const CreateEvent: React.FC = () => {
               id="image_insertion"
               accept="image/png, image/jpeg"
               onChange={handleFileChange}
-              ref={eventImageRef}
             />
           </div>
           <div className={classes.imageContainer}>
@@ -285,52 +187,85 @@ const CreateEvent: React.FC = () => {
               </div>
             )}
             {imageURL && <img src={imageURL} alt="Event" className={classes.imagePreview} />}
-            {/* <button onClick={handleUpload} disabled={loading}>
-                    Upload Image
-                  </button> */}
           </div>
 
-          <div className={classes.inputElementBox}>
+          <form onSubmit={handleSubmit(onSubmit)} className={classes.inputElementBox}>
             <InputComponent
-              ref={eventNameRef}
               inputType="text"
               inputPlaceholder="Enter your event name"
-              value={eventDataRef.current.eventName}
+              register={register("eventName", { required: "Event name is required", maxLength: {
+                value: 30,
+                message: "Event name cannot exceed 30 characters"
+              } })}
+              error={errors.eventName}
             />
             <InputComponent
-              ref={eventDescriptionRef}
               inputType="text"
               inputPlaceholder="Describe your event"
-              value={eventDataRef.current.eventDescription}
+              register={register("eventDescription", { required: "Event description is required", maxLength: {
+                value: 500,
+                message: 'Description cannot exceed 500 characters',
+              }, })}
+              error={errors.eventDescription}
             />
             <InputComponent
-              ref={eventDateRef}
               inputType="datetime-local"
               inputPlaceholder="Enter your event date"
-              value={eventDataRef.current.eventDate}
+              register={register("eventDate", {
+                required: "Event date is required",
+                validate: {
+                  notPastDate: (value) => {
+                    const selectedDate = new Date(value);
+                    const currentDate = new Date();
+                    return !isBefore(selectedDate, currentDate) || "Event date cannot be in the past";
+                  },
+                  withinOneMonth: (value) => {
+                    const selectedDate = new Date(value);
+                    const currentDate = new Date();
+                    return (
+                      differenceInDays(selectedDate, currentDate) <= 30 ||
+                      "Event date cannot be more than one month in the future"
+                    );
+                  },
+                },
+              })}
+              error={errors.eventDate}
             />
             <InputComponent
-              ref={eventPlaceRef}
               inputType="text"
               inputPlaceholder="Event Place"
-              value={eventDataRef.current.eventPlace}
+              register={register("eventPlace", { required: "Event place is required" })}
+              error={errors.eventPlace}
             />
             <InputComponent
-              ref={eventTypeRef}
               inputType="text"
               inputPlaceholder="Enter your Event Type"
-              value={eventDataRef.current.eventType}
+              register={register("eventType", { required: "Event type is required" })}
+              error={errors.eventType}
             />
             <InputComponent
-              ref={eventAttendeesLimit}
               inputType="number"
               inputPlaceholder="How many people can your event have?"
-              value={eventDataRef.current.eventAttendeesLimit.toString()}
+              register={register("eventAttendeesLimit", {
+                required: "Attendees limit is required",
+                min: { value: 1, message: "Attendees limit must be at least 1" },
+              })}
+              error={errors.eventAttendeesLimit}
             />
-            <Button variant="outline-danger" onClick={handleSubmit}>
+            <InputComponent
+              inputType="number"
+              inputPlaceholder="Maximum tickets per user."
+              register={register("ticket_limit_per_user", {
+                required: "Ticket limit per user is required",
+                min: { value: 1, message: "Ticket limit must be at least 1" },
+                
+              })}
+              error={errors.ticket_limit_per_user}
+            />
+            <Button type="submit" variant="danger" className={classes.submitButton}>
               Submit
             </Button>
-          </div>
+          </form>
         </div>
       </Col>
     </Container>

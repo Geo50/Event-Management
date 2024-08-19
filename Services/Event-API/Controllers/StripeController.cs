@@ -6,6 +6,7 @@ using Stripe.Checkout;
 using System.Collections.Generic;
 using Domain.Entities;
 using Application.DTO.EventDTOs;
+using Microsoft.Extensions.Logging;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -80,7 +81,12 @@ public class StripeController : ControllerBase
                     eventid = int.Parse(session.Metadata["EventId"])
                 };
                 await _event_User_Service.CreateTransaction(transactionDTO);
-                return Ok(new { message = "Payment successful and transaction created." });
+                return Ok(new
+                {
+                    message = "Payment successful and transaction created.",
+                    ticketId = transactionDTO.TicketId,
+                    eventId = transactionDTO.eventid
+                });
             }
             return BadRequest(new { message = "Payment not successful." });
         }

@@ -116,6 +116,8 @@ namespace Infrastructure.Repositories
 
         public async Task UpdatePassword(User user)
         {
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.UserPassword);
+
             var getQuery = UserQueries.GetPasswordVerificationAnswer;
 
             using (var connection = Connection)
@@ -130,7 +132,7 @@ namespace Infrastructure.Repositories
                     var updateQuery = UserQueries.UpdateUserPassword;
                     await connection.ExecuteAsync(updateQuery, new
                     {
-                        userpassword = user.UserPassword,
+                        userpassword = hashedPassword,
                         UserName = user.UserName
                     });
                 }

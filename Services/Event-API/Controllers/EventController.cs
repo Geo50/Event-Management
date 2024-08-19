@@ -67,7 +67,7 @@ namespace Event_API.Controllers
 
         [HttpPost("GetEventInDetails")]
 
-        public async Task<ActionResult<IEnumerable<CombinedProperties>>> GetEventInDetails( [FromQuery] int eventId)
+        public async Task<ActionResult<IEnumerable<CombinedProperties>>> GetEventInDetails([FromQuery] int eventId)
         {
             var eventDetails = await _eventService.GetEventInDetails(eventId);
             return Ok(eventDetails);
@@ -75,7 +75,7 @@ namespace Event_API.Controllers
 
         [HttpPost("CreateNewBookmark")]
 
-        public async Task<IActionResult> CreateNewBookmark( Bookmarks bookmark)
+        public async Task<IActionResult> CreateNewBookmark(Bookmarks bookmark)
         {
             await _event_User_Service.CreateNewBookmark(bookmark);
             return Ok();
@@ -128,6 +128,71 @@ namespace Event_API.Controllers
             return Ok(tickets);
         }
 
+        [HttpPut("UpdateTicketStatus")]
+
+        public async Task<ActionResult> UpdateTicketStatus(UpdateTicketStatusDTO updateTicketStatusDTO)
+        {
+            await _event_User_Service.UpdateTicketStatus(updateTicketStatusDTO);
+            return Ok();
+        }
+
+        [HttpPut("IncrementTicketStatus")]
+
+        public async Task<ActionResult> IncrementTicketStatus(UpdateTicketStatusDTO updateTicketStatusDTO)
+        {
+            await _event_User_Service.IncrementTicketStatus(updateTicketStatusDTO);
+            return Ok();
+        }
+
+        [HttpPost("GetTransactionsPerUserEvent")]
+        public async Task<ActionResult<int>> GetTransactionsPerUserEvent([FromBody] TransactionCountDTO transactionCountDTO)
+        {
+            try
+            {
+                var count = await _event_User_Service.GetTransactionsPerUserEvent(transactionCountDTO);
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while processing your request.", error = ex.Message });
+            }
+        }
+        [HttpGet("GetTransactionsPerEvent")]
+        public async Task<ActionResult<int>> GetTransactionsPerEvent([FromQuery] int eventid)
+        {
+            try
+            {
+                var count = await _event_User_Service.GetTransactionsPerEvent(eventid);
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while processing your request.", error = ex.Message });
+            }
+        }
+
+        [HttpPost("GetEventMaxTicketsPerUser")]
+        public async Task<int> GetEventMaxTicketsPerUser([FromQuery] int eventid)
+        {
+            var maxTickets = await _eventService.GetEventMaxTicketsPerUser(eventid);
+            return maxTickets;
+        }
+
+        [HttpDelete("DeleteBoughtTicket")]
+
+        public async Task<ActionResult> DeleteBoughtTicket(TransactionDTO transactionDTO)
+        {
+            await _event_User_Service.DeleteBoughtTicket(transactionDTO);
+            return Ok();
+        }
+
+        [HttpDelete("DeleteBookmark")]
+
+        public async Task<ActionResult> DeleteBookmark(DeleteBookmarkDTO deleteBookmarkDTO)
+        {
+            await _event_User_Service.DeleteBookmark(deleteBookmarkDTO);
+            return Ok();
+        }
 
     }
 }

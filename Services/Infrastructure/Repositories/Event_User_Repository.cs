@@ -20,10 +20,15 @@ namespace Infrastructure.Repositories
         public Task<IEnumerable<Transaction>> GetTransaction(int UserId);
         public Task CreateTransaction(Transaction transaction);
         public Task<IEnumerable<CombinedProperties>> GetBoughtTickets(int UserId);
-
+        public Task UpdateTicketStatus(Tickets tickets);
+        public Task IncrementTicketStatus(Tickets tickets);
+        public Task<int> GetTransactionsPerUserEvent (Transaction transaction);
+        public Task<int> GetTransactionsPerEvent (int eventid);
+        public Task DeleteBoughtTicket(Transaction transaction);
+        public Task DeleteBookmark (Bookmarks bookmark);
     }
 
-    public class Event_User_Repository : IEvent_User_Repository
+    public class Event_User_Repository : IEvent_User_Repository 
     {
         private readonly IConfiguration _configuration;
         public Event_User_Repository(IConfiguration configuration)
@@ -32,6 +37,85 @@ namespace Infrastructure.Repositories
         }
 
         private IDbConnection Connection => new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+        public async Task DeleteBookmark(Bookmarks bookmark)
+        {
+            var query = Event_User_Queries.DeleteBookmark;
+            using (var connection = Connection)
+            {
+                await connection.QuerySingleOrDefaultAsync(query, new
+                {
+                    eventid = bookmark.EventId,
+                    userid = bookmark.UserId
+                });
+            }
+        }
+        public async Task DeleteBoughtTicket(Transaction transaction)
+        {
+            var query = Event_User_Queries.DeleteBoughtTicket;
+            using (var connection = Connection)
+            {
+                 await connection.QuerySingleOrDefaultAsync(query, new
+                {
+                    eventid = transaction.eventid,
+                    ticketid = transaction.TicketId,
+                    userid = transaction.UserId
+                });
+                
+
+            }
+        }
+
+        public async Task UpdateTicketStatus(Tickets tickets)
+        {
+            var query = Event_User_Queries.UpdateTicketStatus;
+            using (var connection = Connection)
+            {
+                await connection.ExecuteAsync(query, new
+                {
+                    eventid = tickets.EventId,
+                    ticketid = tickets.TicketId,
+                });
+            }
+        }
+        public async Task IncrementTicketStatus(Tickets tickets)
+        {
+            var query = Event_User_Queries.IncrementTicketStatus;
+            using (var connection = Connection)
+            {
+                await connection.ExecuteAsync(query, new
+                {
+                    eventid = tickets.EventId,
+                    ticketid = tickets.TicketId,
+                });
+            }
+        }
+        public async Task<int> GetTransactionsPerUserEvent(Transaction transaction)
+        {
+            var query = Event_User_Queries.GetTransactionsPerUserEvent;
+            using (var connection = Connection)
+            {
+                var count = await connection.QuerySingleAsync<int>(query, new
+                {
+                    eventid = transaction.eventid,
+                    Userid = transaction.UserId
+                });
+                return count;
+            }
+        }
+        public async Task<int> GetTransactionsPerEvent(int eventid)
+        {
+            var query = Event_User_Queries.GetTransactionsPerEvent;
+            using (var connection = Connection)
+            {
+                var count = await connection.QuerySingleAsync<int>(query, new
+                {
+                    eventid 
+                });
+                return count;
+            }
+        }
+
 
         public async Task<IEnumerable<CombinedProperties>> GetBoughtTickets(int UserId)
         {

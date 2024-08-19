@@ -1,61 +1,94 @@
+.columnClass {
+  width: 90vw;
+  overflow: auto;
+}
 
-.ticketTable {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
+.ticketTable th,
+.ticketTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.ticketTable th {
+  background-color: #f2f2f2;
+}
+
+.rowClass input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+.ticketsButton {
+  width: 100%;
+  margin-right: 0.5rem;
+  margin-left: 0.5;
+}
+
+.noTicketsFound {
+  font-size: 3rem;
+  font-weight: 600;
+}
+
+.ticketTable th,
+.ticketTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  min-width: 5rem;
+}
+
+.headerTitle {
+  margin-top: 2rem;
+}
+
+.ticketTable th {
+  background-color: #f2f2f2;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+}
+
+@media (width < 770px) {
+  .editContainer {
+    margin-top: 1rem;
   }
-  
-  .ticketTable th, .ticketTable td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  
+  .ticketTable th,
+  .ticketTable td {
+    font-size: 0.8rem;
   }
-  
-  .ticketTable th {
-    background-color: #f2f2f2;
+  .buyButton {
+    font-size: 0.8rem;
+    padding: 5px;
   }
-  
-  .rowClass input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 100%; /* Full width on smaller screens */
   }
-  
+
+  .rowClass input,
+  .rowClass select,
   .ticketsButton {
     width: 100%;
-    margin-right: 0.5rem;
-    margin-left: 0.5;
   }
 
-  .noTicketsFound {
-    font-size: 3rem;
-    font-weight: 600;
+  .ticketsButton {
+    margin-bottom: 10px; /* Add space between buttons */
   }
-  
-  
-  @media (max-width: 768px) {
-    .container {
-      width: 100%; /* Full width on smaller screens */
-    }
-  
-    .rowClass input, 
-    .rowClass select, 
-    .ticketsButton {
-      width: 100%;
-    }
-  
-    .ticketsButton {
-      margin-bottom: 10px; /* Add space between buttons */
-    }
+}
+
+@media (max-width: 576px) {
+  .ticketTable th,
+  .ticketTable td {
+    padding: 4px; /* Reduce padding on smaller screens */
   }
-  
-  @media (max-width: 576px) {
-    .ticketTable th, .ticketTable td {
-      padding: 4px; /* Reduce padding on smaller screens */
-    }
-  
-    .ticketTable {
-      font-size: 0.8rem; /* Reduce font size on smaller screens */
-    }
+
+  .ticketTable {
+    font-size: 0.8rem; /* Reduce font size on smaller screens */
   }
+}

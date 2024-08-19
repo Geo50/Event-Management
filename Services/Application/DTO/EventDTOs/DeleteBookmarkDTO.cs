@@ -4,14 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Application.DTO.EventDTOs
 {
-    public class Bookings
+    public class DeleteBookmarkDTO
     {
         public int UserId { get; set; }
         public int EventId { get; set; }
-        public int TicketId { get; set; }
-        public string UserName { get; set; }
-        public int BookingId { get; set; }
     }
 }

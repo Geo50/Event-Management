@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Application.DTO.EventDTOs
 {
-    public class TransactionDTO
+    public class UpdateTicketStatusDTO
     {
-        public int TicketId { get; set; }   
-        public int eventid { get; set; }
-        public int UserId { get; set; }
+        public int TicketId { get; set; }
+        public int EventId { get; set; }
     }
 }

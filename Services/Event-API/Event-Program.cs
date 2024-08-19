@@ -35,21 +35,6 @@ builder.Services.AddScoped<JwtTokenService>(provider =>
     return new JwtTokenService(settings.SecretKey, settings.Issuer, settings.Audience);
 });
 
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddJwtBearer(options =>
-//    {
-//        var settings = jwtSettings.Get<JwtSettings>();
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            ValidateIssuer = true,
-//            ValidateAudience = true,
-//            ValidateLifetime = true,
-//            ValidateIssuerSigningKey = true,
-//            ValidIssuer = settings.Issuer,
-//            ValidAudience = settings.Audience,
-//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.SecretKey))
-//        };
-//    });
 
 // Add CORS policy
 builder.Services.AddCors(options =>

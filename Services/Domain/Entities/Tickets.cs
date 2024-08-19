@@ -8,7 +8,7 @@ namespace Domain.Entities
 {
     public class Tickets
     {
-        public int TicketId {  get; set; }
+        public int TicketId { get; set; }
         public int EventId { get; set; }
         public required string TicketName { get; set; }
         public int TicketPrice { get; set; }
